@@ -120,8 +120,10 @@ function formatDate(str) {
 // sidebar active link highlight
 function initSidebarActive() {
     const path = window.location.pathname;
+    $$('.nav-item').forEach(el => el.classList.remove('active'));
     $$('.nav-item').forEach(el => {
-        if (el.getAttribute('href') && path.endsWith(el.getAttribute('href').split('/').pop())) {
+        const href = el.getAttribute('href');
+        if (href && href !== '#' && path.includes(href)) {
             el.classList.add('active');
         }
     });
