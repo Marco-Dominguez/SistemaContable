@@ -4,19 +4,19 @@
 
 - XAMPP con Apache y MySQL activos
 - PHP 8.1+
-- Navegador moderno
+- Navegador
 
 ---
 
 ## 1. Copiar el proyecto
 
-Copia la carpeta `SistemaContable` completa dentro de:
+Copia el proyecto dentro de la carpeta:
 
 ```
-C:\xampp\htdocs\SistemaContable\
+C:\xampp\htdocs\
 ```
 
-La estructura final debe quedar así:
+Estructura del proyecto:
 
 ```
 C:\xampp\htdocs\SistemaContable\
@@ -70,7 +70,7 @@ Abre `C:\xampp\apache\conf\httpd.conf` y verifica que esta línea NO esté comen
 LoadModule rewrite_module modules/mod_rewrite.so
 ```
 
-Busca la sección `<Directory "C:/xampp/htdocs">` y asegúrate de que diga:
+Busca la sección `<Directory "C:/xampp/htdocs">` o `<Directory "/Applications/XAMPP/xamppfiles/htdocs">` y asegúrate de que diga:
 
 ```
 AllowOverride All
@@ -83,8 +83,8 @@ Reinicia Apache en el Panel de XAMPP.
 ## 3. Crear la base de datos
 
 1. Abre **phpMyAdmin**: http://localhost/phpmyadmin
-2. Ve a **SQL** (pestaña superior).
-3. Copia y ejecuta el contenido de:
+2. Ve a **SQL**.
+3. Copia y ejecuta:
 
    ```
    service/config/schema.sql
@@ -118,41 +118,41 @@ http://localhost/SistemaContable/
 
 ### Credenciales por defecto
 
-| Campo    | Valor                  |
-|----------|------------------------|
-| Correo   | admin@contable.local   |
-| Contraseña | Admin2024!           |
+| Campo      | Valor                  |
+|------------|------------------------|
+| Correo     | admin@contable.local   |
+| Contraseña | Admin2026!             |
 
-> **Importante:** Cambia la contraseña del administrador después del primer acceso.
+> **Importante:** Puedes cambiar la contraseña del administracion por seguridad.
 
 ---
 
 ## Estructura de la API
 
-Todas las APIs viven bajo `/SistemaContable/service/api/`:
+Todas las APIs estan en `/SistemaContable/service/api/`:
 
-| Endpoint                          | Método | Descripción                        |
-|-----------------------------------|--------|------------------------------------|
-| `api/auth?action=login`           | POST   | Iniciar sesión                     |
-| `api/auth?action=logout`          | POST   | Cerrar sesión                      |
-| `api/auth?action=me`              | GET    | Datos del usuario actual           |
-| `api/roles`                       | GET    | Listar todos los roles             |
-| `api/roles?id={id}`               | GET    | Obtener un rol                     |
-| `api/roles`                       | POST   | Crear rol                          |
-| `api/roles?id={id}`               | PUT    | Actualizar rol                     |
-| `api/roles?id={id}`               | DELETE | Eliminar rol                       |
-| `api/roles?id={id}&action=permisos` | GET  | Ver permisos de un rol             |
-| `api/roles?id={id}&action=permisos` | POST | Guardar permisos de un rol         |
-| `api/usuarios`                    | GET    | Listar usuarios                    |
-| `api/usuarios?id={id}`            | GET    | Obtener usuario                    |
-| `api/usuarios`                    | POST   | Crear usuario                      |
-| `api/usuarios?id={id}`            | PUT    | Actualizar usuario                 |
-| `api/usuarios?id={id}`            | DELETE | Eliminar usuario                   |
-| `api/usuarios?id={id}&action=roles` | GET  | Ver roles de un usuario            |
-| `api/usuarios?id={id}&action=roles` | POST | Asignar roles a un usuario         |
-| `api/modulos?action=modulos`      | GET    | Listar módulos del sistema         |
-| `api/modulos?action=acciones`     | GET    | Listar acciones disponibles        |
-| `api/modulos?action=matriz`       | GET    | Matriz módulo × acción             |
+| Endpoint                            | Método | Descripción                        |
+|-------------------------------------|--------|------------------------------------|
+| `api/auth?action=login`             | POST   | Iniciar sesión                     |
+| `api/auth?action=logout`            | POST   | Cerrar sesión                      |
+| `api/auth?action=me`                | GET    | Datos del usuario actual           |
+| `api/roles`                         | GET    | Listar todos los roles             |
+| `api/roles?id={id}`                 | GET    | Obtener un rol                     |
+| `api/roles`                         | POST   | Crear rol                          |
+| `api/roles?id={id}`                 | PUT    | Actualizar rol                     |
+| `api/roles?id={id}`                 | DELETE | Eliminar rol                       |
+| `api/roles?id={id}&action=permisos` | GET    | Ver permisos de un rol             |
+| `api/roles?id={id}&action=permisos` | POST   | Guardar permisos de un rol         |
+| `api/usuarios`                      | GET    | Listar usuarios                    |
+| `api/usuarios?id={id}`              | GET    | Obtener usuario                    |
+| `api/usuarios`                      | POST   | Crear usuario                      |
+| `api/usuarios?id={id}`              | PUT    | Actualizar usuario                 |
+| `api/usuarios?id={id}`              | DELETE | Eliminar usuario                   |
+| `api/usuarios?id={id}&action=roles` | GET    | Ver roles de un usuario            |
+| `api/usuarios?id={id}&action=roles` | POST   | Asignar roles a un usuario         |
+| `api/modulos?action=modulos`        | GET    | Listar módulos del sistema         |
+| `api/modulos?action=acciones`       | GET    | Listar acciones disponibles        |
+| `api/modulos?action=matriz`         | GET    | Matriz módulo × acción             |
 
 ---
 
@@ -164,7 +164,7 @@ Todas las APIs (excepto login) requieren el header:
 Authorization: Bearer {token}
 ```
 
-El token se obtiene al hacer login exitoso y se almacena automáticamente en `localStorage`.
+El token se obtiene al hacer login y se almacena en `localStorage`.
 
 ---
 
@@ -180,7 +180,7 @@ El token se obtiene al hacer login exitoso y se almacena automáticamente en `lo
 
 ## Notas de seguridad
 
-- Las contraseñas se almacenan como hash bcrypt (cost 12).
+- Las contraseñas se almacenan como hash bcrypt.
 - Los tokens de sesión son de 80 caracteres hex aleatorios.
 - La sesión expira a las 8 horas por defecto (ajustable en `app.php`).
-- Todas las rutas de API validan autenticación y permisos RBAC antes de ejecutar.
+- Todas las rutas de API validan autenticación y permisos antes de ejecutar.
