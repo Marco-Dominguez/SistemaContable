@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios — Sistema Contable</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/SistemaContable/view/assets/css/app.css">
+</head>
+<body>
+<div id="app">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="bi bi-calculator"></i></div>
+            <span>SistemaContable</span>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-3">
+            <div class="nav-group">
+                <a href="/SistemaContable/view/pages/dashboard/index.html" class="nav-item">
+                    <i class="bi bi-house-door"></i> Inicio
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Seguridad</div>
+                <a href="/SistemaContable/view/pages/security/usuarios/index.html" class="nav-item active">
+                    <i class="bi bi-people"></i> Usuarios
+                </a>
+                <a href="/SistemaContable/view/pages/security/roles/index.html" class="nav-item">
+                    <i class="bi bi-shield-lock"></i> Roles y Permisos
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Gestión</div>
+                <a href="#" class="nav-item text-slate-500"><i class="bi bi-person-badge"></i> Clientes</a>
+                <a href="#" class="nav-item text-slate-500"><i class="bi bi-file-earmark-text"></i> Declaraciones</a>
+                <a href="#" class="nav-item text-slate-500"><i class="bi bi-bar-chart-line"></i> Analíticas</a>
+            </div>
+        </nav>
+        <div class="p-3 border-t border-slate-800">
+            <a href="#" class="nav-item"><i class="bi bi-person-circle"></i> Perfil</a>
+        </div>
+    </aside>
+
+    <div id="main">
+        <header id="topbar">
+            <div class="flex items-center gap-3">
+                <button id="sidebar-toggle" class="btn btn-outline btn-icon">
+                    <i class="bi bi-list text-lg"></i>
+                </button>
+                <nav class="text-sm text-slate-400">
+                    <span>Seguridad</span>
+                    <span class="mx-1">/</span>
+                    <span class="text-slate-700 font-medium">Usuarios</span>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-medium text-slate-700" id="topbar-user-name">—</p>
+                    <p class="text-xs text-slate-400" id="topbar-user-role">—</p>
+                </div>
+                <button id="btn-logout" class="btn btn-outline btn-sm">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span class="hidden sm:inline">Salir</span>
+                </button>
+            </div>
+        </header>
+
+        <main id="page-content">
+            <!-- list -->
+            <div class="tab-list" role="tablist">
+                <button class="tab-btn active" data-tab="tab-users">Usuarios</button>
+                <button class="tab-btn" data-tab="tab-user-roles">Asignar Roles</button>
+            </div>
+
+            <!-- usuarios -->
+            <div id="tab-users">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Gestión de Usuarios</h2>
+                        <p class="text-sm text-slate-400">Administra los usuarios del sistema</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-new-user">
+                        <i class="bi bi-plus-lg"></i> Nuevo Usuario
+                    </button>
+                </div>
+
+                <!-- search -->
+                <div class="card p-4 mb-4">
+                    <div class="flex gap-3 flex-wrap">
+                        <input type="text" id="search-users" placeholder="Buscar por nombre o correo..."
+                               class="form-input flex-1 min-w-48">
+                        <button class="btn btn-outline" id="btn-refresh-users">
+                            <i class="bi bi-arrow-clockwise"></i> Actualizar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- table -->
+                <div class="card overflow-hidden">
+                    <div id="users-loading" class="p-8 text-center text-slate-400">
+                        <div class="spinner mx-auto mb-2"></div>
+                        Cargando usuarios...
+                    </div>
+                    <div id="users-table-wrap" class="hidden overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nombre</th>
+                                    <th>Correo</th>
+                                    <th>Roles</th>
+                                    <th>Estado</th>
+                                    <th>Último acceso</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div id="users-empty" class="hidden p-10 text-center text-slate-400">
+                        <i class="bi bi-people text-4xl block mb-2"></i>
+                        No hay usuarios registrados.
+                    </div>
+                </div>
+            </div>
+
+            <!-- asignar roles -->
+            <div id="tab-user-roles" class="hidden">
+                <div class="mb-4">
+                    <h2 class="text-lg font-bold text-slate-800">Asignar Roles a Usuarios</h2>
+                    <p class="text-sm text-slate-400">Selecciona un usuario para ver y editar sus roles</p>
+                </div>
+
+                <div class="card p-5">
+                    <div class="form-group mb-4">
+                        <label class="form-label">Selecciona un usuario</label>
+                        <select id="sel-user-for-roles" class="form-input">
+                            <option value="">— Selecciona —</option>
+                        </select>
+                    </div>
+
+                    <div id="user-roles-panel" class="hidden">
+                        <p class="text-sm font-semibold text-slate-600 mb-3">Roles disponibles:</p>
+                        <div id="roles-checkboxes" class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4"></div>
+                        <button class="btn btn-primary" id="btn-save-user-roles">
+                            <i class="bi bi-save"></i> Guardar Roles
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- crear o editar usuarios -->
+<div id="modal-user" class="modal-backdrop hidden">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800" id="modal-user-title">Nuevo Usuario</h3>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-user">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="form-user" novalidate class="flex flex-col gap-4">
+                <input type="hidden" id="user-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label" for="user-nombre">Nombre *</label>
+                        <input class="form-input" type="text" id="user-nombre" placeholder="Nombre">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="user-apellidos">Apellidos *</label>
+                        <input class="form-input" type="text" id="user-apellidos" placeholder="Apellidos">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="user-email">Correo electrónico *</label>
+                    <input class="form-input" type="email" id="user-email" placeholder="correo@ejemplo.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="user-password">
+                        Contraseña <span id="pass-hint" class="text-slate-400 text-xs">(requerida)</span>
+                    </label>
+                    <input class="form-input" type="password" id="user-password" placeholder="Mínimo 8 caracteres">
+                </div>
+                <div class="form-group" id="user-activo-group" style="display:none;">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="user-activo" checked class="w-4 h-4 accent-blue-600">
+                        <span class="form-label mb-0">Usuario activo</span>
+                    </label>
+                </div>
+                <div id="form-user-error" class="alert alert-error hidden">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <span id="form-user-error-msg"></span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-user">Cancelar</button>
+            <button class="btn btn-primary" id="btn-save-user">
+                <i class="bi bi-save"></i> Guardar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- confirmar eliminar -->
+<div id="modal-delete" class="modal-backdrop hidden">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800">Confirmar eliminación</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-slate-600">¿Estás seguro de que deseas eliminar al usuario
+                <strong id="delete-user-name"></strong>?
+                Esta acción no se puede deshacer.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-delete">Cancelar</button>
+            <button class="btn btn-danger" id="btn-confirm-delete">
+                <i class="bi bi-trash"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="/SistemaContable/view/assets/js/app.js"></script>
+<script src="/SistemaContable/view/pages/security/usuarios/usuarios.js"></script>
+</body>
+</html>

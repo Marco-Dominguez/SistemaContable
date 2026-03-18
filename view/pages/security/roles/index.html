@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roles y Permisos — Sistema Contable</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/SistemaContable/view/assets/css/app.css">
+</head>
+<body>
+<div id="app">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="bi bi-calculator"></i></div>
+            <span>SistemaContable</span>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-3">
+            <div class="nav-group">
+                <a href="/SistemaContable/view/pages/dashboard/index.html" class="nav-item">
+                    <i class="bi bi-house-door"></i> Inicio
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Seguridad</div>
+                <a href="/SistemaContable/view/pages/security/usuarios/index.html" class="nav-item">
+                    <i class="bi bi-people"></i> Usuarios
+                </a>
+                <a href="/SistemaContable/view/pages/security/roles/index.html" class="nav-item active">
+                    <i class="bi bi-shield-lock"></i> Roles y Permisos
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Gestión</div>
+                <a href="#" class="nav-item text-slate-500"><i class="bi bi-person-badge"></i> Clientes</a>
+                <a href="#" class="nav-item text-slate-500"><i class="bi bi-file-earmark-text"></i> Declaraciones</a>
+                <a href="#" class="nav-item text-slate-500"><i class="bi bi-bar-chart-line"></i> Analíticas</a>
+            </div>
+        </nav>
+        <div class="p-3 border-t border-slate-800">
+            <a href="#" class="nav-item"><i class="bi bi-person-circle"></i> Perfil</a>
+        </div>
+    </aside>
+
+    <div id="main">
+        <header id="topbar">
+            <div class="flex items-center gap-3">
+                <button id="sidebar-toggle" class="btn btn-outline btn-icon">
+                    <i class="bi bi-list text-lg"></i>
+                </button>
+                <nav class="text-sm text-slate-400">
+                    <span>Seguridad</span>
+                    <span class="mx-1">/</span>
+                    <span class="text-slate-700 font-medium">Roles y Permisos</span>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-medium text-slate-700" id="topbar-user-name">—</p>
+                    <p class="text-xs text-slate-400" id="topbar-user-role">—</p>
+                </div>
+                <button id="btn-logout" class="btn btn-outline btn-sm">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span class="hidden sm:inline">Salir</span>
+                </button>
+            </div>
+        </header>
+
+        <main id="page-content">
+            <!-- Tabs -->
+            <div class="tab-list" role="tablist">
+                <button class="tab-btn active" data-tab="tab-roles">Roles</button>
+                <button class="tab-btn" data-tab="tab-permisos">Módulos y Acciones</button>
+                <button class="tab-btn" data-tab="tab-rol-permisos">Asignar Permisos</button>
+            </div>
+
+            <!-- ─── Roles ─── -->
+            <div id="tab-roles">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Gestión de Roles</h2>
+                        <p class="text-sm text-slate-400">Crea y administra los roles del sistema</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-new-role">
+                        <i class="bi bi-plus-lg"></i> Nuevo Rol
+                    </button>
+                </div>
+
+                <div class="card overflow-hidden">
+                    <div id="roles-loading" class="p-8 text-center text-slate-400">
+                        <div class="spinner mx-auto mb-2"></div>
+                        Cargando roles...
+                    </div>
+                    <div id="roles-table-wrap" class="hidden overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Usuarios</th>
+                                    <th>Estado</th>
+                                    <th>Creado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roles-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div id="roles-empty" class="hidden p-10 text-center text-slate-400">
+                        <i class="bi bi-shield text-4xl block mb-2"></i>
+                        No hay roles registrados.
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Modulos y Acciones ─── -->
+            <div id="tab-permisos" class="hidden">
+                <div class="mb-4">
+                    <h2 class="text-lg font-bold text-slate-800">Módulos y Acciones del Sistema</h2>
+                    <p class="text-sm text-slate-400">Matriz de acciones disponibles por módulo</p>
+                </div>
+
+                <div class="card overflow-x-auto">
+                    <div id="matriz-loading" class="p-8 text-center text-slate-400">
+                        <div class="spinner mx-auto mb-2"></div>
+                        Cargando matriz...
+                    </div>
+                    <div id="matriz-table-wrap" class="hidden p-4">
+                        <table class="perm-table" id="matriz-table"></table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Asignar Permisos ─── -->
+            <div id="tab-rol-permisos" class="hidden">
+                <div class="mb-4">
+                    <h2 class="text-lg font-bold text-slate-800">Asignar Permisos a Rol</h2>
+                    <p class="text-sm text-slate-400">Selecciona un rol y configura sus permisos por módulo</p>
+                </div>
+
+                <div class="card p-5">
+                    <div class="form-group mb-5">
+                        <label class="form-label">Selecciona un Rol</label>
+                        <select id="sel-rol-permisos" class="form-input max-w-sm">
+                            <option value="">— Selecciona —</option>
+                        </select>
+                    </div>
+
+                    <div id="permisos-panel" class="hidden">
+                        <div class="flex items-center justify-between mb-3">
+                            <p class="text-sm font-semibold text-slate-700">Permisos del rol:</p>
+                            <div class="flex gap-2">
+                                <button class="btn btn-outline btn-sm" id="btn-select-all">
+                                    <i class="bi bi-check2-all"></i> Todos
+                                </button>
+                                <button class="btn btn-outline btn-sm" id="btn-deselect-all">
+                                    <i class="bi bi-x-lg"></i> Ninguno
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto border border-slate-200 rounded-xl mb-4">
+                            <table class="perm-table" id="permisos-table"></table>
+                        </div>
+
+                        <button class="btn btn-primary" id="btn-save-permisos">
+                            <i class="bi bi-save"></i> Guardar Permisos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Crear o Editar Rol -->
+<div id="modal-rol" class="modal-backdrop hidden">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800" id="modal-rol-title">Nuevo Rol</h3>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-rol">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="form-rol" novalidate class="flex flex-col gap-4">
+                <input type="hidden" id="rol-id">
+                <div class="form-group">
+                    <label class="form-label" for="rol-nombre">Nombre del Rol *</label>
+                    <input class="form-input" type="text" id="rol-nombre" placeholder="Ej. Contador Senior">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="rol-descripcion">Descripción</label>
+                    <textarea class="form-input" id="rol-descripcion" rows="3"
+                              placeholder="Describe las responsabilidades de este rol..."></textarea>
+                </div>
+                <div class="form-group" id="rol-activo-group" style="display:none;">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="rol-activo" checked class="w-4 h-4 accent-blue-600">
+                        <span class="form-label mb-0">Rol activo</span>
+                    </label>
+                </div>
+                <div id="form-rol-error" class="alert alert-error hidden">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <span id="form-rol-error-msg"></span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-rol">Cancelar</button>
+            <button class="btn btn-primary" id="btn-save-rol">
+                <i class="bi bi-save"></i> Guardar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmar Eliminar Rol -->
+<div id="modal-delete-rol" class="modal-backdrop hidden">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800">Confirmar eliminación</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-slate-600">¿Eliminar el rol <strong id="delete-rol-name"></strong>?
+                Se quitará de todos los usuarios que lo tengan asignado.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-delete-rol">Cancelar</button>
+            <button class="btn btn-danger" id="btn-confirm-delete-rol">
+                <i class="bi bi-trash"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="/SistemaContable/view/assets/js/app.js"></script>
+<script src="/SistemaContable/view/pages/security/roles/roles.js"></script>
+</body>
+</html>

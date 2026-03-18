@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio — Sistema Contable</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/SistemaContable/view/assets/css/app.css">
+</head>
+<body>
+<div id="app">
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="bi bi-calculator"></i></div>
+            <span>SistemaContable</span>
+        </div>
+        <nav class="flex-1 overflow-y-auto py-3">
+            <div class="nav-group">
+                <a href="/SistemaContable/view/pages/dashboard/index.html" class="nav-item active">
+                    <i class="bi bi-house-door"></i> Inicio
+                </a>
+            </div>
+            <div class="nav-group" id="nav-seguridad">
+                <div class="nav-group-label">Seguridad</div>
+                <a href="/SistemaContable/view/pages/security/usuarios/index.html" class="nav-item">
+                    <i class="bi bi-people"></i> Usuarios
+                </a>
+                <a href="/SistemaContable/view/pages/security/roles/index.html" class="nav-item">
+                    <i class="bi bi-shield-lock"></i> Roles y Permisos
+                </a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Gestión</div>
+                <a href="#" class="nav-item text-slate-500 cursor-not-allowed">
+                    <i class="bi bi-person-badge"></i> Clientes <span class="ml-auto text-xs badge badge-gray">Próximo</span>
+                </a>
+                <a href="#" class="nav-item text-slate-500 cursor-not-allowed">
+                    <i class="bi bi-file-earmark-text"></i> Declaraciones <span class="ml-auto text-xs badge badge-gray">Próximo</span>
+                </a>
+                <a href="#" class="nav-item text-slate-500 cursor-not-allowed">
+                    <i class="bi bi-bar-chart-line"></i> Analíticas <span class="ml-auto text-xs badge badge-gray">Próximo</span>
+                </a>
+            </div>
+        </nav>
+        <div class="p-3 border-t border-slate-800">
+            <a href="#" class="nav-item">
+                <i class="bi bi-person-circle"></i> Perfil
+            </a>
+        </div>
+    </aside>
+
+    <div id="main">
+        <header id="topbar">
+            <div class="flex items-center gap-3">
+                <button id="sidebar-toggle" class="btn btn-outline btn-icon">
+                    <i class="bi bi-list text-lg"></i>
+                </button>
+                <h1 class="text-base font-semibold text-slate-700">Inicio</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-medium text-slate-700" id="topbar-user-name">—</p>
+                    <p class="text-xs text-slate-400" id="topbar-user-role">—</p>
+                </div>
+                <button id="btn-logout" class="btn btn-outline btn-sm">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span class="hidden sm:inline">Salir</span>
+                </button>
+            </div>
+        </header>
+
+        <main id="page-content">
+            <!-- Bienvenidos -->
+            <div class="card p-6 mb-6" style="background: linear-gradient(135deg,#1e3a5f,#1e40af); color:#fff; border-radius:14px;">
+                <h2 class="text-xl font-bold mb-1" id="welcome-title">Bienvenido</h2>
+                <p class="text-blue-200 text-sm" id="welcome-sub">Sistema Contable — Control de declaraciones fiscales</p>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="stats-grid">
+                <div class="card p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                            <i class="bi bi-people text-blue-600 text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-medium">Usuarios</p>
+                            <p class="text-xl font-bold text-slate-700" id="stat-users">—</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
+                            <i class="bi bi-shield-lock text-purple-600 text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-medium">Roles</p>
+                            <p class="text-xl font-bold text-slate-700" id="stat-roles">—</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
+                            <i class="bi bi-person-badge text-green-600 text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-medium">Clientes</p>
+                            <p class="text-xl font-bold text-slate-700">—</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                            <i class="bi bi-file-earmark-check text-amber-600 text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-400 font-medium">Declaraciones</p>
+                            <p class="text-xl font-bold text-slate-700">—</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="card p-5">
+                <h3 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Acciones rápidas</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="quick-actions">
+                    <a href="/SistemaContable/view/pages/security/usuarios/index.html"
+                       class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition text-center">
+                        <i class="bi bi-person-plus text-blue-600 text-2xl"></i>
+                        <span class="text-xs font-medium text-slate-600">Nuevo Usuario</span>
+                    </a>
+                    <a href="/SistemaContable/view/pages/security/roles/index.html"
+                       class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50 transition text-center">
+                        <i class="bi bi-shield-plus text-purple-600 text-2xl"></i>
+                        <span class="text-xs font-medium text-slate-600">Nuevo Rol</span>
+                    </a>
+                    <a href="#"
+                       class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 text-center opacity-50 cursor-not-allowed">
+                        <i class="bi bi-person-badge text-green-600 text-2xl"></i>
+                        <span class="text-xs font-medium text-slate-600">Nuevo Cliente</span>
+                    </a>
+                    <a href="#"
+                       class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 text-center opacity-50 cursor-not-allowed">
+                        <i class="bi bi-file-earmark-plus text-amber-600 text-2xl"></i>
+                        <span class="text-xs font-medium text-slate-600">Nueva Declaración</span>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="/SistemaContable/view/assets/js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    Auth.redirectIfNotLogged();
+
+    const u = Auth.getUser();
+    if (u) {
+        document.getElementById('welcome-title').textContent = `Bienvenido, ${u.nombre} ${u.apellidos}`;
+    }
+
+    // cargar stats
+    try {
+        const [resUsers, resRoles] = await Promise.all([
+            Api.get('usuarios'),
+            Api.get('roles'),
+        ]);
+        if (resUsers?.success) document.getElementById('stat-users').textContent = resUsers.data.usuarios?.length ?? 0;
+        if (resRoles?.success) document.getElementById('stat-roles').textContent = resRoles.data.roles?.length ?? 0;
+    } catch (e) { /* na */ }
+});
+</script>
+</body>
+</html>

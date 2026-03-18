@@ -1,0 +1,24 @@
+Options -Indexes
+
+# Seguridad
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# CORS
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /SistemaContable/service/
+
+    # Permitir OPTIONS
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^ - [L]
+
+    # Rutas APIs
+    RewriteRule ^api/auth(.*)$     controllers/AuthController.php$1 [L,QSA]
+    RewriteRule ^api/roles(.*)$    controllers/RolesController.php$1 [L,QSA]
+    RewriteRule ^api/usuarios(.*)$ controllers/UsuariosController.php$1 [L,QSA]
+    RewriteRule ^api/modulos(.*)$  controllers/ModulosController.php$1 [L,QSA]
+</IfModule>

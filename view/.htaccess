@@ -1,0 +1,9 @@
+Options -Indexes
+
+# redirigir raíz a login si no hay index
+DirectoryIndex index.html login.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /SistemaContable/view/
+</IfModule>

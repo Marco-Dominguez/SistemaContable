@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{PAGE_TITLE}} — Sistema Contable</title>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- App CSS -->
+    <link rel="stylesheet" href="/SistemaContable/view/assets/css/app.css">
+</head>
+<body>
+
+<div id="app">
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon"><i class="bi bi-calculator"></i></div>
+            <span>SistemaContable</span>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto py-3">
+            <div class="nav-group">
+                <a href="/SistemaContable/view/pages/dashboard/index.html" class="nav-item">
+                    <i class="bi bi-house-door"></i> Inicio
+                </a>
+            </div>
+
+            <div class="nav-group" id="nav-seguridad">
+                <div class="nav-group-label">Seguridad</div>
+                <a href="/SistemaContable/view/pages/security/usuarios/index.html" class="nav-item">
+                    <i class="bi bi-people"></i> Usuarios
+                </a>
+                <a href="/SistemaContable/view/pages/security/roles/index.html" class="nav-item">
+                    <i class="bi bi-shield-lock"></i> Roles y Permisos
+                </a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-label">Gestión</div>
+                <a href="#" class="nav-item">
+                    <i class="bi bi-person-badge"></i> Clientes
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="bi bi-file-earmark-text"></i> Declaraciones
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="bi bi-bar-chart-line"></i> Analíticas
+                </a>
+            </div>
+        </nav>
+
+        <div class="p-3 border-t border-slate-800">
+            <a href="/SistemaContable/view/pages/auth/profile.html" class="nav-item">
+                <i class="bi bi-person-circle"></i> Perfil
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div id="main">
+        <!-- TOPBAR -->
+        <header id="topbar">
+            <div class="flex items-center gap-3">
+                <button id="sidebar-toggle" class="btn btn-outline btn-icon md:hidden">
+                    <i class="bi bi-list text-lg"></i>
+                </button>
+                <h1 class="text-base font-semibold text-slate-700" id="page-heading">{{PAGE_HEADING}}</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-medium text-slate-700" id="topbar-user-name">—</p>
+                    <p class="text-xs text-slate-400" id="topbar-user-role">—</p>
+                </div>
+                <button id="btn-logout" class="btn btn-outline btn-sm gap-1.5">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span class="hidden sm:inline">Salir</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <main id="page-content">
+            {{PAGE_CONTENT}}
+        </main>
+    </div>
+</div>
+
+<!-- App JS -->
+<script src="/SistemaContable/view/assets/js/app.js"></script>
+<!-- Page JS -->
+<script src="{{PAGE_JS}}"></script>
+</body>
+</html>
