@@ -1,5 +1,18 @@
-document.addEventListener('DOMContentLoaded', () => {
+const TABS_BASE = '/SistemaContable/view/pages/security/roles/tabs/';
+const TABS = ['tab-roles', 'tab-modulos', 'tab-acciones', 'tab-permisos', 'tab-rol-permisos'];
+
+async function loadTABS() {
+    const container = document.getElementById('page-content');
+    for (const name of TABS) {
+        const res  = await fetch(`${TABS_BASE}${name}.html`);
+        const html = await res.text();
+        container.insertAdjacentHTML('beforeend', html);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
     Auth.redirectIfNotLogged();
+    await loadTABS();
 
     let allRoles    = [];
     let editingRolId    = null;

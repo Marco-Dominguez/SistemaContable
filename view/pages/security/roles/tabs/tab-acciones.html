@@ -1,0 +1,106 @@
+<!-- acciones -->
+<div id="tab-acciones" class="hidden">
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <h2 class="text-lg font-bold text-slate-800">Gestión de Acciones</h2>
+            <p class="text-sm text-slate-400">Agrega y administra las acciones disponibles</p>
+        </div>
+        <button class="btn btn-primary" id="btn-new-accion">
+            <i class="bi bi-plus-lg"></i> Nueva Acción
+        </button>
+    </div>
+
+    <div class="alert alert-info mb-4" style="display:flex;gap:0.5rem;align-items:flex-start;background:#eff6ff;border:1px solid #bfdbfe;border-radius:0.75rem;padding:0.75rem 1rem;">
+        <i class="bi bi-info-circle text-blue-500 mt-0.5"></i>
+        <span class="text-sm text-blue-700">Las acciones nuevas no quedan asignadas a ningún módulo. Ve a la pestaña <strong>Módulos y Acciones</strong> para asignarlas.</span>
+    </div>
+
+    <div class="card overflow-hidden">
+        <div id="acciones-loading" class="p-8 text-center text-slate-400">
+            <div class="spinner mx-auto mb-2"></div>
+            Cargando acciones...
+        </div>
+        <div id="acciones-table-wrap" class="hidden overflow-x-auto">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Acción</th>
+                        <th>Slug</th>
+                        <th>Descripción</th>
+                        <th>Módulos asignados</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="acciones-tbody"></tbody>
+            </table>
+        </div>
+        <div id="acciones-empty" class="hidden p-10 text-center text-slate-400">
+            <i class="bi bi-lightning text-4xl block mb-2"></i>
+            No hay acciones registradas.
+        </div>
+    </div>
+</div>
+
+<!-- crear / editar acción -->
+<div id="modal-accion" class="modal-backdrop hidden">
+    <div class="modal-box" style="max-width:460px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800" id="modal-accion-title">Nueva Acción</h3>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-accion">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="form-accion" novalidate class="flex flex-col gap-4">
+                <input type="hidden" id="accion-id">
+                <div class="form-group">
+                    <label class="form-label" for="accion-nombre">Nombre *</label>
+                    <input class="form-input" type="text" id="accion-nombre" placeholder="Ej. Aprobar">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="accion-slug">Slug *</label>
+                    <input class="form-input font-mono text-sm" type="text" id="accion-slug" placeholder="aprobar">
+                    <p class="text-xs text-slate-400 mt-1">Solo minúsculas, números y guiones</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="accion-descripcion">Descripción</label>
+                    <textarea class="form-input" id="accion-descripcion" rows="2"
+                              placeholder="Describe cuándo aplica esta acción..."></textarea>
+                </div>
+                <div id="form-accion-error" class="alert alert-error hidden">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <span id="form-accion-error-msg"></span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-accion">Cancelar</button>
+            <button class="btn btn-primary" id="btn-save-accion">
+                <i class="bi bi-save"></i> Guardar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- confirmar eliminar acción -->
+<div id="modal-delete-accion" class="modal-backdrop hidden">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800">Confirmar eliminación</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-slate-600 mb-2">¿Eliminar la acción <strong id="delete-accion-name"></strong>?</p>
+            <p class="text-sm text-red-600">
+                <i class="bi bi-exclamation-triangle mr-1"></i>
+                Se eliminará de todos los módulos y de los permisos de roles que la usen.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-delete-accion">Cancelar</button>
+            <button class="btn btn-danger" id="btn-confirm-delete-accion">
+                <i class="bi bi-trash"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</div>

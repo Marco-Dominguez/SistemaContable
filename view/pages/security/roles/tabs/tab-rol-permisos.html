@@ -1,0 +1,38 @@
+<!-- asignar permisos a rol -->
+<div id="tab-rol-permisos" class="hidden">
+    <div class="mb-4">
+        <h2 class="text-lg font-bold text-slate-800">Asignar Permisos a Rol</h2>
+        <p class="text-sm text-slate-400">Selecciona un rol y configura sus permisos por módulo</p>
+    </div>
+
+    <div class="card p-5">
+        <div class="form-group mb-5">
+            <label class="form-label">Selecciona un Rol</label>
+            <select id="sel-rol-permisos" class="form-input max-w-sm">
+                <option value="">— Selecciona —</option>
+            </select>
+        </div>
+
+        <div id="permisos-panel" class="hidden">
+            <div class="flex items-center justify-between mb-3">
+                <p class="text-sm font-semibold text-slate-700">Permisos del rol:</p>
+                <div class="flex gap-2">
+                    <button class="btn btn-outline btn-sm" id="btn-select-all">
+                        <i class="bi bi-check2-all"></i> Todos
+                    </button>
+                    <button class="btn btn-outline btn-sm" id="btn-deselect-all">
+                        <i class="bi bi-x-lg"></i> Ninguno
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto border border-slate-200 rounded-xl mb-4">
+                <table class="perm-table" id="permisos-table"></table>
+            </div>
+
+            <button class="btn btn-primary" id="btn-save-permisos">
+                <i class="bi bi-save"></i> Guardar Permisos
+            </button>
+        </div>
+    </div>
+</div>
