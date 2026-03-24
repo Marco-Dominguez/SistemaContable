@@ -1,56 +1,60 @@
 document.addEventListener('DOMContentLoaded', () => {
     Auth.redirectIfNotLogged();
 
-    let allRoles  = [];
-    let editingId = null;
-    let deleteId  = null;
+    let allRoles    = [];
+    let editingRolId    = null;
+    let deleteRolId     = null;
+    let editingModuloId = null;
+    let deleteModuloId  = null;
+    let editingAccionId = null;
+    let deleteAccionId  = null;
+
+    const ALL_TABS = ['tab-roles','tab-modulos','tab-acciones','tab-permisos','tab-rol-permisos'];
 
     // tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            const tabs = ['tab-roles','tab-permisos','tab-rol-permisos'];
-            tabs.forEach(t => document.getElementById(t)?.classList.add('hidden'));
+            ALL_TABS.forEach(t => document.getElementById(t)?.classList.add('hidden'));
             const target = btn.dataset.tab;
             document.getElementById(target)?.classList.remove('hidden');
 
+            if (target === 'tab-modulos')      loadModulos();
+            if (target === 'tab-acciones')     loadAcciones();
             if (target === 'tab-permisos')     loadMatriz();
             if (target === 'tab-rol-permisos') loadRolSelector();
         });
     });
 
-    // cargar roles
+    // helpers
+    function escHtml(str) {
+        return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function toSlug(text) {
+        return text.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-|-$/g, '');
+    }
+
+    // roles
     async function loadRoles() {
-        toggleLoading('roles-loading', 'roles-table-wrap', true);
+        show('roles-loading'); hide('roles-table-wrap'); hide('roles-empty');
         try {
             const res = await Api.get('roles');
             if (!res?.success) { Toast.error(res?.message || 'Error al cargar roles.'); return; }
             allRoles = res.data.roles ?? [];
             renderRoles(allRoles);
         } catch { Toast.error('Error de conexión.'); }
-        finally { toggleLoading('roles-loading', 'roles-table-wrap', false); }
+        finally { hide('roles-loading'); }
     }
 
-    // mostrar u ocultar cargado
-    function toggleLoading(loadId, wrapId, loading) {
-        document.getElementById(loadId)?.classList.toggle('hidden', !loading);
-        document.getElementById(wrapId)?.classList.toggle('hidden', loading);
-    }
-
-    // mostrar tabla de roles
     function renderRoles(roles) {
         const tbody = document.getElementById('roles-tbody');
-        const empty = document.getElementById('roles-empty');
-        const wrap  = document.getElementById('roles-table-wrap');
-
-        if (!roles.length) {
-            empty.classList.remove('hidden');
-            wrap.classList.add('hidden');
-            return;
-        }
-        empty.classList.add('hidden');
-        wrap.classList.remove('hidden');
+        if (!roles.length) { show('roles-empty'); hide('roles-table-wrap'); return; }
+        hide('roles-empty'); show('roles-table-wrap');
 
         tbody.innerHTML = roles.map(r => `
             <tr>
@@ -64,14 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </td>
                 <td class="text-slate-500 text-sm max-w-xs truncate">${escHtml(r.descripcion || '—')}</td>
-                <td>
-                    <span class="badge badge-blue">${r.total_usuarios ?? 0} usuario${r.total_usuarios != 1 ? 's' : ''}</span>
-                </td>
-                <td>
-                    <span class="badge ${r.activo ? 'badge-green' : 'badge-red'}">
-                        ${r.activo ? 'Activo' : 'Inactivo'}
-                    </span>
-                </td>
+                <td><span class="badge badge-blue">${r.total_usuarios ?? 0} usuario${r.total_usuarios != 1 ? 's' : ''}</span></td>
+                <td><span class="badge ${r.activo ? 'badge-green' : 'badge-red'}">${r.activo ? 'Activo' : 'Inactivo'}</span></td>
                 <td class="text-slate-400 text-xs">${formatDate(r.created_at)}</td>
                 <td>
                     <div class="flex gap-1">
@@ -97,25 +95,19 @@ document.addEventListener('DOMContentLoaded', () => {
             b.addEventListener('click', () => openDeleteRol(parseInt(b.dataset.id), b.dataset.name)));
     }
 
-    function escHtml(str) {
-        return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    // abrir modal de crear o editar rol
     document.getElementById('btn-new-role')?.addEventListener('click', () => {
-        editingId = null;
+        editingRolId = null;
         document.getElementById('modal-rol-title').textContent = 'Nuevo Rol';
         document.getElementById('rol-id').value = '';
         document.getElementById('rol-nombre').value = '';
         document.getElementById('rol-descripcion').value = '';
         document.getElementById('rol-activo-group').style.display = 'none';
-        hideRolError();
+        hideError('form-rol-error');
         Modal.open('modal-rol');
     });
 
-    // abrir modal de editar rol
     async function openEditRol(id) {
-        editingId = id;
+        editingRolId = id;
         const res = await Api.get(`roles?id=${id}`);
         if (!res?.success) { Toast.error('No se pudo cargar el rol.'); return; }
         const r = res.data.rol;
@@ -125,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('rol-descripcion').value = r.descripcion ?? '';
         document.getElementById('rol-activo').checked = !!r.activo;
         document.getElementById('rol-activo-group').style.display = '';
-        hideRolError();
+        hideError('form-rol-error');
         Modal.open('modal-rol');
     }
 
@@ -133,41 +125,28 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById(id)?.addEventListener('click', () => Modal.close('modal-rol')));
 
     document.getElementById('btn-save-rol')?.addEventListener('click', async () => {
-        hideRolError();
+        hideError('form-rol-error');
         const nombre      = document.getElementById('rol-nombre').value.trim();
         const descripcion = document.getElementById('rol-descripcion').value.trim();
         const activo      = document.getElementById('rol-activo').checked;
-
-        if (!nombre) return showRolError('El nombre es requerido.');
+        if (!nombre) return showError('form-rol-error', 'El nombre es requerido.');
 
         const btn = document.getElementById('btn-save-rol');
         setLoading(btn, true);
-        const body = { nombre, descripcion, activo };
-
         try {
-            const res = editingId
-                ? await Api.put(`roles?id=${editingId}`, body)
-                : await Api.post('roles', body);
-            if (!res?.success) return showRolError(res?.message || 'Error al guardar.');
-            Toast.success(editingId ? 'Rol actualizado.' : 'Rol creado.');
+            const res = editingRolId
+                ? await Api.put(`roles?id=${editingRolId}`, { nombre, descripcion, activo })
+                : await Api.post('roles', { nombre, descripcion, activo });
+            if (!res?.success) return showError('form-rol-error', res?.message || 'Error al guardar.');
+            Toast.success(editingRolId ? 'Rol actualizado.' : 'Rol creado.');
             Modal.close('modal-rol');
             loadRoles();
-            if (!document.getElementById('tab-rol-permisos').classList.contains('hidden')) loadRolSelector();
-        } catch { showRolError('Error de conexión.'); }
+        } catch { showError('form-rol-error', 'Error de conexión.'); }
         finally { setLoading(btn, false); }
     });
 
-    function showRolError(msg) {
-        document.getElementById('form-rol-error-msg').textContent = msg;
-        document.getElementById('form-rol-error').classList.remove('hidden');
-    }
-    function hideRolError() {
-        document.getElementById('form-rol-error').classList.add('hidden');
-    }
-
-    // abrir modal de confirmar eliminación de rol
     function openDeleteRol(id, name) {
-        deleteId = id;
+        deleteRolId = id;
         document.getElementById('delete-rol-name').textContent = name;
         Modal.open('modal-delete-rol');
     }
@@ -175,84 +154,395 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-cancel-delete-rol')?.addEventListener('click', () => Modal.close('modal-delete-rol'));
 
     document.getElementById('btn-confirm-delete-rol')?.addEventListener('click', async () => {
-        if (!deleteId) return;
+        if (!deleteRolId) return;
         const btn = document.getElementById('btn-confirm-delete-rol');
         setLoading(btn, true);
         try {
-            const res = await Api.delete(`roles?id=${deleteId}`);
+            const res = await Api.delete(`roles?id=${deleteRolId}`);
             if (!res?.success) { Toast.error(res?.message || 'Error al eliminar.'); return; }
             Toast.success('Rol eliminado.');
             Modal.close('modal-delete-rol');
             loadRoles();
         } catch { Toast.error('Error de conexión.'); }
-        finally { setLoading(btn, false); deleteId = null; }
+        finally { setLoading(btn, false); deleteRolId = null; }
     });
 
-    // cargar matriz de modulos y acciones
-    async function loadMatriz() {
-        const loadEl = document.getElementById('matriz-loading');
-        const wrapEl = document.getElementById('matriz-table-wrap');
-        loadEl?.classList.remove('hidden');
-        wrapEl?.classList.add('hidden');
-
+    // módulos
+    async function loadModulos() {
+        show('modulos-loading'); hide('modulos-table-wrap'); hide('modulos-empty');
         try {
-            const res = await Api.get('modulos?action=matriz');
-            if (!res?.success) return;
-            const { modulos, acciones, modulo_acciones } = res.data;
-            renderMatriz(modulos, acciones, modulo_acciones);
-        } catch { Toast.error('Error al cargar módulos.'); }
-        finally {
-            loadEl?.classList.add('hidden');
-            wrapEl?.classList.remove('hidden');
-        }
+            const res = await Api.get('modulos?action=modulos');
+            if (!res?.success) { Toast.error(res?.message || 'Error al cargar módulos.'); return; }
+            renderModulos(res.data.modulos ?? []);
+        } catch { Toast.error('Error de conexión.'); }
+        finally { hide('modulos-loading'); }
     }
 
-    // mostrar matriz de modulos y acciones
-    function renderMatriz(modulos, acciones, ma) {
-        const table = document.getElementById('matriz-table');
-        const exists = {};
-        ma.forEach(m => { exists[`${m.modulo_id}_${m.accion_id}`] = true; });
+    function renderModulos(modulos) {
+        const tbody = document.getElementById('modulos-tbody');
+        if (!modulos.length) { show('modulos-empty'); hide('modulos-table-wrap'); return; }
+        hide('modulos-empty'); show('modulos-table-wrap');
 
-        const headers = `<thead><tr>
-            <th class="text-left">Módulo</th>
-            ${acciones.map(a => `<th>${escHtml(a.nombre)}</th>`).join('')}
-        </tr></thead>`;
-
-        const rows = modulos.map(m => `
+        tbody.innerHTML = modulos.map(m => `
             <tr>
-                <td class="text-left font-medium text-slate-700">
-                    <i class="bi bi-grid text-slate-400 mr-1"></i> ${escHtml(m.nombre)}
+                <td class="text-slate-400 text-xs">${m.id}</td>
+                <td>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                            <i class="bi ${escHtml(m.icono || 'bi-grid')} text-blue-500 text-sm"></i>
+                        </div>
+                        <span class="font-medium text-slate-800">${escHtml(m.nombre)}</span>
+                    </div>
                 </td>
-                ${acciones.map(a => `
-                    <td>
-                        ${exists[`${m.id}_${a.id}`]
-                            ? '<i class="bi bi-check2-circle text-green-500 text-base"></i>'
-                            : '<i class="bi bi-dash text-slate-200 text-base"></i>'}
-                    </td>
-                `).join('')}
+                <td><code class="text-xs bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">${escHtml(m.slug)}</code></td>
+                <td class="text-slate-500 text-sm max-w-xs truncate">${escHtml(m.descripcion || '—')}</td>
+                <td class="text-center text-slate-500 text-sm">${m.orden}</td>
+                <td><span class="badge ${m.activo ? 'badge-green' : 'badge-red'}">${m.activo ? 'Activo' : 'Inactivo'}</span></td>
+                <td>
+                    <div class="flex gap-1">
+                        <button class="btn btn-outline btn-icon btn-sm btn-edit-modulo" data-id="${m.id}" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-icon btn-sm btn-delete-modulo"
+                                data-id="${m.id}" data-name="${escHtml(m.nombre)}" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
             </tr>
         `).join('');
 
-        table.innerHTML = `${headers}<tbody>${rows}</tbody>`;
+        tbody.querySelectorAll('.btn-edit-modulo').forEach(b =>
+            b.addEventListener('click', () => openEditModulo(parseInt(b.dataset.id))));
+        tbody.querySelectorAll('.btn-delete-modulo').forEach(b =>
+            b.addEventListener('click', () => openDeleteModulo(parseInt(b.dataset.id), b.dataset.name)));
     }
 
+    document.getElementById('btn-new-modulo')?.addEventListener('click', () => {
+        editingModuloId = null;
+        document.getElementById('modal-modulo-title').textContent = 'Nuevo Módulo';
+        document.getElementById('modulo-id').value = '';
+        document.getElementById('modulo-nombre').value = '';
+        document.getElementById('modulo-slug').value = '';
+        document.getElementById('modulo-icono').value = 'bi-grid';
+        document.getElementById('modulo-icono-preview').className = 'bi bi-grid text-slate-600 text-lg';
+        document.getElementById('modulo-descripcion').value = '';
+        document.getElementById('modulo-orden').value = '0';
+        document.getElementById('modulo-activo-group').style.display = 'none';
+        hideError('form-modulo-error');
+        Modal.open('modal-modulo');
+    });
 
+    // auto slug from name
+    document.getElementById('modulo-nombre')?.addEventListener('input', e => {
+        if (!editingModuloId) {
+            document.getElementById('modulo-slug').value = toSlug(e.target.value);
+        }
+    });
+
+    // icon preview
+    document.getElementById('modulo-icono')?.addEventListener('input', e => {
+        const cls = e.target.value.trim() || 'bi-grid';
+        document.getElementById('modulo-icono-preview').className = `bi ${cls} text-slate-600 text-lg`;
+    });
+
+    async function openEditModulo(id) {
+        editingModuloId = id;
+        const res = await Api.get(`modulos?action=modulos&id=${id}`);
+        if (!res?.success) { Toast.error('No se pudo cargar el módulo.'); return; }
+        const m = res.data.modulo;
+        document.getElementById('modal-modulo-title').textContent = 'Editar Módulo';
+        document.getElementById('modulo-id').value       = m.id;
+        document.getElementById('modulo-nombre').value   = m.nombre;
+        document.getElementById('modulo-slug').value     = m.slug;
+        document.getElementById('modulo-icono').value    = m.icono ?? 'bi-grid';
+        document.getElementById('modulo-icono-preview').className = `bi ${m.icono ?? 'bi-grid'} text-slate-600 text-lg`;
+        document.getElementById('modulo-descripcion').value = m.descripcion ?? '';
+        document.getElementById('modulo-orden').value    = m.orden ?? 0;
+        document.getElementById('modulo-activo').checked = !!m.activo;
+        document.getElementById('modulo-activo-group').style.display = '';
+        hideError('form-modulo-error');
+        Modal.open('modal-modulo');
+    }
+
+    ['btn-close-modal-modulo','btn-cancel-modulo'].forEach(id =>
+        document.getElementById(id)?.addEventListener('click', () => Modal.close('modal-modulo')));
+
+    document.getElementById('btn-save-modulo')?.addEventListener('click', async () => {
+        hideError('form-modulo-error');
+        const nombre      = document.getElementById('modulo-nombre').value.trim();
+        const slug        = document.getElementById('modulo-slug').value.trim();
+        const icono       = document.getElementById('modulo-icono').value.trim() || 'bi-grid';
+        const descripcion = document.getElementById('modulo-descripcion').value.trim();
+        const orden       = parseInt(document.getElementById('modulo-orden').value) || 0;
+        const activo      = document.getElementById('modulo-activo').checked;
+
+        if (!nombre) return showError('form-modulo-error', 'El nombre es requerido.');
+        if (!slug)   return showError('form-modulo-error', 'El slug es requerido.');
+        if (!/^[a-z0-9\-]+$/.test(slug))
+            return showError('form-modulo-error', 'El slug solo puede tener minúsculas, números y guiones.');
+
+        const btn = document.getElementById('btn-save-modulo');
+        setLoading(btn, true);
+        const body = { nombre, slug, icono, descripcion, orden, activo };
+        try {
+            const res = editingModuloId
+                ? await Api.put(`modulos?action=modulos&id=${editingModuloId}`, body)
+                : await Api.post('modulos?action=modulos', body);
+            if (!res?.success) return showError('form-modulo-error', res?.message || 'Error al guardar.');
+            Toast.success(editingModuloId ? 'Módulo actualizado.' : 'Módulo creado.');
+            Modal.close('modal-modulo');
+            loadModulos();
+        } catch { showError('form-modulo-error', 'Error de conexión.'); }
+        finally { setLoading(btn, false); }
+    });
+
+    function openDeleteModulo(id, name) {
+        deleteModuloId = id;
+        document.getElementById('delete-modulo-name').textContent = name;
+        Modal.open('modal-delete-modulo');
+    }
+
+    document.getElementById('btn-cancel-delete-modulo')?.addEventListener('click', () => Modal.close('modal-delete-modulo'));
+
+    document.getElementById('btn-confirm-delete-modulo')?.addEventListener('click', async () => {
+        if (!deleteModuloId) return;
+        const btn = document.getElementById('btn-confirm-delete-modulo');
+        setLoading(btn, true);
+        try {
+            const res = await Api.delete(`modulos?action=modulos&id=${deleteModuloId}`);
+            if (!res?.success) { Toast.error(res?.message || 'Error al eliminar.'); return; }
+            Toast.success('Módulo eliminado.');
+            Modal.close('modal-delete-modulo');
+            loadModulos();
+        } catch { Toast.error('Error de conexión.'); }
+        finally { setLoading(btn, false); deleteModuloId = null; }
+    });
+
+    // acciones
+    async function loadAcciones() {
+        show('acciones-loading'); hide('acciones-table-wrap'); hide('acciones-empty');
+        try {
+            const res = await Api.get('modulos?action=acciones');
+            if (!res?.success) { Toast.error(res?.message || 'Error al cargar acciones.'); return; }
+            renderAcciones(res.data.acciones ?? []);
+        } catch { Toast.error('Error de conexión.'); }
+        finally { hide('acciones-loading'); }
+    }
+
+    function renderAcciones(acciones) {
+        const tbody = document.getElementById('acciones-tbody');
+        if (!acciones.length) { show('acciones-empty'); hide('acciones-table-wrap'); return; }
+        hide('acciones-empty'); show('acciones-table-wrap');
+
+        tbody.innerHTML = acciones.map(a => `
+            <tr>
+                <td class="text-slate-400 text-xs">${a.id}</td>
+                <td>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+                            <i class="bi bi-lightning text-green-500 text-sm"></i>
+                        </div>
+                        <span class="font-medium text-slate-800">${escHtml(a.nombre)}</span>
+                    </div>
+                </td>
+                <td><code class="text-xs bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">${escHtml(a.slug)}</code></td>
+                <td class="text-slate-500 text-sm max-w-xs truncate">${escHtml(a.descripcion || '—')}</td>
+                <td class="text-center">
+                    ${parseInt(a.total_modulos) > 0
+                        ? `<span class="badge badge-blue">${a.total_modulos} módulo${a.total_modulos != 1 ? 's' : ''}</span>`
+                        : `<span class="badge badge-gray">Sin asignar</span>`}
+                </td>
+                <td>
+                    <div class="flex gap-1">
+                        <button class="btn btn-outline btn-icon btn-sm btn-edit-accion" data-id="${a.id}" title="Editar">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-danger btn-icon btn-sm btn-delete-accion"
+                                data-id="${a.id}" data-name="${escHtml(a.nombre)}" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+
+        tbody.querySelectorAll('.btn-edit-accion').forEach(b =>
+            b.addEventListener('click', () => openEditAccion(parseInt(b.dataset.id))));
+        tbody.querySelectorAll('.btn-delete-accion').forEach(b =>
+            b.addEventListener('click', () => openDeleteAccion(parseInt(b.dataset.id), b.dataset.name)));
+    }
+
+    document.getElementById('btn-new-accion')?.addEventListener('click', () => {
+        editingAccionId = null;
+        document.getElementById('modal-accion-title').textContent = 'Nueva Acción';
+        document.getElementById('accion-id').value = '';
+        document.getElementById('accion-nombre').value = '';
+        document.getElementById('accion-slug').value = '';
+        document.getElementById('accion-descripcion').value = '';
+        hideError('form-accion-error');
+        Modal.open('modal-accion');
+    });
+
+    // auto slug from name
+    document.getElementById('accion-nombre')?.addEventListener('input', e => {
+        if (!editingAccionId) {
+            document.getElementById('accion-slug').value = toSlug(e.target.value);
+        }
+    });
+
+    async function openEditAccion(id) {
+        editingAccionId = id;
+        const res = await Api.get(`modulos?action=acciones&id=${id}`);
+        if (!res?.success) { Toast.error('No se pudo cargar la acción.'); return; }
+        const a = res.data.accion;
+        document.getElementById('modal-accion-title').textContent = 'Editar Acción';
+        document.getElementById('accion-id').value          = a.id;
+        document.getElementById('accion-nombre').value      = a.nombre;
+        document.getElementById('accion-slug').value        = a.slug;
+        document.getElementById('accion-descripcion').value = a.descripcion ?? '';
+        hideError('form-accion-error');
+        Modal.open('modal-accion');
+    }
+
+    ['btn-close-modal-accion','btn-cancel-accion'].forEach(id =>
+        document.getElementById(id)?.addEventListener('click', () => Modal.close('modal-accion')));
+
+    document.getElementById('btn-save-accion')?.addEventListener('click', async () => {
+        hideError('form-accion-error');
+        const nombre      = document.getElementById('accion-nombre').value.trim();
+        const slug        = document.getElementById('accion-slug').value.trim();
+        const descripcion = document.getElementById('accion-descripcion').value.trim();
+
+        if (!nombre) return showError('form-accion-error', 'El nombre es requerido.');
+        if (!slug)   return showError('form-accion-error', 'El slug es requerido.');
+        if (!/^[a-z0-9\-]+$/.test(slug))
+            return showError('form-accion-error', 'El slug solo puede tener minúsculas, números y guiones.');
+
+        const btn = document.getElementById('btn-save-accion');
+        setLoading(btn, true);
+        try {
+            const res = editingAccionId
+                ? await Api.put(`modulos?action=acciones&id=${editingAccionId}`, { nombre, slug, descripcion })
+                : await Api.post('modulos?action=acciones', { nombre, slug, descripcion });
+            if (!res?.success) return showError('form-accion-error', res?.message || 'Error al guardar.');
+            Toast.success(editingAccionId ? 'Acción actualizada.' : 'Acción creada.');
+            Modal.close('modal-accion');
+            loadAcciones();
+        } catch { showError('form-accion-error', 'Error de conexión.'); }
+        finally { setLoading(btn, false); }
+    });
+
+    function openDeleteAccion(id, name) {
+        deleteAccionId = id;
+        document.getElementById('delete-accion-name').textContent = name;
+        Modal.open('modal-delete-accion');
+    }
+
+    document.getElementById('btn-cancel-delete-accion')?.addEventListener('click', () => Modal.close('modal-delete-accion'));
+
+    document.getElementById('btn-confirm-delete-accion')?.addEventListener('click', async () => {
+        if (!deleteAccionId) return;
+        const btn = document.getElementById('btn-confirm-delete-accion');
+        setLoading(btn, true);
+        try {
+            const res = await Api.delete(`modulos?action=acciones&id=${deleteAccionId}`);
+            if (!res?.success) { Toast.error(res?.message || 'Error al eliminar.'); return; }
+            Toast.success('Acción eliminada.');
+            Modal.close('modal-delete-accion');
+            loadAcciones();
+        } catch { Toast.error('Error de conexión.'); }
+        finally { setLoading(btn, false); deleteAccionId = null; }
+    });
+
+    // matriz módulos y acciones (editable)
+    async function loadMatriz() {
+        show('matriz-loading'); hide('matriz-table-wrap');
+        try {
+            const res = await Api.get('modulos?action=matriz');
+            if (!res?.success) { Toast.error('Error al cargar la matriz.'); return; }
+            renderMatriz(res.data.modulos, res.data.acciones, res.data.modulo_acciones);
+        } catch { Toast.error('Error de conexión.'); }
+        finally { hide('matriz-loading'); show('matriz-table-wrap'); }
+    }
+
+    function renderMatriz(modulos, acciones, ma) {
+        const table = document.getElementById('matriz-table');
+
+        // build lookup: modulo_id → Set of accion_id
+        const assigned = {};
+        modulos.forEach(m => assigned[m.id] = new Set());
+        ma.forEach(x => assigned[x.modulo_id]?.add(parseInt(x.accion_id)));
+
+        const headers = `<thead><tr>
+            <th class="text-left min-w-36">Módulo</th>
+            ${acciones.map(a => `<th class="min-w-16 text-center">${escHtml(a.nombre)}</th>`).join('')}
+            <th class="min-w-20 text-center">Guardar</th>
+        </tr></thead>`;
+
+        const rows = modulos.map(m => {
+            const cells = acciones.map(a => `
+                <td class="text-center">
+                    <input type="checkbox" class="ma-check w-4 h-4 accent-blue-600"
+                           data-modulo="${m.id}" data-accion="${a.id}"
+                           ${assigned[m.id]?.has(parseInt(a.id)) ? 'checked' : ''}>
+                </td>
+            `).join('');
+
+            return `<tr data-modulo-id="${m.id}">
+                <td class="text-left">
+                    <div class="flex items-center gap-2">
+                        <i class="bi ${escHtml(m.icono || 'bi-grid')} text-slate-400 text-sm"></i>
+                        <span class="font-medium text-slate-700 text-sm">${escHtml(m.nombre)}</span>
+                    </div>
+                </td>
+                ${cells}
+                <td class="text-center">
+                    <button class="btn btn-primary btn-sm btn-save-row" data-modulo-id="${m.id}" data-modulo-name="${escHtml(m.nombre)}">
+                        <i class="bi bi-save"></i>
+                    </button>
+                </td>
+            </tr>`;
+        }).join('');
+
+        table.innerHTML = `${headers}<tbody>${rows}</tbody>`;
+
+        table.querySelectorAll('.btn-save-row').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const mid = parseInt(btn.dataset.moduloId);
+                const name = btn.dataset.moduloName;
+                const accionIds = [...table.querySelectorAll(`.ma-check[data-modulo="${mid}"]:checked`)]
+                    .map(c => parseInt(c.dataset.accion));
+
+                setLoading(btn, true);
+                try {
+                    const res = await Api.post('modulos?action=matriz', { modulo_id: mid, accion_ids: accionIds });
+                    if (!res?.success) { Toast.error(res?.message || 'Error al guardar.'); return; }
+                    Toast.success(`Acciones de "${name}" guardadas.`);
+                } catch { Toast.error('Error de conexión.'); }
+                finally { setLoading(btn, false); }
+            });
+        });
+    }
+
+    // asignar permisos a rol
     let permData = null;
 
-    // cargar selector de roles para asignar permisos
     async function loadRolSelector() {
         if (!allRoles.length) await loadRoles();
         const sel = document.getElementById('sel-rol-permisos');
+        const current = sel.value;
         sel.innerHTML = '<option value="">— Selecciona —</option>';
         allRoles.forEach(r => {
             const o = document.createElement('option');
             o.value = r.id;
             o.textContent = r.nombre;
+            if (r.id == current) o.selected = true;
             sel.appendChild(o);
         });
     }
 
-    document.getElementById('sel-rol-permisos')?.addEventListener('change', async (e) => {
+    document.getElementById('sel-rol-permisos')?.addEventListener('change', async e => {
         const rid = e.target.value;
         const panel = document.getElementById('permisos-panel');
         if (!rid) { panel.classList.add('hidden'); return; }
@@ -260,7 +550,6 @@ document.addEventListener('DOMContentLoaded', () => {
         panel.classList.remove('hidden');
     });
 
-    // cargar permisos
     async function loadPermisosRol(rolId) {
         const res = await Api.get(`roles?id=${rolId}&action=permisos`);
         if (!res?.success) { Toast.error('Error al cargar permisos.'); return; }
@@ -268,7 +557,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderPermisosTable(permData);
     }
 
-    // mostrar tabla de permisos para el rol seleccionado
     function renderPermisosTable({ modulos, acciones, modulo_acciones, asignados }) {
         const table = document.getElementById('permisos-table');
 
@@ -296,28 +584,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>`;
             }).join('');
 
-            const moduleChecks = acciones.map(a => maByKey[`${m.id}_${a.id}`]).filter(Boolean);
-            const allChecked   = moduleChecks.every(id => asignados?.[m.id]);
-
             return `<tr>
                 <td class="text-left font-medium text-slate-700 text-sm">${escHtml(m.nombre)}</td>
                 ${cells}
                 <td>
                     <input type="checkbox" class="row-all-check w-4 h-4 accent-purple-600"
-                           data-module-id="${m.id}" title="Seleccionar todas las acciones de este módulo">
+                           data-module-id="${m.id}" title="Seleccionar todas">
                 </td>
             </tr>`;
         }).join('');
 
         table.innerHTML = `${headers}<tbody>${rows}</tbody>`;
 
-        // comportamiento de checkbox para seleccionar todo en la fila
         table.querySelectorAll('.row-all-check').forEach(chk => {
             chk.addEventListener('change', () => {
                 const mid = chk.dataset.moduleId;
-                table.querySelectorAll(`.perm-check`).forEach(c => {
-                    const maId = parseInt(c.dataset.maId);
-                    if (maMap[maId]?.modulo_id == mid) c.checked = chk.checked;
+                table.querySelectorAll('.perm-check').forEach(c => {
+                    if (maMap[parseInt(c.dataset.maId)]?.modulo_id == mid) c.checked = chk.checked;
                 });
             });
         });
@@ -326,14 +609,14 @@ document.addEventListener('DOMContentLoaded', () => {
             c.addEventListener('change', () => {
                 const maId  = parseInt(c.dataset.maId);
                 const mid   = maMap[maId]?.modulo_id;
-                const allIn = [...table.querySelectorAll('.perm-check')].filter(x => maMap[parseInt(x.dataset.maId)]?.modulo_id == mid);
+                const allIn = [...table.querySelectorAll('.perm-check')]
+                    .filter(x => maMap[parseInt(x.dataset.maId)]?.modulo_id == mid);
                 const rowChk = table.querySelector(`.row-all-check[data-module-id="${mid}"]`);
                 if (rowChk) rowChk.checked = allIn.every(x => x.checked);
             });
         });
     }
 
-    // seleccionar o deseleccionar todos los permisos
     document.getElementById('btn-select-all')?.addEventListener('click', () => {
         document.querySelectorAll('.perm-check, .row-all-check').forEach(c => c.checked = true);
     });
@@ -341,14 +624,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.perm-check, .row-all-check').forEach(c => c.checked = false);
     });
 
-    // gurdar permisos asignados al rol
     document.getElementById('btn-save-permisos')?.addEventListener('click', async () => {
         const rid = document.getElementById('sel-rol-permisos').value;
         if (!rid) return;
-
         const checked = [...document.querySelectorAll('.perm-check:checked')]
             .map(c => parseInt(c.dataset.maId));
-
         const btn = document.getElementById('btn-save-permisos');
         setLoading(btn, true);
         try {
@@ -358,6 +638,20 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch { Toast.error('Error de conexión.'); }
         finally { setLoading(btn, false); }
     });
+
+    // utils
+    function show(id) { document.getElementById(id)?.classList.remove('hidden'); }
+    function hide(id) { document.getElementById(id)?.classList.add('hidden'); }
+
+    function showError(formErrId, msg) {
+        const el = document.getElementById(formErrId);
+        const span = el?.querySelector('span');
+        if (span) span.textContent = msg;
+        el?.classList.remove('hidden');
+    }
+    function hideError(formErrId) {
+        document.getElementById(formErrId)?.classList.add('hidden');
+    }
 
     // init
     loadRoles();

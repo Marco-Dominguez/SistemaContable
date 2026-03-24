@@ -13,7 +13,7 @@
 <body>
 <div id="app">
 
-    <!-- SIDEBAR -->
+    <!-- sidebar -->
     <aside id="sidebar">
         <div class="sidebar-brand">
             <div class="brand-icon"><i class="bi bi-calculator"></i></div>
@@ -77,14 +77,16 @@
         </header>
 
         <main id="page-content">
-            <!-- Tabs -->
+            <!-- tabs -->
             <div class="tab-list" role="tablist">
-                <button class="tab-btn active" data-tab="tab-roles">Roles</button>
-                <button class="tab-btn" data-tab="tab-permisos">Módulos y Acciones</button>
-                <button class="tab-btn" data-tab="tab-rol-permisos">Asignar Permisos</button>
+                <button class="tab-btn active"  data-tab="tab-roles">Roles</button>
+                <button class="tab-btn"         data-tab="tab-modulos">Módulos</button>
+                <button class="tab-btn"         data-tab="tab-acciones">Acciones</button>
+                <button class="tab-btn"         data-tab="tab-permisos">Módulos y Acciones</button>
+                <button class="tab-btn"         data-tab="tab-rol-permisos">Asignar Permisos</button>
             </div>
 
-            <!-- ─── Roles ─── -->
+            <!-- roles -->
             <div id="tab-roles">
                 <div class="flex items-center justify-between mb-4">
                     <div>
@@ -124,19 +126,110 @@
                 </div>
             </div>
 
-            <!-- ─── Modulos y Acciones ─── -->
-            <div id="tab-permisos" class="hidden">
-                <div class="mb-4">
-                    <h2 class="text-lg font-bold text-slate-800">Módulos y Acciones del Sistema</h2>
-                    <p class="text-sm text-slate-400">Matriz de acciones disponibles por módulo</p>
+            <!-- modulos -->
+            <div id="tab-modulos" class="hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Gestión de Módulos</h2>
+                        <p class="text-sm text-slate-400">Agrega y administra los módulos del sistema</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-new-modulo">
+                        <i class="bi bi-plus-lg"></i> Nuevo Módulo
+                    </button>
                 </div>
 
-                <div class="card overflow-x-auto">
+                <div class="card overflow-hidden">
+                    <div id="modulos-loading" class="p-8 text-center text-slate-400">
+                        <div class="spinner mx-auto mb-2"></div>
+                        Cargando módulos...
+                    </div>
+                    <div id="modulos-table-wrap" class="hidden overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Módulo</th>
+                                    <th>Slug</th>
+                                    <th>Descripción</th>
+                                    <th>Orden</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modulos-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div id="modulos-empty" class="hidden p-10 text-center text-slate-400">
+                        <i class="bi bi-grid text-4xl block mb-2"></i>
+                        No hay módulos registrados.
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── Acciones ─── -->
+            <div id="tab-acciones" class="hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Gestión de Acciones</h2>
+                        <p class="text-sm text-slate-400">Agrega y administra las acciones disponibles</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-new-accion">
+                        <i class="bi bi-plus-lg"></i> Nueva Acción
+                    </button>
+                </div>
+
+                <div class="alert alert-info mb-4" style="display:flex;gap:0.5rem;align-items:flex-start;background:#eff6ff;border:1px solid #bfdbfe;border-radius:0.75rem;padding:0.75rem 1rem;">
+                    <i class="bi bi-info-circle text-blue-500 mt-0.5"></i>
+                    <span class="text-sm text-blue-700">Las acciones nuevas no quedan asignadas a ningún módulo. Ve a la pestaña <strong>Módulos y Acciones</strong> para asignarlas.</span>
+                </div>
+
+                <div class="card overflow-hidden">
+                    <div id="acciones-loading" class="p-8 text-center text-slate-400">
+                        <div class="spinner mx-auto mb-2"></div>
+                        Cargando acciones...
+                    </div>
+                    <div id="acciones-table-wrap" class="hidden overflow-x-auto">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Acción</th>
+                                    <th>Slug</th>
+                                    <th>Descripción</th>
+                                    <th>Módulos asignados</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="acciones-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div id="acciones-empty" class="hidden p-10 text-center text-slate-400">
+                        <i class="bi bi-lightning text-4xl block mb-2"></i>
+                        No hay acciones registradas.
+                    </div>
+                </div>
+            </div>
+
+            <!-- modulos y acciones -->
+            <div id="tab-permisos" class="hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Módulos y Acciones</h2>
+                        <p class="text-sm text-slate-400">Define qué acciones están disponibles en cada módulo</p>
+                    </div>
+                </div>
+
+                <div class="alert mb-4" style="display:flex;gap:0.5rem;align-items:flex-start;background:#fefce8;border:1px solid #fde047;border-radius:0.75rem;padding:0.75rem 1rem;">
+                    <i class="bi bi-exclamation-triangle text-yellow-600 mt-0.5"></i>
+                    <span class="text-sm text-yellow-800">Quitar una acción de un módulo eliminará automáticamente ese permiso de todos los roles que lo tengan asignado.</span>
+                </div>
+
+                <div class="card overflow-hidden">
                     <div id="matriz-loading" class="p-8 text-center text-slate-400">
                         <div class="spinner mx-auto mb-2"></div>
                         Cargando matriz...
                     </div>
-                    <div id="matriz-table-wrap" class="hidden p-4">
+                    <div id="matriz-table-wrap" class="hidden overflow-x-auto p-4">
                         <table class="perm-table" id="matriz-table"></table>
                     </div>
                 </div>
@@ -184,7 +277,7 @@
     </div>
 </div>
 
-<!-- Crear o Editar Rol -->
+<!-- crear o editar rol -->
 <div id="modal-rol" class="modal-backdrop hidden">
     <div class="modal-box">
         <div class="modal-header">
@@ -239,6 +332,154 @@
         <div class="modal-footer">
             <button class="btn btn-outline" id="btn-cancel-delete-rol">Cancelar</button>
             <button class="btn btn-danger" id="btn-confirm-delete-rol">
+                <i class="bi bi-trash"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- crear o editar modulo -->
+<div id="modal-modulo" class="modal-backdrop hidden">
+    <div class="modal-box" style="max-width:520px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800" id="modal-modulo-title">Nuevo Módulo</h3>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-modulo">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="form-modulo" novalidate class="flex flex-col gap-4">
+                <input type="hidden" id="modulo-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group col-span-2">
+                        <label class="form-label" for="modulo-nombre">Nombre *</label>
+                        <input class="form-input" type="text" id="modulo-nombre" placeholder="Ej. Reportes">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modulo-slug">Slug *</label>
+                        <input class="form-input font-mono text-sm" type="text" id="modulo-slug" placeholder="reportes">
+                        <p class="text-xs text-slate-400 mt-1">Solo minúsculas, números y guiones</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="modulo-orden">Orden</label>
+                        <input class="form-input" type="number" id="modulo-orden" value="0" min="0">
+                    </div>
+                    <div class="form-group col-span-2">
+                        <label class="form-label" for="modulo-icono">Icono (Bootstrap Icons)</label>
+                        <div class="flex gap-2">
+                            <input class="form-input font-mono text-sm" type="text" id="modulo-icono"
+                                   placeholder="bi-grid" value="bi-grid">
+                            <div class="w-10 h-10 flex-shrink-0 rounded-lg bg-slate-100 flex items-center justify-center">
+                                <i id="modulo-icono-preview" class="bi bi-grid text-slate-600 text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-span-2">
+                        <label class="form-label" for="modulo-descripcion">Descripción</label>
+                        <textarea class="form-input" id="modulo-descripcion" rows="2"
+                                  placeholder="Describe brevemente este módulo..."></textarea>
+                    </div>
+                    <div class="form-group col-span-2" id="modulo-activo-group" style="display:none;">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="modulo-activo" checked class="w-4 h-4 accent-blue-600">
+                            <span class="form-label mb-0">Módulo activo</span>
+                        </label>
+                    </div>
+                </div>
+                <div id="form-modulo-error" class="alert alert-error hidden">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <span id="form-modulo-error-msg"></span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-modulo">Cancelar</button>
+            <button class="btn btn-primary" id="btn-save-modulo">
+                <i class="bi bi-save"></i> Guardar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- confirmar eliminar modulo -->
+<div id="modal-delete-modulo" class="modal-backdrop hidden">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800">Confirmar eliminación</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-slate-600 mb-2">¿Eliminar el módulo <strong id="delete-modulo-name"></strong>?</p>
+            <p class="text-sm text-red-600">
+                <i class="bi bi-exclamation-triangle mr-1"></i>
+                Se eliminarán también todas sus asignaciones de acciones y los permisos de roles relacionados.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-delete-modulo">Cancelar</button>
+            <button class="btn btn-danger" id="btn-confirm-delete-modulo">
+                <i class="bi bi-trash"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- crear o editar accion -->
+<div id="modal-accion" class="modal-backdrop hidden">
+    <div class="modal-box" style="max-width:460px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800" id="modal-accion-title">Nueva Acción</h3>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-accion">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="form-accion" novalidate class="flex flex-col gap-4">
+                <input type="hidden" id="accion-id">
+                <div class="form-group">
+                    <label class="form-label" for="accion-nombre">Nombre *</label>
+                    <input class="form-input" type="text" id="accion-nombre" placeholder="Ej. Aprobar">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="accion-slug">Slug *</label>
+                    <input class="form-input font-mono text-sm" type="text" id="accion-slug" placeholder="aprobar">
+                    <p class="text-xs text-slate-400 mt-1">Solo minúsculas, números y guiones</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="accion-descripcion">Descripción</label>
+                    <textarea class="form-input" id="accion-descripcion" rows="2"
+                              placeholder="Describe cuándo aplica esta acción..."></textarea>
+                </div>
+                <div id="form-accion-error" class="alert alert-error hidden">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <span id="form-accion-error-msg"></span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-accion">Cancelar</button>
+            <button class="btn btn-primary" id="btn-save-accion">
+                <i class="bi bi-save"></i> Guardar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- confirmar eliminar accion -->
+<div id="modal-delete-accion" class="modal-backdrop hidden">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800">Confirmar eliminación</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-slate-600 mb-2">¿Eliminar la acción <strong id="delete-accion-name"></strong>?</p>
+            <p class="text-sm text-red-600">
+                <i class="bi bi-exclamation-triangle mr-1"></i>
+                Se eliminará de todos los módulos y de los permisos de roles que la usen.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-delete-accion">Cancelar</button>
+            <button class="btn btn-danger" id="btn-confirm-delete-accion">
                 <i class="bi bi-trash"></i> Eliminar
             </button>
         </div>
