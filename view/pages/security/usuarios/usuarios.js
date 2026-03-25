@@ -1,7 +1,18 @@
-// view/pages/security/usuarios/usuarios.js
+const TABS_BASE = '/SistemaContable/view/pages/security/usuarios/tabs/';
+const TABS = ['tab-users', 'tab-user-roles'];
 
-document.addEventListener('DOMContentLoaded', () => {
+async function loadTabs() {
+    const container = document.getElementById('page-content');
+    for (const name of TABS) {
+        const res  = await fetch(`${TABS_BASE}${name}.html`);
+        const html = await res.text();
+        container.insertAdjacentHTML('beforeend', html);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
     Auth.redirectIfNotLogged();
+    await loadTabs();
 
     // estados globales
     let allUsers   = [];
@@ -89,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>
         `).join('');
 
-        // Bind edit buttons
+        // bind botones
         tbody.querySelectorAll('.btn-edit-user').forEach(btn => {
             btn.addEventListener('click', () => openEditUser(parseInt(btn.dataset.id)));
         });
@@ -112,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-refresh-users')?.addEventListener('click', loadUsers);
 
-    // abrir modal de crear usuario
+    // abrir modal crear
     document.getElementById('btn-new-user')?.addEventListener('click', () => openCreateUser());
 
     function openCreateUser() {
@@ -129,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Modal.open('modal-user');
     }
 
-    // abrir modal de editar usuario
+    // abrir modal editar
     async function openEditUser(id) {
         editingId = id;
         const res = await Api.get(`usuarios?id=${id}`);
@@ -153,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById(id)?.addEventListener('click', () => Modal.close('modal-user'));
     });
 
-    // guardar usuario
+    // guardar
     document.getElementById('btn-save-user')?.addEventListener('click', async () => {
         hideFormError();
         const nombre    = document.getElementById('user-nombre').value.trim();
@@ -197,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('form-user-error').classList.add('hidden');
     }
 
-    // abrir modal de confirmar eliminacion de usuario
+    // confirmar eliminar
     function openDeleteUser(id, name) {
         deleteId = id;
         document.getElementById('delete-user-name').textContent = name;
@@ -224,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // cargar selector de usuarios para asignar roles
+    // cargar selector para asignar roles
     let allRoles = [];
 
     async function loadUserSelector() {
