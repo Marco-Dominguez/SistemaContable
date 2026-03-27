@@ -9,6 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/view/assets/css/app.css">
+    <!-- google tag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H55HB0QW2W"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-H55HB0QW2W");
+    </script>
 </head>
 <body>
 <div id="app">
@@ -129,7 +137,7 @@
             </div>
 
             <!-- Acciones -->
-            <div class="card p-5">
+            <div class="card p-5 mb-6">
                 <h3 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Acciones rápidas</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="quick-actions">
                     <a href="/view/pages/security/usuarios/index.html"
@@ -154,30 +162,45 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Declaraciones recientes -->
+            <div class="card p-5 mb-6" style="overflow-x: clip; overflow-y: visible;">
+                <h3 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Declaraciones recientes</h3>
+                <div class="carousel-wrapper px-4">
+                    <button class="carousel-btn prev" id="carousel-prev">
+                        <i class="bi bi-chevron-left" style="font-size:.8rem;"></i>
+                    </button>
+                    <div class="carousel-track-outer">
+                        <div class="carousel-track" id="carousel-track"></div>
+                    </div>
+                    <button class="carousel-btn next" id="carousel-next">
+                        <i class="bi bi-chevron-right" style="font-size:.8rem;"></i>
+                    </button>
+                </div>
+            </div>
         </main>
     </div>
 </div>
 
+<!-- Modal Declaración -->
+<div class="modal-backdrop hidden" id="modal-decl">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2 class="text-base font-semibold text-slate-700">Declaración</h2>
+            <button class="btn btn-outline btn-icon btn-sm" id="modal-decl-close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p class="text-sm text-slate-500">Declaración</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline btn-sm" id="modal-decl-close2">Cerrar</button>
+        </div>
+    </div>
+</div>
+
 <script src="/view/assets/js/app.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', async () => {
-    Auth.redirectIfNotLogged();
-
-    const u = Auth.getUser();
-    if (u) {
-        document.getElementById('welcome-title').textContent = `Bienvenido, ${u.nombre} ${u.apellidos}`;
-    }
-
-    // cargar stats
-    try {
-        const [resUsers, resRoles] = await Promise.all([
-            Api.get('usuarios'),
-            Api.get('roles'),
-        ]);
-        if (resUsers?.success) document.getElementById('stat-users').textContent = resUsers.data.usuarios?.length ?? 0;
-        if (resRoles?.success) document.getElementById('stat-roles').textContent = resRoles.data.roles?.length ?? 0;
-    } catch (e) { /* na */ }
-});
-</script>
+<script src="/view/pages/dashboard/dashboard.js"></script>
 </body>
 </html>
