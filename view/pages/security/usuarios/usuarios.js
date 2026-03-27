@@ -1,4 +1,4 @@
-const TABS_BASE = '/SistemaContable/view/pages/security/usuarios/tabs/';
+const TABS_BASE = '/view/pages/security/usuarios/tabs/';
 const TABS = ['tab-users', 'tab-user-roles'];
 
 async function loadTabs() {

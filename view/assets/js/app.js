@@ -1,5 +1,5 @@
 // configuracion
-const API_BASE = '/SistemaContable/service/api';
+const API_BASE = '/service/api';
 
 // auth helpers
 const Auth = {
@@ -23,12 +23,12 @@ const Auth = {
     },
     redirectIfNotLogged() {
         if (!this.isLogged()) {
-            window.location.href = '/SistemaContable/view/pages/auth/login.html';
+            window.location.href = '/view/pages/auth/login.html';
         }
     },
     redirectIfLogged() {
         if (this.isLogged()) {
-            window.location.href = '/SistemaContable/view/pages/dashboard/index.html';
+            window.location.href = '/view/pages/dashboard/index.html';
         }
     },
 };
@@ -53,7 +53,7 @@ const Api = {
         if (res.status === 401) {
             Auth.clear();
             if (!window.location.pathname.includes('login.html')) {
-                window.location.href = '/SistemaContable/view/pages/auth/login.html';
+                window.location.href = '/view/pages/auth/login.html';
                 return;
             }
         }
@@ -155,6 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#btn-logout')?.addEventListener('click', async () => {
         await Api.post('auth?action=logout');
         Auth.clear();
-        window.location.href = '/SistemaContable/view/pages/auth/login.html';
+        window.location.href = '/view/pages/auth/login.html';
     });
 });

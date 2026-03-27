@@ -10,7 +10,7 @@ Options -Indexes
 # CORS
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /SistemaContable/service/
+    RewriteBase /service/
 
     # Permitir OPTIONS
     RewriteCond %{REQUEST_METHOD} OPTIONS

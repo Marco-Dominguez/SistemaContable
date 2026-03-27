@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/SistemaContable/view/assets/css/app.css">
+    <link rel="stylesheet" href="/view/assets/css/app.css">
 </head>
 <body>
 <div id="app">
@@ -20,16 +20,16 @@
         </div>
         <nav class="flex-1 overflow-y-auto py-3">
             <div class="nav-group">
-                <a href="/SistemaContable/view/pages/dashboard/index.html" class="nav-item">
+                <a href="/view/pages/dashboard/index.html" class="nav-item">
                     <i class="bi bi-house-door"></i> Inicio
                 </a>
             </div>
             <div class="nav-group" id="nav-seguridad">
                 <div class="nav-group-label">Seguridad</div>
-                <a href="/SistemaContable/view/pages/security/usuarios/index.html" class="nav-item">
+                <a href="/view/pages/security/usuarios/index.html" class="nav-item">
                     <i class="bi bi-people"></i> Usuarios
                 </a>
-                <a href="/SistemaContable/view/pages/security/roles/index.html" class="nav-item">
+                <a href="/view/pages/security/roles/index.html" class="nav-item">
                     <i class="bi bi-shield-lock"></i> Roles y Permisos
                 </a>
             </div>
@@ -132,12 +132,12 @@
             <div class="card p-5">
                 <h3 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Acciones rápidas</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="quick-actions">
-                    <a href="/SistemaContable/view/pages/security/usuarios/index.html"
+                    <a href="/view/pages/security/usuarios/index.html"
                        class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition text-center">
                         <i class="bi bi-person-plus text-blue-600 text-2xl"></i>
                         <span class="text-xs font-medium text-slate-600">Nuevo Usuario</span>
                     </a>
-                    <a href="/SistemaContable/view/pages/security/roles/index.html"
+                    <a href="/view/pages/security/roles/index.html"
                        class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50 transition text-center">
                         <i class="bi bi-shield-plus text-purple-600 text-2xl"></i>
                         <span class="text-xs font-medium text-slate-600">Nuevo Rol</span>
@@ -158,7 +158,7 @@
     </div>
 </div>
 
-<script src="/SistemaContable/view/assets/js/app.js"></script>
+<script src="/view/assets/js/app.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
     Auth.redirectIfNotLogged();
