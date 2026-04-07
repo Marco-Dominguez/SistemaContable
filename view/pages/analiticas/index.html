@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analíticas — SistemaContable</title>
+    <meta name="description"
+        content="Panel de analíticas fiscales: KPIs, gráficas de tendencias y distribución de declaraciones.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/view/assets/css/app.css">
+    <!-- google tag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H55HB0QW2W"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag("js", new Date());
+        gtag("config", "G-H55HB0QW2W");
+    </script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- sidebar -->
+        <aside id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><i class="bi bi-calculator"></i></div>
+                <span>SistemaContable</span>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-3">
+                <div class="nav-group">
+                    <a href="/view/pages/dashboard/index.html" class="nav-item">
+                        <i class="bi bi-house-door"></i> Inicio
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-label">Seguridad</div>
+                    <a href="/view/pages/security/usuarios/index.html" class="nav-item">
+                        <i class="bi bi-people"></i> Usuarios
+                    </a>
+                    <a href="/view/pages/security/roles/index.html" class="nav-item">
+                        <i class="bi bi-shield-lock"></i> Roles y Permisos
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-label">Gestión</div>
+                    <a href="/view/pages/clientes/index.html" class="nav-item">
+                        <i class="bi bi-person-badge"></i> Clientes
+                    </a>
+                    <a href="/view/pages/declaraciones/index.html" class="nav-item">
+                        <i class="bi bi-file-earmark-text"></i> Declaraciones
+                    </a>
+                    <a href="/view/pages/analiticas/index.html" class="nav-item">
+                        <i class="bi bi-bar-chart-line"></i> Analíticas
+                    </a>
+                </div>
+            </nav>
+            <div class="p-3 border-t border-slate-800">
+                <a href="#" class="nav-item"><i class="bi bi-person-circle"></i> Perfil</a>
+            </div>
+        </aside>
+
+        <div id="main">
+            <header id="topbar">
+                <div class="flex items-center gap-3">
+                    <button id="sidebar-toggle" class="btn btn-outline btn-icon">
+                        <i class="bi bi-list text-lg"></i>
+                    </button>
+                    <nav class="text-sm text-slate-400">
+                        <span>Gestión</span>
+                        <span class="mx-1">/</span>
+                        <span class="text-slate-700 font-medium">Analíticas</span>
+                    </nav>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- notificaciones -->
+                    <div class="relative" id="notif-wrapper">
+                        <button class="btn btn-outline btn-icon btn-sm" id="btn-notif">
+                            <i class="bi bi-bell"></i>
+                            <span class="notif-badge hidden" id="notif-count">0</span>
+                        </button>
+                        <div class="notif-dropdown hidden" id="notif-dropdown"></div>
+                    </div>
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium text-slate-700" id="topbar-user-name">—</p>
+                        <p class="text-xs text-slate-400" id="topbar-user-role">—</p>
+                    </div>
+                    <button id="btn-logout" class="btn btn-outline btn-sm">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span class="hidden sm:inline">Salir</span>
+                    </button>
+                </div>
+            </header>
+
+            <main id="page-content">
+                <!-- titulo y filtro de año -->
+                <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+                    <div>
+                        <h1 class="text-xl font-bold text-slate-800"><i
+                                class="bi bi-bar-chart-line mr-2 text-blue-600"></i>Analíticas Fiscales</h1>
+                        <p class="text-sm text-slate-400">Resumen visual de declaraciones, importes y tendencias.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label class="form-label text-xs mb-0" for="analiticas-anio">Año:</label>
+                        <select id="analiticas-anio" class="form-input" style="width:100px"></select>
+                        <button id="btn-refresh-analiticas" class="btn btn-outline btn-sm">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- kpis -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="kpi-grid">
+                    <div class="card p-4" id="kpi-total">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                                style="background:#eff6ff">
+                                <i class="bi bi-file-earmark-text text-lg" style="color:#2563eb"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 font-medium">Total Declaraciones</p>
+                                <p class="text-xl font-bold text-slate-700" id="kpi-total-val">—</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-4" id="kpi-pendientes">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                                style="background:#fefce8">
+                                <i class="bi bi-clock text-lg" style="color:#ca8a04"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 font-medium">Pendientes</p>
+                                <p class="text-xl font-bold text-slate-700" id="kpi-pend-val">—</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-4" id="kpi-importe">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                                style="background:#fef2f2">
+                                <i class="bi bi-cash-stack text-lg" style="color:#dc2626"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 font-medium">Total a Pagar</p>
+                                <p class="text-xl font-bold text-slate-700" id="kpi-imp-val">—</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-4" id="kpi-saldo">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center"
+                                style="background:#f0fdf4">
+                                <i class="bi bi-piggy-bank text-lg" style="color:#16a34a"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-400 font-medium">Total Saldo a Favor</p>
+                                <p class="text-xl font-bold text-slate-700" id="kpi-sal-val">—</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- graficos dona y lineas -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="card p-5">
+                        <h3 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Distribución por
+                            Estatus</h3>
+                        <div style="position:relative; max-height:320px; display:flex; justify-content:center;">
+                            <canvas id="chart-estatus"></canvas>
+                        </div>
+                    </div>
+                    <div class="card p-5">
+                        <h3 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Tendencia Mensual
+                            — Importes</h3>
+                        <div style="position:relative; max-height:320px;">
+                            <canvas id="chart-tendencia"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- graficos barras obligaciones y tabla top clientes -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="card p-5">
+                        <h3 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Obligaciones más
+                            Frecuentes</h3>
+                        <div style="position:relative; max-height:320px;">
+                            <canvas id="chart-obligaciones"></canvas>
+                        </div>
+                    </div>
+                    <div class="card p-5">
+                        <h3 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Top Clientes</h3>
+                        <div class="overflow-x-auto">
+                            <table class="data-table" id="table-top-clientes">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Cliente</th>
+                                        <th class="text-right">Declaraciones</th>
+                                        <th class="text-right">Importe Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- grafico barras estatus por mes -->
+                <div class="card p-5 mb-6">
+                    <h3 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Declaraciones por Mes
+                    </h3>
+                    <div style="position:relative; max-height:350px;">
+                        <canvas id="chart-decl-mes"></canvas>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="/view/assets/js/app.js"></script>
+    <script src="/view/pages/analiticas/analiticas.js"></script>
+</body>
+
+</html>

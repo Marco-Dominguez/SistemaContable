@@ -25,4 +25,5 @@ Options -Indexes
     RewriteRule ^api/declaraciones(.*)$   controllers/DeclaracionesController.php$1 [L,QSA]
     RewriteRule ^api/catalogos(.*)$       controllers/CatalogosController.php$1 [L,QSA]
     RewriteRule ^api/notificaciones(.*)$  controllers/NotificacionesController.php$1 [L,QSA]
+    RewriteRule ^api/analiticas(.*)$      controllers/AnaliticasController.php$1 [L,QSA]
 </IfModule>
