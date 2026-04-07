@@ -1,0 +1,24 @@
+<!-- asignar regímenes a cliente -->
+<div id="tab-regimenes" class="hidden">
+    <div class="mb-4">
+        <h2 class="text-lg font-bold text-slate-800">Asignar Regímenes Fiscales</h2>
+        <p class="text-sm text-slate-400">Selecciona un cliente para ver y editar sus regímenes fiscales</p>
+    </div>
+
+    <div class="card p-5">
+        <div class="form-group mb-4">
+            <label class="form-label">Selecciona un cliente</label>
+            <select id="sel-client-for-regimenes" class="form-input">
+                <option value="">— Selecciona —</option>
+            </select>
+        </div>
+
+        <div id="client-regimenes-panel" class="hidden">
+            <p class="text-sm font-semibold text-slate-600 mb-3">Regímenes fiscales disponibles:</p>
+            <div id="regimenes-checkboxes" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4"></div>
+            <button class="btn btn-primary" id="btn-save-client-regimenes">
+                <i class="bi bi-save"></i> Guardar Regímenes
+            </button>
+        </div>
+    </div>
+</div>
