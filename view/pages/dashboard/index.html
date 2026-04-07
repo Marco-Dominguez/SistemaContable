@@ -46,8 +46,8 @@
                 <a href="/view/pages/clientes/index.html" class="nav-item">
                     <i class="bi bi-person-badge"></i> Clientes
                 </a>
-                <a href="#" class="nav-item text-slate-500 cursor-not-allowed">
-                    <i class="bi bi-file-earmark-text"></i> Declaraciones <span class="ml-auto text-xs badge badge-gray">Próximo</span>
+                <a href="/view/pages/declaraciones/index.html" class="nav-item">
+                    <i class="bi bi-file-earmark-text"></i> Declaraciones
                 </a>
                 <a href="#" class="nav-item text-slate-500 cursor-not-allowed">
                     <i class="bi bi-bar-chart-line"></i> Analíticas <span class="ml-auto text-xs badge badge-gray">Próximo</span>
@@ -119,7 +119,7 @@
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 font-medium">Clientes</p>
-                            <p class="text-xl font-bold text-slate-700">—</p>
+                            <p class="text-xl font-bold text-slate-700" id="stat-clients">—</p>
                         </div>
                     </div>
                 </div>
@@ -130,7 +130,7 @@
                         </div>
                         <div>
                             <p class="text-xs text-slate-400 font-medium">Declaraciones</p>
-                            <p class="text-xl font-bold text-slate-700">—</p>
+                            <p class="text-xl font-bold text-slate-700" id="stat-decl">—</p>
                         </div>
                     </div>
                 </div>
@@ -155,8 +155,8 @@
                         <i class="bi bi-person-badge text-green-600 text-2xl"></i>
                         <span class="text-xs font-medium text-slate-600">Nuevo Cliente</span>
                     </a>
-                    <a href="#"
-                       class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 text-center opacity-50 cursor-not-allowed">
+                    <a href="/view/pages/declaraciones/index.html"
+                       class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 hover:border-amber-300 hover:bg-amber-50 transition text-center">
                         <i class="bi bi-file-earmark-plus text-amber-600 text-2xl"></i>
                         <span class="text-xs font-medium text-slate-600">Nueva Declaración</span>
                     </a>
