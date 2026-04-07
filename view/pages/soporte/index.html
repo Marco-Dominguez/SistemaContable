@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soporte — SistemaContable</title>
+    <meta name="description"
+        content="Información de contacto del equipo de desarrollo y soporte técnico del Sistema Contable.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/view/assets/css/app.css">
+    <!-- google tag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H55HB0QW2W"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag("js", new Date());
+        gtag("config", "G-H55HB0QW2W");
+    </script>
+
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- sidebar -->
+        <aside id="sidebar"></aside>
+
+        <div id="main">
+            <header id="topbar">
+                <div class="flex items-center gap-3">
+                    <button id="sidebar-toggle" class="btn btn-outline btn-icon">
+                        <i class="bi bi-list text-lg"></i>
+                    </button>
+                    <nav class="text-sm text-slate-400">
+                        <span>Soporte</span>
+                        <span class="mx-1">/</span>
+                        <span class="text-slate-700 font-medium">Contacto</span>
+                    </nav>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- notificaciones -->
+                    <div class="relative" id="notif-wrapper">
+                        <button class="btn btn-outline btn-icon btn-sm" id="btn-notif">
+                            <i class="bi bi-bell"></i>
+                            <span class="notif-badge hidden" id="notif-count">0</span>
+                        </button>
+                        <div class="notif-dropdown hidden" id="notif-dropdown"></div>
+                    </div>
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium text-slate-700" id="topbar-user-name">—</p>
+                        <p class="text-xs text-slate-400" id="topbar-user-role">—</p>
+                    </div>
+                    <button id="btn-logout" class="btn btn-outline btn-sm">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span class="hidden sm:inline">Salir</span>
+                    </button>
+                </div>
+            </header>
+
+            <main id="page-content">
+                <!-- tarjetas de alumnos -->
+                <div class="mb-6">
+                    <h2 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Equipo de Desarrollo
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6" style="max-width:700px">
+                        <!-- alumno 1 -->
+                        <div class="dev-card">
+                            <div class="dev-card-header">
+                                <div class="dev-avatar">MD</div>
+                            </div>
+                            <div class="dev-card-body">
+                                <h3>MARCO ANTONIO DOMÍNGUEZ ZAMARRÓN</h3>
+                                <div class="dev-info-row">
+                                    <i class="bi bi-mortarboard"></i>
+                                    <span>216830</span>
+                                </div>
+                                <div class="dev-info-row">
+                                    <i class="bi bi-envelope"></i>
+                                    <span>al216830@alumnos.uacj.mx</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- alumno 2 -->
+                        <div class="dev-card">
+                            <div class="dev-card-header">
+                                <div class="dev-avatar">BM</div>
+                            </div>
+                            <div class="dev-card-body">
+                                <h3>BRISA ROCIO MORA RIVERA</h3>
+                                <div class="dev-info-row">
+                                    <i class="bi bi-mortarboard"></i>
+                                    <span>179706</span>
+                                </div>
+                                <div class="dev-info-row">
+                                    <i class="bi bi-envelope"></i>
+                                    <span>al179706@alumnos.uacj.mx</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- telefono de soporte -->
+                <div class="mb-6" style="max-width:700px">
+                    <h2 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Línea de Soporte</h2>
+                    <div class="support-phone-card">
+                        <div class="support-phone-icon">
+                            <i class="bi bi-telephone-fill"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-blue-200 font-medium">Teléfono de soporte técnico</p>
+                            <p class="text-2xl font-bold tracking-wide" style="letter-spacing:.05em">+52 656-111-22-33
+                            </p>
+                            <p class="text-xs text-slate-400 mt-1">Lunes a Viernes — 9:00 AM a 6:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- mapa -->
+                <div class="mb-6" style="max-width:700px">
+                    <h2 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Ubicación</h2>
+                    <div class="map-container">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1879.1319835889813!2d-106.43370980545106!3d31.742530424999316!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x86e75b170624180f%3A0x58d66de7b5da9d4b!2sDirecci%C3%B3n%20IIT-IADA%20-%20Edificio%20L!5e0!3m2!1ses-419!2smx!4v1775533938683!5m2!1ses-419!2smx"
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                    <div class="flex items-center gap-2 mt-3 text-sm text-slate-500">
+                        <i class="bi bi-geo-alt text-blue-500"></i>
+                        <span>Dirección IIT-IADA — Edificio L, UACJ, Ciudad Juárez, Chihuahua</span>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="/view/assets/js/app.js"></script>
+</body>
+
+</html>

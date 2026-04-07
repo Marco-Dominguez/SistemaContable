@@ -136,6 +136,27 @@ function initSidebarToggle() {
     toggle?.addEventListener('click', () => sidebar?.classList.toggle('open'));
 }
 
+// load sidebar component from partial HTML
+async function loadSidebar() {
+    const sidebar = $('#sidebar');
+    if (!sidebar) return;
+    // solo cargar si el sidebar esta vacio
+    if (sidebar.children.length > 0) {
+        initSidebarActive();
+        initSidebarToggle();
+        return;
+    }
+    try {
+        const res = await fetch('/view/components/sidebar.html');
+        if (!res.ok) return;
+        sidebar.innerHTML = await res.text();
+        initSidebarActive();
+        initSidebarToggle();
+    } catch (e) {
+        console.error('Error cargando sidebar:', e);
+    }
+}
+
 // init topbar user info
 function initTopbarUser() {
     const u = Auth.getUser();
@@ -146,10 +167,9 @@ function initTopbarUser() {
     if (roleEl) roleEl.textContent = u.roles?.join(', ') ?? '';
 }
 
-// logout
-document.addEventListener('DOMContentLoaded', () => {
-    initSidebarActive();
-    initSidebarToggle();
+// init general
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadSidebar();
     initTopbarUser();
 
     $('#btn-logout')?.addEventListener('click', async () => {
