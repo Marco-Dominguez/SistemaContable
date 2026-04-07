@@ -22,22 +22,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (e) { /* na */ }
 
-    // render carousel con datos reales
+    // mostrar carousel con datos reales
     function renderCarousel(declaraciones) {
-        const track   = document.getElementById('carousel-track');
+        const track = document.getElementById('carousel-track');
         const btnPrev = document.getElementById('carousel-prev');
         const btnNext = document.getElementById('carousel-next');
-        const modal   = document.getElementById('modal-decl');
-        const CARD_W  = 210 + 16;
+        const modal = document.getElementById('modal-decl');
+        const CARD_W = 210 + 16;
         let offset = 0;
 
-        const MESES = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        const MESES = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
         const STATUS_MAP = {
-            'Pendiente':       { badgeClass: 'badge-yellow', thumbBg: '#fefce8', iconColor: '#ca8a04' },
-            'En Proceso':      { badgeClass: 'badge-blue',   thumbBg: '#eff6ff', iconColor: '#2563eb' },
-            'Para Pago':       { badgeClass: 'badge-red',    thumbBg: '#fef2f2', iconColor: '#dc2626' },
-            'Pagada':          { badgeClass: 'badge-green',  thumbBg: '#f0fdf4', iconColor: '#16a34a' },
-            'Presentada_Cero': { badgeClass: 'badge-gray',   thumbBg: '#f8fafc', iconColor: '#64748b' },
+            'Pendiente': { badgeClass: 'badge-yellow', thumbBg: '#fefce8', iconColor: '#ca8a04' },
+            'En Proceso': { badgeClass: 'badge-blue', thumbBg: '#eff6ff', iconColor: '#2563eb' },
+            'Para Pago': { badgeClass: 'badge-red', thumbBg: '#fef2f2', iconColor: '#dc2626' },
+            'Pagada': { badgeClass: 'badge-green', thumbBg: '#f0fdf4', iconColor: '#16a34a' },
+            'Presentada_Cero': { badgeClass: 'badge-gray', thumbBg: '#f8fafc', iconColor: '#64748b' },
         };
 
         // fallback si no hay declaraciones reales
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         function updateCarousel() {
-            const outerW  = track.parentElement.offsetWidth;
+            const outerW = track.parentElement.offsetWidth;
             const visible = Math.max(1, Math.floor(outerW / CARD_W));
             const maxOffset = Math.max(0, declaraciones.length - visible);
             btnPrev.disabled = offset === 0;
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // cerrar modal
-    document.getElementById('modal-decl-close').addEventListener('click',  () => document.getElementById('modal-decl').classList.add('hidden'));
+    document.getElementById('modal-decl-close').addEventListener('click', () => document.getElementById('modal-decl').classList.add('hidden'));
     document.getElementById('modal-decl-close2').addEventListener('click', () => document.getElementById('modal-decl').classList.add('hidden'));
     document.getElementById('modal-decl').addEventListener('click', e => { if (e.target.id === 'modal-decl') e.target.classList.add('hidden'); });
 });

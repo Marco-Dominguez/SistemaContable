@@ -3,8 +3,8 @@ const API_BASE = '/service/api';
 
 // auth helpers
 const Auth = {
-    getToken()   { return localStorage.getItem('sc_token'); },
-    getUser()    {
+    getToken() { return localStorage.getItem('sc_token'); },
+    getUser() {
         try { return JSON.parse(localStorage.getItem('sc_user')); }
         catch { return null; }
     },
@@ -16,7 +16,7 @@ const Auth = {
         localStorage.removeItem('sc_token');
         localStorage.removeItem('sc_user');
     },
-    isLogged()   { return !!this.getToken(); },
+    isLogged() { return !!this.getToken(); },
     can(modulo, accion) {
         const u = this.getUser();
         return !!(u?.permisos?.[modulo]?.includes(accion));
@@ -46,7 +46,7 @@ const Api = {
         };
         if (body && method !== 'GET') opts.body = JSON.stringify(body);
 
-        const res  = await fetch(`${API_BASE}/${endpoint}`, opts);
+        const res = await fetch(`${API_BASE}/${endpoint}`, opts);
         const data = await res.json();
 
         // si es 401 limpiar sesion y redirigir
@@ -59,10 +59,10 @@ const Api = {
         }
         return data;
     },
-    get(endpoint)          { return this.request('GET',    endpoint); },
-    post(endpoint, body)   { return this.request('POST',   endpoint, body); },
-    put(endpoint, body)    { return this.request('PUT',    endpoint, body); },
-    delete(endpoint)       { return this.request('DELETE', endpoint); },
+    get(endpoint) { return this.request('GET', endpoint); },
+    post(endpoint, body) { return this.request('POST', endpoint, body); },
+    put(endpoint, body) { return this.request('PUT', endpoint, body); },
+    delete(endpoint) { return this.request('DELETE', endpoint); },
 };
 
 // toast helper
@@ -85,13 +85,13 @@ const Toast = {
         setTimeout(() => t.remove(), duration);
     },
     success(m) { this.show(m, 'success'); },
-    error(m)   { this.show(m, 'error'); },
-    info(m)    { this.show(m, 'info'); },
+    error(m) { this.show(m, 'error'); },
+    info(m) { this.show(m, 'info'); },
 };
 
 // modal helper
 const Modal = {
-    open(id)  { document.getElementById(id)?.classList.remove('hidden'); },
+    open(id) { document.getElementById(id)?.classList.remove('hidden'); },
     close(id) { document.getElementById(id)?.classList.add('hidden'); },
 };
 
@@ -157,4 +157,122 @@ document.addEventListener('DOMContentLoaded', () => {
         Auth.clear();
         window.location.href = '/view/pages/auth/login.html';
     });
+
+    // notificaciones
+    initNotifications();
 });
+
+// notificaciones sistema
+function initNotifications() {
+    const btnNotif = $('#btn-notif');
+    const dropdown = $('#notif-dropdown');
+    const countBadge = $('#notif-count');
+    if (!btnNotif || !dropdown) return;
+    if (!Auth.isLogged()) return;
+
+    let isOpen = false;
+
+    btnNotif.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        isOpen = !isOpen;
+        if (isOpen) {
+            await loadNotifications();
+            dropdown.classList.remove('hidden');
+        } else {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (isOpen && !dropdown.contains(e.target) && !btnNotif.contains(e.target)) {
+            dropdown.classList.add('hidden');
+            isOpen = false;
+        }
+    });
+
+    async function loadNotifCount() {
+        try {
+            const res = await Api.get('notificaciones?action=count');
+            if (res?.success) {
+                const cnt = res.data.count || 0;
+                if (cnt > 0) {
+                    countBadge.textContent = cnt > 99 ? '99+' : cnt;
+                    countBadge.classList.remove('hidden');
+                } else {
+                    countBadge.classList.add('hidden');
+                }
+            }
+        } catch (e) { /* silencio */ }
+    }
+
+    async function loadNotifications() {
+        try {
+            const res = await Api.get('notificaciones');
+            if (!res?.success) return;
+            const notifs = res.data.notificaciones ?? [];
+            if (!notifs.length) {
+                dropdown.innerHTML = `
+                    <div class="notif-dropdown-header">
+                        <span class="font-semibold text-sm">Notificaciones</span>
+                    </div>
+                    <div class="p-4 text-center text-slate-400 text-sm">
+                        <i class="bi bi-bell-slash text-2xl block mb-1"></i>
+                        Sin notificaciones
+                    </div>`;
+                return;
+            }
+            const tipoIcons = {
+                info: 'bi-info-circle text-blue-500',
+                success: 'bi-check-circle text-green-500',
+                warning: 'bi-exclamation-triangle text-amber-500',
+                error: 'bi-x-circle text-red-500',
+            };
+            dropdown.innerHTML = `
+                <div class="notif-dropdown-header">
+                    <span class="font-semibold text-sm">Notificaciones</span>
+                    <button class="text-xs text-blue-600 hover:underline" id="btn-mark-all-read">Marcar todas como leídas</button>
+                </div>
+                <div class="notif-dropdown-list">
+                    ${notifs.slice(0, 20).map(n => `
+                        <div class="notif-item ${n.leido ? '' : 'notif-unread'}" data-id="${n.id}">
+                            <i class="bi ${tipoIcons[n.tipo] || tipoIcons.info} text-lg"></i>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-slate-800 truncate">${n.titulo}</p>
+                                <p class="text-xs text-slate-500 line-clamp-2">${n.mensaje}</p>
+                                <p class="text-xs text-slate-300 mt-1">${timeAgo(n.created_at)}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`;
+
+            // marcar como leída
+            dropdown.querySelectorAll('.notif-item').forEach(item => {
+                item.addEventListener('click', async () => {
+                    const nid = item.dataset.id;
+                    await Api.put(`notificaciones?id=${nid}`);
+                    item.classList.remove('notif-unread');
+                    loadNotifCount();
+                });
+            });
+
+            // marcar todas como leídas
+            $('#btn-mark-all-read')?.addEventListener('click', async () => {
+                await Api.put('notificaciones?action=read-all');
+                dropdown.querySelectorAll('.notif-unread').forEach(i => i.classList.remove('notif-unread'));
+                countBadge.classList.add('hidden');
+            });
+        } catch (e) { /* silencio */ }
+    }
+
+    function timeAgo(dateStr) {
+        const diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
+        if (diff < 60) return 'Justo ahora';
+        if (diff < 3600) return `Hace ${Math.floor(diff / 60)} min`;
+        if (diff < 86400) return `Hace ${Math.floor(diff / 3600)} h`;
+        return `Hace ${Math.floor(diff / 86400)} d`;
+    }
+
+    // carga inicial y cada 30 segundos
+    loadNotifCount();
+    setInterval(loadNotifCount, 30000);
+}
