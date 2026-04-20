@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/view/assets/css/app.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <!-- google tag -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H55HB0QW2W"></script>
     <script>
@@ -133,11 +134,49 @@
                         <span>Dirección IIT-IADA — Edificio L, UACJ, Ciudad Juárez, Chihuahua</span>
                     </div>
                 </div>
+                <!-- formulario de contacto al contador -->
+                <div class="mb-6" style="max-width:700px">
+                    <h2 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Enviar mensaje al
+                        contador</h2>
+                    <div class="card p-6">
+                        <form id="form-contact" novalidate class="flex flex-col gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div class="form-group">
+                                    <label class="form-label" for="contact-name">Nombre</label>
+                                    <input class="form-input" type="text" id="contact-name"
+                                        placeholder="Tu nombre" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="contact-email">Correo</label>
+                                    <input class="form-input" type="email" id="contact-email"
+                                        placeholder="tu@correo.com" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="contact-subject">Asunto</label>
+                                <input class="form-input" type="text" id="contact-subject"
+                                    placeholder="Asunto del mensaje" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="contact-message">Mensaje</label>
+                                <textarea class="form-input" id="contact-message" rows="4"
+                                    placeholder="Escribe tu mensaje aquí..." required></textarea>
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="submit" class="btn btn-primary" id="btn-send-contact">
+                                    <i class="bi bi-send"></i>
+                                    Enviar mensaje
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
 
-    <script src="/view/assets/js/app.js"></script>
+<script src="/view/assets/js/app.js"></script>
+    <script src="/view/pages/soporte/soporte.js"></script>
 </body>
 
 </html>
