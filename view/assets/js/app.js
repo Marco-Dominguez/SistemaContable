@@ -46,8 +46,17 @@ const Api = {
         };
         if (body && method !== 'GET') opts.body = JSON.stringify(body);
 
-        const res = await fetch(`${API_BASE}/${endpoint}`, opts);
-        const data = await res.json();
+        const res = await fetch(`${API_BASE}/${endpoint}`, {
+            ...opts,
+            signal: AbortSignal.timeout(15000),
+        });
+
+        let data;
+        try {
+            data = await res.json();
+        } catch {
+            throw new Error('Respuesta inválida del servidor.');
+        }
 
         // si es 401 limpiar sesion y redirigir
         if (res.status === 401) {

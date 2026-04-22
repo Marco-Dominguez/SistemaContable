@@ -82,9 +82,16 @@
                 <tbody id="decl-tbody"></tbody>
             </table>
         </div>
-        <div id="decl-empty" class="hidden p-10 text-center text-slate-400">
-            <i class="bi bi-file-earmark-text text-4xl block mb-2"></i>
-            No hay declaraciones registradas.
+        <div id="decl-empty" class="hidden p-10 text-center">
+            <i class="bi bi-file-earmark-text text-5xl block mb-3 text-slate-200"></i>
+            <p class="font-semibold text-slate-700 mb-1" id="decl-empty-title">Sin declaraciones registradas</p>
+            <p class="text-sm text-slate-400 mb-5" id="decl-empty-msg">Aún no hay declaraciones en el sistema. Crea la primera desde "Nueva Declaración".</p>
+            <button class="btn btn-primary btn-sm" id="decl-empty-cta">
+                <i class="bi bi-plus-circle"></i> Nueva Declaración
+            </button>
+            <button class="btn btn-outline btn-sm hidden" id="decl-empty-clear">
+                <i class="bi bi-x-circle"></i> Limpiar filtros
+            </button>
         </div>
     </div>
 </div>

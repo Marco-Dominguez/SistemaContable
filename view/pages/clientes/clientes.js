@@ -3,10 +3,15 @@ const TABS = ['tab-clientes', 'tab-regimenes'];
 
 async function loadTabs() {
     const container = document.getElementById('page-content');
-    for (const name of TABS) {
-        const res = await fetch(`${TABS_BASE}${name}.html`);
-        const html = await res.text();
-        container.insertAdjacentHTML('beforeend', html);
+    try {
+        for (const name of TABS) {
+            const res = await fetch(`${TABS_BASE}${name}.html`);
+            if (!res.ok) throw new Error(`${name}: ${res.status}`);
+            const html = await res.text();
+            container.insertAdjacentHTML('beforeend', html);
+        }
+    } catch (e) {
+        Toast.error('Error al cargar la página. Recarga el navegador.');
     }
 }
 
@@ -17,6 +22,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     let allClients = [];
     let editingId = null;
     let deleteId = null;
+
+    // empty state
+    document.getElementById('btn-empty-new-client')?.addEventListener('click', () => {
+        document.getElementById('btn-new-client')?.click();
+    });
+    document.getElementById('btn-clear-client-search')?.addEventListener('click', () => {
+        const s = document.getElementById('search-clients');
+        if (s) { s.value = ''; }
+        renderClients(allClients);
+    });
 
     // tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -53,13 +68,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderClients(clients) {
         const tbody = document.getElementById('clients-tbody');
         const empty = document.getElementById('clients-empty');
+        const noResults = document.getElementById('clients-no-results');
+        const isSearching = (document.getElementById('search-clients')?.value.trim().length ?? 0) > 0;
 
         if (!clients.length) {
-            empty.classList.remove('hidden');
             document.getElementById('clients-table-wrap').classList.add('hidden');
+            if (isSearching) {
+                empty.classList.add('hidden');
+                noResults.classList.remove('hidden');
+            } else {
+                empty.classList.remove('hidden');
+                noResults.classList.add('hidden');
+            }
             return;
         }
         empty.classList.add('hidden');
+        noResults.classList.add('hidden');
         document.getElementById('clients-table-wrap').classList.remove('hidden');
 
         tbody.innerHTML = clients.map(c => `

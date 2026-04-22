@@ -12,10 +12,15 @@ const STATUS_BADGES = {
 
 async function loadTabs() {
     const container = document.getElementById('page-content');
-    for (const name of TABS) {
-        const res = await fetch(`${TABS_BASE}${name}.html`);
-        const html = await res.text();
-        container.insertAdjacentHTML('beforeend', html);
+    try {
+        for (const name of TABS) {
+            const res = await fetch(`${TABS_BASE}${name}.html`);
+            if (!res.ok) throw new Error(`${name}: ${res.status}`);
+            const html = await res.text();
+            container.insertAdjacentHTML('beforeend', html);
+        }
+    } catch (e) {
+        Toast.error('Error al cargar la página. Recarga el navegador.');
     }
 }
 
@@ -28,6 +33,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     let deleteId = null;
     let uploadDeclId = null;
     let uploadTipo = '';
+
+    // empty state
+    document.getElementById('decl-empty-cta')?.addEventListener('click', () => {
+        document.querySelector('.tab-btn[data-tab="tab-nueva"]')?.click();
+    });
+    document.getElementById('decl-empty-clear')?.addEventListener('click', () => {
+        ['filter-estatus', 'filter-mes', 'filter-anio', 'filter-cliente'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        loadDeclaraciones();
+    });
 
     // selector de año
     const currentYear = new Date().getFullYear();
@@ -112,11 +129,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('decl-table-wrap').classList.toggle('hidden', loading);
     }
 
+    function hasActiveFilters() {
+        return ['filter-estatus', 'filter-mes', 'filter-anio', 'filter-cliente'].some(id =>
+            document.getElementById(id)?.value !== ''
+        );
+    }
+
     function renderDeclaraciones(list) {
         const tbody = document.getElementById('decl-tbody');
         const empty = document.getElementById('decl-empty');
 
         if (!list.length) {
+            const filtering = hasActiveFilters();
+            document.getElementById('decl-empty-title').textContent = filtering
+                ? 'Sin resultados para este filtro'
+                : 'Sin declaraciones registradas';
+            document.getElementById('decl-empty-msg').textContent = filtering
+                ? 'No se encontraron declaraciones con los filtros aplicados.'
+                : 'Aún no hay declaraciones en el sistema. Crea la primera desde "Nueva Declaración".';
+            document.getElementById('decl-empty-cta').classList.toggle('hidden', filtering);
+            document.getElementById('decl-empty-clear').classList.toggle('hidden', !filtering);
             empty.classList.remove('hidden');
             document.getElementById('decl-table-wrap').classList.add('hidden');
             return;
@@ -305,9 +337,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btn-confirm-upload')?.addEventListener('click', async () => {
         const fileInput = document.getElementById('upload-file');
         const file = fileInput.files?.[0];
+        const errEl = document.getElementById('upload-error');
+        const errMsg = document.getElementById('upload-error-msg');
+
         if (!file) {
-            document.getElementById('upload-error-msg').textContent = 'Selecciona un archivo.';
-            document.getElementById('upload-error').classList.remove('hidden');
+            errMsg.textContent = 'Selecciona un archivo.';
+            errEl.classList.remove('hidden');
+            return;
+        }
+
+        const MAX_SIZE = 10 * 1024 * 1024;
+        if (file.size > MAX_SIZE) {
+            errMsg.textContent = `El archivo pesa ${(file.size / 1024 / 1024).toFixed(1)} MB. El máximo permitido es 10 MB.`;
+            errEl.classList.remove('hidden');
             return;
         }
 
@@ -330,12 +372,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 Modal.close('modal-upload');
                 loadDeclaraciones();
             } else {
-                document.getElementById('upload-error-msg').textContent = data.message || 'Error al subir.';
-                document.getElementById('upload-error').classList.remove('hidden');
+                errMsg.textContent = data.message || 'Error al subir.';
+                errEl.classList.remove('hidden');
             }
         } catch (e) {
-            document.getElementById('upload-error-msg').textContent = 'Error de conexión.';
-            document.getElementById('upload-error').classList.remove('hidden');
+            errMsg.textContent = 'Error de conexión.';
+            errEl.classList.remove('hidden');
         } finally {
             setLoading(btn, false);
         }
