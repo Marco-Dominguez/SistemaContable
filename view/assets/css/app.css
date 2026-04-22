@@ -14,6 +14,14 @@
     --color-bg: #f1f5f9;
     /* slate-100 */
     --color-card: #ffffff;
+    --color-primary-surface: #eff6ff;
+    /* blue-50 */
+    --color-warning-text: #b45309;
+    /* amber-700 */
+    --color-error-text: #b91c1c;
+    /* red-700 */
+    --color-success-text: #15803d;
+    /* green-700 */
     --sidebar-width: 260px;
     --topbar-height: 64px;
 
@@ -824,8 +832,19 @@ h4 {
 }
 
 .notif-item.notif-unread {
-    background: #eff6ff;
-    border-left: 3px solid #3b82f6;
+    background: var(--color-primary-surface);
+    position: relative;
+}
+
+.notif-item.notif-unread::after {
+    content: '';
+    position: absolute;
+    top: 0.9rem;
+    right: 0.75rem;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-primary-lt);
 }
 
 /* dashboard */
@@ -1076,7 +1095,7 @@ h4 {
 
 .dev-card-header {
     height: 90px;
-    background: linear-gradient(135deg, #1e3a5f, #1e40af);
+    background: var(--color-primary);
     position: relative;
 }
 
@@ -1128,7 +1147,7 @@ h4 {
 
 /* tarjetas de soporte */
 .support-phone-card {
-    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+    background: var(--color-sidebar);
     border-radius: 16px;
     padding: 2rem;
     color: #fff;
