@@ -81,53 +81,21 @@
 
                 <!-- kpis -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="kpi-grid">
-                    <div class="card p-4" id="kpi-total">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-                                style="background:#eff6ff">
-                                <i class="bi bi-file-earmark-text text-lg" style="color:#2563eb"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400 font-medium">Total Declaraciones</p>
-                                <p class="text-xl font-bold text-slate-700" id="kpi-total-val">—</p>
-                            </div>
-                        </div>
+                    <div class="card p-5" id="kpi-total">
+                        <p class="dash-stat-label">Total Declaraciones</p>
+                        <p class="dash-stat-value" id="kpi-total-val">—</p>
                     </div>
-                    <div class="card p-4" id="kpi-pendientes">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-                                style="background:#fefce8">
-                                <i class="bi bi-clock text-lg" style="color:#ca8a04"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400 font-medium">Pendientes</p>
-                                <p class="text-xl font-bold text-slate-700" id="kpi-pend-val">—</p>
-                            </div>
-                        </div>
+                    <div class="card p-5" id="kpi-pendientes">
+                        <p class="dash-stat-label">Pendientes</p>
+                        <p class="dash-stat-value" style="color:#b45309" id="kpi-pend-val">—</p>
                     </div>
-                    <div class="card p-4" id="kpi-importe">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-                                style="background:#fef2f2">
-                                <i class="bi bi-cash-stack text-lg" style="color:#dc2626"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400 font-medium">Total a Pagar</p>
-                                <p class="text-xl font-bold text-slate-700" id="kpi-imp-val">—</p>
-                            </div>
-                        </div>
+                    <div class="card p-5" id="kpi-importe">
+                        <p class="dash-stat-label">Total a Pagar</p>
+                        <p class="dash-stat-value dash-stat-value--currency" style="color:#b91c1c" id="kpi-imp-val">—</p>
                     </div>
-                    <div class="card p-4" id="kpi-saldo">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-                                style="background:#f0fdf4">
-                                <i class="bi bi-piggy-bank text-lg" style="color:#16a34a"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-slate-400 font-medium">Total Saldo a Favor</p>
-                                <p class="text-xl font-bold text-slate-700" id="kpi-sal-val">—</p>
-                            </div>
-                        </div>
+                    <div class="card p-5" id="kpi-saldo">
+                        <p class="dash-stat-label">Saldo a Favor</p>
+                        <p class="dash-stat-value dash-stat-value--currency" style="color:#15803d" id="kpi-sal-val">—</p>
                     </div>
                 </div>
 
