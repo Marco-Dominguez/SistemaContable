@@ -1,5 +1,5 @@
 <!-- usuarios -->
-<div id="tab-users">
+<div id="tab-users" role="tabpanel" aria-labelledby="tab-btn-users">
     <div class="flex items-center justify-between mb-4">
         <div>
             <h2 class="text-lg font-bold text-slate-800">Gestión de Usuarios</h2>
@@ -49,12 +49,12 @@
 </div>
 
 <!-- crear / editar usuario -->
-<div id="modal-user" class="modal-backdrop hidden">
+<div id="modal-user" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-user-title">
     <div class="modal-box">
         <div class="modal-header">
             <h3 class="font-semibold text-slate-800" id="modal-user-title">Nuevo Usuario</h3>
-            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-user">
-                <i class="bi bi-x-lg"></i>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-user" aria-label="Cerrar">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
             </button>
         </div>
         <div class="modal-body">
@@ -102,10 +102,10 @@
 </div>
 
 <!-- confirmar eliminar usuario -->
-<div id="modal-delete" class="modal-backdrop hidden">
+<div id="modal-delete" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-delete-user-title">
     <div class="modal-box" style="max-width:400px">
         <div class="modal-header">
-            <h3 class="font-semibold text-slate-800">Confirmar eliminación</h3>
+            <h3 class="font-semibold text-slate-800" id="modal-delete-user-title">Confirmar eliminación</h3>
         </div>
         <div class="modal-body">
             <p class="text-slate-600">¿Estás seguro de que deseas eliminar al usuario

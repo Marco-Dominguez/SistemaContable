@@ -1,5 +1,5 @@
 <!-- roles -->
-<div id="tab-roles">
+<div id="tab-roles" role="tabpanel" aria-labelledby="tab-btn-roles">
     <div class="flex items-center justify-between mb-4">
         <div>
             <h2 class="text-lg font-bold text-slate-800">Gestión de Roles</h2>
@@ -39,12 +39,12 @@
 </div>
 
 <!-- crear / editar rol -->
-<div id="modal-rol" class="modal-backdrop hidden">
+<div id="modal-rol" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-rol-title">
     <div class="modal-box">
         <div class="modal-header">
             <h3 class="font-semibold text-slate-800" id="modal-rol-title">Nuevo Rol</h3>
-            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-rol">
-                <i class="bi bi-x-lg"></i>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-rol" aria-label="Cerrar">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
             </button>
         </div>
         <div class="modal-body">
@@ -81,10 +81,10 @@
 </div>
 
 <!-- confirmar eliminar rol -->
-<div id="modal-delete-rol" class="modal-backdrop hidden">
+<div id="modal-delete-rol" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-delete-rol-title">
     <div class="modal-box" style="max-width:400px">
         <div class="modal-header">
-            <h3 class="font-semibold text-slate-800">Confirmar eliminación</h3>
+            <h3 class="font-semibold text-slate-800" id="modal-delete-rol-title">Confirmar eliminación</h3>
         </div>
         <div class="modal-body">
             <p class="text-slate-600">¿Eliminar el rol <strong id="delete-rol-name"></strong>?

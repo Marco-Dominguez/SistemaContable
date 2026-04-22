@@ -30,17 +30,17 @@
         <div id="main">
             <header id="topbar">
                 <div class="flex items-center gap-3">
-                    <button id="sidebar-toggle" class="btn btn-outline btn-icon">
-                        <i class="bi bi-list text-lg"></i>
+                    <button id="sidebar-toggle" class="btn btn-outline btn-icon" aria-label="Abrir menú de navegación">
+                        <i class="bi bi-list text-lg" aria-hidden="true"></i>
                     </button>
                     <h1 class="text-base font-semibold text-slate-700">Inicio</h1>
                 </div>
                 <div class="flex items-center gap-4">
                     <!-- notificaciones -->
                     <div class="relative" id="notif-wrapper">
-                        <button class="btn btn-outline btn-icon btn-sm" id="btn-notif">
-                            <i class="bi bi-bell"></i>
-                            <span class="notif-badge hidden" id="notif-count">0</span>
+                        <button class="btn btn-outline btn-icon btn-sm" id="btn-notif" aria-label="Notificaciones" aria-haspopup="true" aria-expanded="false">
+                            <i class="bi bi-bell" aria-hidden="true"></i>
+                            <span class="notif-badge hidden" id="notif-count" aria-hidden="true">0</span>
                         </button>
                         <div class="notif-dropdown hidden" id="notif-dropdown"></div>
                     </div>
@@ -136,12 +136,12 @@
     </div>
 
     <!-- Modal Declaración -->
-    <div class="modal-backdrop hidden" id="modal-decl">
+    <div class="modal-backdrop hidden" id="modal-decl" role="dialog" aria-modal="true" aria-labelledby="modal-decl-heading">
         <div class="modal-box">
             <div class="modal-header">
-                <h2 class="text-base font-semibold text-slate-700">Declaración</h2>
-                <button class="btn btn-outline btn-icon btn-sm" id="modal-decl-close">
-                    <i class="bi bi-x-lg"></i>
+                <h2 class="text-base font-semibold text-slate-700" id="modal-decl-heading">Declaración</h2>
+                <button class="btn btn-outline btn-icon btn-sm" id="modal-decl-close" aria-label="Cerrar">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
                 </button>
             </div>
             <div class="modal-body">

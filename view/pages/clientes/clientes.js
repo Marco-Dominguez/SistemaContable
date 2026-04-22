@@ -36,8 +36,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            });
             btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
             const target = btn.dataset.tab;
             document.querySelectorAll('#tab-clientes, #tab-regimenes').forEach(p => p.classList.add('hidden'));
             document.getElementById(target)?.classList.remove('hidden');
@@ -92,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td><span class="font-mono text-sm font-semibold text-slate-700">${escHtml(c.rfc)}</span></td>
                 <td>
                     <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-semibold text-xs">
+                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-semibold text-xs" aria-hidden="true">
                             ${(c.razon_social[0] || '?').toUpperCase()}
                         </div>
                         <p class="font-medium text-slate-800">${escHtml(c.razon_social)}</p>
@@ -103,18 +107,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             `<span class="badge badge-blue mr-1 mb-1" style="font-size:.65rem">${escHtml(r)}</span>`).join('') : '<span class="text-slate-300">—</span>'}</td>
                 <td>
                     <span class="badge ${c.activo ? 'badge-green' : 'badge-red'}">
-                        <i class="bi ${c.activo ? 'bi-check-circle' : 'bi-x-circle'} mr-1"></i>
+                        <i class="bi ${c.activo ? 'bi-check-circle' : 'bi-x-circle'} mr-1" aria-hidden="true"></i>
                         ${c.activo ? 'Activo' : 'Inactivo'}
                     </span>
                 </td>
                 <td>
                     <div class="flex gap-1">
-                        <button class="btn btn-outline btn-icon btn-sm btn-edit-client" data-id="${c.id}" title="Editar">
-                            <i class="bi bi-pencil"></i>
+                        <button class="btn btn-outline btn-icon btn-sm btn-edit-client" data-id="${c.id}"
+                                title="Editar" aria-label="Editar cliente ${escHtml(c.razon_social)}">
+                            <i class="bi bi-pencil" aria-hidden="true"></i>
                         </button>
                         <button class="btn btn-danger btn-icon btn-sm btn-delete-client"
-                                data-id="${c.id}" data-name="${escHtml(c.razon_social)}" title="Eliminar">
-                            <i class="bi bi-trash"></i>
+                                data-id="${c.id}" data-name="${escHtml(c.razon_social)}"
+                                title="Eliminar" aria-label="Eliminar cliente ${escHtml(c.razon_social)}">
+                            <i class="bi bi-trash" aria-hidden="true"></i>
                         </button>
                     </div>
                 </td>

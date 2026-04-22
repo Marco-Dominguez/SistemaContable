@@ -81,15 +81,24 @@ const Toast = {
         if (!this.container) {
             this.container = document.createElement('div');
             this.container.id = 'toast-container';
+            this.container.setAttribute('role', 'status');
+            this.container.setAttribute('aria-live', 'polite');
+            this.container.setAttribute('aria-atomic', 'false');
             document.body.appendChild(this.container);
         }
     },
     show(message, type = 'info', duration = 3500) {
         this.init();
+        if (type === 'error') {
+            this.container.setAttribute('aria-live', 'assertive');
+        } else {
+            this.container.setAttribute('aria-live', 'polite');
+        }
         const icons = { success: 'bi-check-circle', error: 'bi-x-circle', info: 'bi-info-circle' };
         const t = document.createElement('div');
         t.className = `toast toast-${type}`;
-        t.innerHTML = `<i class="bi ${icons[type] || icons.info}"></i><span>${message}</span>`;
+        t.setAttribute('role', 'alert');
+        t.innerHTML = `<i class="bi ${icons[type] || icons.info}" aria-hidden="true"></i><span>${message}</span>`;
         this.container.appendChild(t);
         setTimeout(() => t.remove(), duration);
     },
@@ -100,8 +109,22 @@ const Toast = {
 
 // modal helper
 const Modal = {
-    open(id) { document.getElementById(id)?.classList.remove('hidden'); },
-    close(id) { document.getElementById(id)?.classList.add('hidden'); },
+    _trigger: null,
+    open(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        this._trigger = document.activeElement;
+        el.classList.remove('hidden');
+        const first = el.querySelector('button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        first?.focus();
+    },
+    close(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.add('hidden');
+        this._trigger?.focus();
+        this._trigger = null;
+    },
 };
 
 // dom helpers
@@ -204,6 +227,7 @@ function initNotifications() {
     btnNotif.addEventListener('click', async (e) => {
         e.stopPropagation();
         isOpen = !isOpen;
+        btnNotif.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         if (isOpen) {
             await loadNotifications();
             dropdown.classList.remove('hidden');
@@ -215,6 +239,7 @@ function initNotifications() {
     document.addEventListener('click', (e) => {
         if (isOpen && !dropdown.contains(e.target) && !btnNotif.contains(e.target)) {
             dropdown.classList.add('hidden');
+            btnNotif.setAttribute('aria-expanded', 'false');
             isOpen = false;
         }
     });

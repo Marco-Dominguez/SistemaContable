@@ -1,5 +1,5 @@
 <!-- lista de declaraciones -->
-<div id="tab-declaraciones">
+<div id="tab-declaraciones" role="tabpanel" aria-labelledby="tab-btn-declaraciones">
     <div class="flex items-center justify-between mb-4">
         <div>
             <h2 class="text-lg font-bold text-slate-800">Control de Declaraciones</h2>
@@ -54,8 +54,8 @@
             <button class="btn btn-primary" id="btn-filter-decl">
                 <i class="bi bi-funnel"></i> Filtrar
             </button>
-            <button class="btn btn-outline" id="btn-refresh-decl">
-                <i class="bi bi-arrow-clockwise"></i>
+            <button class="btn btn-outline" id="btn-refresh-decl" aria-label="Actualizar declaraciones">
+                <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
             </button>
         </div>
     </div>
@@ -97,12 +97,12 @@
 </div>
 
 <!-- modal detalle / editar declaracion -->
-<div id="modal-decl-detail" class="modal-backdrop hidden">
+<div id="modal-decl-detail" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-decl-title">
     <div class="modal-box" style="max-width:600px">
         <div class="modal-header">
             <h3 class="font-semibold text-slate-800" id="modal-decl-title">Detalle de Declaración</h3>
-            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-decl">
-                <i class="bi bi-x-lg"></i>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-decl" aria-label="Cerrar">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
             </button>
         </div>
         <div class="modal-body">
@@ -120,12 +120,12 @@
 </div>
 
 <!-- modal subir archivo -->
-<div id="modal-upload" class="modal-backdrop hidden">
+<div id="modal-upload" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="upload-title">
     <div class="modal-box" style="max-width:450px">
         <div class="modal-header">
             <h3 class="font-semibold text-slate-800" id="upload-title">Subir Archivo</h3>
-            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-upload">
-                <i class="bi bi-x-lg"></i>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-upload" aria-label="Cerrar">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
             </button>
         </div>
         <div class="modal-body">
@@ -148,10 +148,10 @@
 </div>
 
 <!-- confirmar eliminar declaracion -->
-<div id="modal-delete-decl" class="modal-backdrop hidden">
+<div id="modal-delete-decl" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-delete-decl-title">
     <div class="modal-box" style="max-width:400px">
         <div class="modal-header">
-            <h3 class="font-semibold text-slate-800">Confirmar eliminación</h3>
+            <h3 class="font-semibold text-slate-800" id="modal-delete-decl-title">Confirmar eliminación</h3>
         </div>
         <div class="modal-body">
             <p class="text-slate-600">¿Estás seguro de que deseas eliminar esta declaración?

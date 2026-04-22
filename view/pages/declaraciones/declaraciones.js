@@ -65,8 +65,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            });
             btn.classList.add('active');
+            btn.setAttribute('aria-selected', 'true');
             const target = btn.dataset.tab;
             TABS.forEach(t => document.getElementById(t)?.classList.add('hidden'));
             document.getElementById(target)?.classList.remove('hidden');
@@ -193,20 +197,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </td>
                 <td>
                     <div class="flex gap-1 flex-wrap">
-                        <button class="btn btn-outline btn-icon btn-sm btn-view-decl" data-id="${d.id}" title="Ver / Editar">
-                            <i class="bi bi-eye"></i>
+                        <button class="btn btn-outline btn-icon btn-sm btn-view-decl" data-id="${d.id}"
+                                title="Ver / Editar" aria-label="Ver declaración #${d.id}">
+                            <i class="bi bi-eye" aria-hidden="true"></i>
                         </button>
-                        <button class="btn btn-outline btn-icon btn-sm btn-upload-acuse" data-id="${d.id}" title="Subir Acuse">
-                            <i class="bi bi-file-earmark-arrow-up"></i>
+                        <button class="btn btn-outline btn-icon btn-sm btn-upload-acuse" data-id="${d.id}"
+                                title="Subir Acuse" aria-label="Subir acuse para declaración #${d.id}">
+                            <i class="bi bi-file-earmark-arrow-up" aria-hidden="true"></i>
                         </button>
-                        <button class="btn btn-outline btn-icon btn-sm btn-upload-linea" data-id="${d.id}" title="Subir Línea de Captura">
-                            <i class="bi bi-credit-card"></i>
+                        <button class="btn btn-outline btn-icon btn-sm btn-upload-linea" data-id="${d.id}"
+                                title="Subir Línea de Captura" aria-label="Subir línea de captura para declaración #${d.id}">
+                            <i class="bi bi-credit-card" aria-hidden="true"></i>
                         </button>
-                        <button class="btn btn-outline btn-icon btn-sm btn-upload-comprobante" data-id="${d.id}" title="Subir Comprobante de Pago" style="color:#16a34a">
-                            <i class="bi bi-receipt"></i>
+                        <button class="btn btn-outline btn-icon btn-sm btn-upload-comprobante" data-id="${d.id}"
+                                title="Subir Comprobante de Pago" aria-label="Subir comprobante de pago para declaración #${d.id}"
+                                style="color:#16a34a">
+                            <i class="bi bi-receipt" aria-hidden="true"></i>
                         </button>
-                        <button class="btn btn-danger btn-icon btn-sm btn-delete-decl" data-id="${d.id}" title="Eliminar">
-                            <i class="bi bi-trash"></i>
+                        <button class="btn btn-danger btn-icon btn-sm btn-delete-decl" data-id="${d.id}"
+                                title="Eliminar" aria-label="Eliminar declaración #${d.id}">
+                            <i class="bi bi-trash" aria-hidden="true"></i>
                         </button>
                     </div>
                 </td>
@@ -239,7 +249,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const res = await Api.get(`declaraciones?id=${id}`);
         if (!res?.success) { Toast.error('No se pudo cargar.'); return; }
         const d = res.data.declaracion;
-        const st = STATUS_BADGES[d.estatus] || STATUS_BADGES['Pendiente'];
 
         document.getElementById('modal-decl-title').textContent = `Declaración #${d.id}`;
         document.getElementById('decl-detail-content').innerHTML = `
