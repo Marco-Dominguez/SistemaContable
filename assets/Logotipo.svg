@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 311.84 68.02">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        fill: #2563eb;
+      }
+
+      .cls-4 {
+        letter-spacing: .14em;
+      }
+
+      .cls-5 {
+        letter-spacing: .15em;
+      }
+
+      .cls-6 {
+        letter-spacing: .16em;
+      }
+
+      .cls-7 {
+        letter-spacing: .1em;
+      }
+
+      .cls-8 {
+        fill: #94a3b8;
+        font-family: Roboto-Black, Roboto;
+        font-size: 20.74px;
+        font-weight: 800;
+      }
+
+      .cls-2, .cls-9 {
+        font-family: Roboto-Bold, Roboto;
+        font-size: 42.67px;
+        font-weight: 700;
+        letter-spacing: .12em;
+      }
+
+      .cls-10 {
+        fill: #22d3ee;
+      }
+
+      .cls-11 {
+        fill: url(#Degradado_sin_nombre_8);
+      }
+
+      .cls-9 {
+        fill: #3b82f6;
+      }
+    </style>
+    <linearGradient id="Degradado_sin_nombre_8" data-name="Degradado sin nombre 8" x1="215.71" y1="34.83" x2="215.71" y2="5.76" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset=".56" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <g id="C1">
+    <rect class="cls-1" y="46.03" width="15.85" height="15.85"/>
+  </g>
+  <g id="C2">
+    <rect class="cls-10" x="20.21" y="46.03" width="15.85" height="15.85"/>
+  </g>
+  <g id="C3">
+    <rect class="cls-3" x="39.95" y="24.75" width="15.85" height="37.13"/>
+  </g>
+  <g id="Capa_5" data-name="Capa 5">
+    <rect class="cls-1" y="24.75" width="15.85" height="15.85"/>
+  </g>
+  <g id="Capa_6" data-name="Capa 6">
+    <rect class="cls-1" x="20.21" y="24.75" width="15.85" height="15.85"/>
+  </g>
+  <g id="Capa_7" data-name="Capa 7">
+    <rect class="cls-1" y="3.47" width="15.85" height="15.85"/>
+  </g>
+  <g id="Capa_8" data-name="Capa 8">
+    <rect class="cls-1" x="20.21" y="3.47" width="15.85" height="15.85"/>
+  </g>
+  <g id="Capa_9" data-name="Capa 9">
+    <rect class="cls-1" x="39.95" y="3.47" width="15.85" height="15.85"/>
+  </g>
+  <g id="Texto">
+    <g>
+      <text class="cls-9" transform="translate(233.69 36.94)"><tspan x="0" y="0">inK</tspan></text>
+      <g>
+        <text class="cls-8" transform="translate(63.62 62.4)"><tspan class="cls-5" x="0" y="0">SISTE</tspan><tspan class="cls-6" x="71.06" y="0">M</tspan><tspan class="cls-5" x="92.47" y="0">A CO</tspan><tspan class="cls-4" x="151.14" y="0">N</tspan><tspan class="cls-7" x="168.66" y="0">T</tspan><tspan class="cls-5" x="182.38" y="0">ABLE</tspan></text>
+        <text class="cls-2" transform="translate(65.91 36.5)"><tspan x="0" y="0">Conta</tspan></text>
+        <polygon class="cls-11" points="225.54 6.17 225.54 36.5 205.87 36.5 205.87 31.64 219.46 31.64 219.46 6.17 225.54 6.17"/>
+      </g>
+    </g>
+  </g>
+</svg>
