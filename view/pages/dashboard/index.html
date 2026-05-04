@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Sora:wght@600;700&display=swap"
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/view/assets/css/app.css">
+    <link rel="stylesheet" href="/view/assets/css/app.css?v=2">
     <!-- google tag -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H55HB0QW2W"></script>
     <script>
@@ -115,7 +115,7 @@
                         </nav>
                     </div>
 
-                    <div class="card p-5">
+                    <div class="card p-5" style="overflow-x:clip;overflow-y:visible;">
                         <div class="card-header-row flex items-center justify-between mb-4">
                             <h3>Declaraciones recientes</h3>
                             <a href="/view/pages/declaraciones/index.html"
@@ -123,11 +123,21 @@
                                 Ver todas <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
-                        <div id="recents-container">
-                            <div class="flex items-center gap-2 py-6 text-slate-400 justify-center">
-                                <div class="spinner"></div>
-                                <span class="text-sm">Cargando...</span>
+                        <div class="carousel-wrapper">
+                            <button class="carousel-btn prev" id="carousel-prev" aria-label="Anterior" disabled>
+                                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                            </button>
+                            <div class="carousel-track-outer">
+                                <div class="carousel-track" id="carousel-track">
+                                    <div class="flex items-center gap-2 py-6 text-slate-400 w-full justify-center">
+                                        <div class="spinner"></div>
+                                        <span class="text-sm">Cargando...</span>
+                                    </div>
+                                </div>
                             </div>
+                            <button class="carousel-btn next" id="carousel-next" aria-label="Siguiente" disabled>
+                                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -153,8 +163,8 @@
         </div>
     </div>
 
-    <script src="/view/assets/js/app.js"></script>
-    <script src="/view/pages/dashboard/dashboard.js"></script>
+    <script src="/view/assets/js/app.js?v=2"></script>
+    <script src="/view/pages/dashboard/dashboard.js?v=3"></script>
 </body>
 
 </html>
