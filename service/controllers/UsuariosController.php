@@ -125,8 +125,10 @@ function updateUser(array $user, int $id): void {
 function deleteUser(array $user, int $id): void {
     requirePermission($user['usuario_id'], 'usuarios', 'eliminar');
     if ($id === $user['usuario_id']) jsonResponse(false, 'No puedes eliminar tu propia cuenta.', [], 403);
-    $db = Database::getInstance();
-    $db->prepare('SELECT id FROM usuarios WHERE id = :id')->execute([':id' => $id]);
+    $db    = Database::getInstance();
+    $check = $db->prepare('SELECT id FROM usuarios WHERE id = :id');
+    $check->execute([':id' => $id]);
+    if (!$check->fetch()) jsonResponse(false, 'Usuario no encontrado.', [], 404);
     $db->prepare('DELETE FROM usuarios WHERE id = :id')->execute([':id' => $id]);
     jsonResponse(true, 'Usuario eliminado correctamente.');
 }

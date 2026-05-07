@@ -9,9 +9,11 @@ $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
 
 match (true) {
-    $method === 'POST' && $action === 'login'   => login(),
-    $method === 'POST' && $action === 'logout'  => logout(),
-    $method === 'GET'  && $action === 'me'      => me(),
+    $method === 'POST' && $action === 'login'           => login(),
+    $method === 'POST' && $action === 'logout'          => logout(),
+    $method === 'GET'  && $action === 'me'              => me(),
+    $method === 'PUT'  && $action === 'update-profile'  => updateProfile(),
+    $method === 'PUT'  && $action === 'change-password' => changePassword(),
     default => jsonResponse(false, 'Ruta no encontrada.', [], 404),
 };
 
@@ -99,6 +101,66 @@ function logout(): void {
             ->execute([':t' => trim($m[1])]);
     }
     jsonResponse(true, 'Sesión cerrada correctamente.');
+}
+
+// actualiza nombre, apellidos y email del usuario autenticado
+function updateProfile(): void {
+    $user      = requireAuth();
+    $body      = getJsonBody();
+    $nombre    = trim($body['nombre']    ?? '');
+    $apellidos = trim($body['apellidos'] ?? '');
+    $email     = trim($body['email']     ?? '');
+
+    $errors = [];
+    if (!$nombre)    $errors[] = 'El nombre es requerido.';
+    if (!$apellidos) $errors[] = 'Los apellidos son requeridos.';
+    if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'El correo no es válido.';
+    if ($errors) jsonResponse(false, implode(' ', $errors), [], 422);
+
+    $db     = Database::getInstance();
+    $sets   = ['nombre = :n', 'apellidos = :a'];
+    $params = [':id' => $user['usuario_id'], ':n' => $nombre, ':a' => $apellidos];
+    if ($email) { $sets[] = 'email = :e'; $params[':e'] = $email; }
+
+    try {
+        $db->prepare('UPDATE usuarios SET ' . implode(', ', $sets) . ' WHERE id = :id')->execute($params);
+        jsonResponse(true, 'Perfil actualizado correctamente.', [
+            'nombre'    => $nombre,
+            'apellidos' => $apellidos,
+            'email'     => $email ?: $user['email'],
+        ]);
+    } catch (PDOException $e) {
+        if ($e->errorInfo[1] === 1062) jsonResponse(false, 'Ese correo ya está en uso.', [], 409);
+        throw $e;
+    }
+}
+
+// cambia la contraseña verificando la contraseña actual
+function changePassword(): void {
+    $user        = requireAuth();
+    $body        = getJsonBody();
+    $currentPass = trim($body['current_password'] ?? '');
+    $newPass     = trim($body['new_password']     ?? '');
+
+    if (!$currentPass) jsonResponse(false, 'La contraseña actual es requerida.', [], 422);
+    if (strlen($newPass) < 8) jsonResponse(false, 'La nueva contraseña debe tener al menos 8 caracteres.', [], 422);
+
+    $db   = Database::getInstance();
+    $stmt = $db->prepare('SELECT password_hash FROM usuarios WHERE id = :id');
+    $stmt->execute([':id' => $user['usuario_id']]);
+    $row  = $stmt->fetch();
+
+    if (!$row || !password_verify($currentPass, $row['password_hash'])) {
+        jsonResponse(false, 'La contraseña actual es incorrecta.', [], 401);
+    }
+
+    $db->prepare('UPDATE usuarios SET password_hash = :h WHERE id = :id')
+       ->execute([
+           ':h'  => password_hash($newPass, PASSWORD_BCRYPT, ['cost' => 12]),
+           ':id' => $user['usuario_id'],
+       ]);
+
+    jsonResponse(true, 'Contraseña actualizada correctamente.');
 }
 
 // devuelve los datos del usuario autenticado, roles y permisos

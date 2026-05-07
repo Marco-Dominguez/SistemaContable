@@ -149,6 +149,34 @@ function formatDate(str) {
     return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
+// ocultar ítems de navegación según permisos del usuario
+function applyNavPermissions() {
+    const NAV_MAP = {
+        '/view/pages/dashboard/index.html':          'dashboard',
+        '/view/pages/security/usuarios/index.html':  'usuarios',
+        '/view/pages/security/roles/index.html':     'roles',
+        '/view/pages/clientes/index.html':           'clientes',
+        '/view/pages/declaraciones/index.html':      'declaraciones',
+        '/view/pages/analiticas/index.html':         'analiticas',
+        '/view/pages/auth/profile.html':             'perfil',
+    };
+
+    $$('.nav-item').forEach(el => {
+        const href = el.getAttribute('href');
+        if (!href || href === '#') return;
+        const slug = NAV_MAP[href];
+        if (slug && !Auth.can(slug, 'ver')) el.style.display = 'none';
+    });
+
+    // ocultar etiqueta del grupo si todos sus nav-items están ocultos
+    $$('.nav-group').forEach(g => {
+        const items = $$('.nav-item', g);
+        if (items.length && items.every(el => el.style.display === 'none')) {
+            g.style.display = 'none';
+        }
+    });
+}
+
 // sidebar active link highlight
 function initSidebarActive() {
     const path = window.location.pathname;
@@ -176,6 +204,7 @@ async function loadSidebar() {
     if (sidebar.children.length > 0) {
         initSidebarActive();
         initSidebarToggle();
+        applyNavPermissions();
         return;
     }
     try {
@@ -184,6 +213,7 @@ async function loadSidebar() {
         sidebar.innerHTML = await res.text();
         initSidebarActive();
         initSidebarToggle();
+        applyNavPermissions();
     } catch (e) {
         console.error('Error cargando sidebar:', e);
     }

@@ -519,6 +519,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         finally { setLoading(btn, false); }
     });
 
+    // exportar CSV
+    function exportToCSV() {
+        if (!allDecl.length) { Toast.info('No hay declaraciones para exportar.'); return; }
+
+        const headers = ['ID', 'RFC', 'Cliente', 'Obligacion', 'Clave',
+                         'Periodo Mes', 'Periodo Año', 'Estatus',
+                         'Importe a Pagar', 'Saldo a Favor',
+                         'Fecha Limite', 'Fecha Pago', 'Observaciones', 'Creada'];
+
+        const rows = allDecl.map(d => [
+            d.id, d.rfc, d.razon_social, d.obligacion_nombre, d.obligacion_clave,
+            MESES[d.periodo_mes] || d.periodo_mes, d.periodo_anio,
+            d.estatus === 'Presentada_Cero' ? 'Presentada en Cero' : d.estatus,
+            parseFloat(d.importe_a_pagar || 0).toFixed(2),
+            parseFloat(d.saldo_a_favor   || 0).toFixed(2),
+            d.fecha_limite || '', d.fecha_pago || '',
+            d.observaciones || '', d.created_at || '',
+        ]);
+
+        const csv = [headers, ...rows]
+            .map(r => r.map(c => { const s = String(c).replace(/"/g, '""'); return /[,"\n\r]/.test(s) ? `"${s}"` : s; }).join(','))
+            .join('\r\n');
+
+        const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+        const a    = Object.assign(document.createElement('a'), {
+            href:     URL.createObjectURL(blob),
+            download: `declaraciones_${new Date().toISOString().slice(0, 10)}.csv`,
+        });
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+        Toast.success(`${allDecl.length} declaraciones exportadas.`);
+    }
+
+    if (Auth.can('declaraciones', 'exportar')) {
+        document.getElementById('btn-export-decl')?.classList.remove('hidden');
+    }
+    document.getElementById('btn-export-decl')?.addEventListener('click', exportToCSV);
+
     // init
     await loadClientsForSelectors();
     loadDeclaraciones();
