@@ -132,7 +132,27 @@ h4 {
     left: 0;
     bottom: 0;
     z-index: var(--z-sidebar);
-    transition: transform .25s ease;
+    transition: transform .25s ease, width .25s ease;
+}
+
+#sidebar.collapsed {
+    width: 80px;
+}
+
+#sidebar.collapsed .nav-group-label {
+    display: none;
+}
+
+#sidebar.collapsed .nav-item {
+    font-size: 0;
+    justify-content: center;
+    padding: .55rem 0;
+    gap: 0;
+}
+
+#sidebar.collapsed .nav-item i {
+    font-size: 1.25rem;
+    margin: 0;
 }
 
 #sidebar.hidden-mobile {
@@ -224,6 +244,11 @@ h4 {
     min-width: 0;
     display: flex;
     flex-direction: column;
+    transition: margin-left .25s ease;
+}
+
+#main.collapsed {
+    margin-left: 80px;
 }
 
 /* Topbar */

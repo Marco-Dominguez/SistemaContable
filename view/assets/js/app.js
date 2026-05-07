@@ -208,7 +208,15 @@ function initSidebarActive() {
 function initSidebarToggle() {
     const toggle = $('#sidebar-toggle');
     const sidebar = $('#sidebar');
-    toggle?.addEventListener('click', () => sidebar?.classList.toggle('open'));
+    const main = $('#main');
+    toggle?.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            sidebar?.classList.toggle('open');
+        } else {
+            sidebar?.classList.toggle('collapsed');
+            main?.classList.toggle('collapsed');
+        }
+    });
 }
 
 // load sidebar component from partial HTML
