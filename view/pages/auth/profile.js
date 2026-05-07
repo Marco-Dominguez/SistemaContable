@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 current.apellidos = res.data.apellidos || apellidos;
                 if (email) current.email = res.data.email || email;
                 localStorage.setItem('sc_user', JSON.stringify(current));
-                initTopbarUser();
+                initSidebarUser();
             }
 
             Toast.success('Perfil actualizado correctamente.');

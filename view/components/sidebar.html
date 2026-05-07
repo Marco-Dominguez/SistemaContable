@@ -37,6 +37,15 @@
         </a>
     </div>
 </nav>
-<div class="p-3 border-t border-slate-800">
-    <a href="/view/pages/auth/profile.html" class="nav-item"><i class="bi bi-person-circle"></i> Perfil</a>
+<div class="sidebar-user">
+    <a href="/view/pages/auth/profile.html" class="sidebar-user-profile" aria-label="Ver perfil">
+        <div class="sidebar-user-avatar" id="sidebar-user-avatar">?</div>
+        <div class="sidebar-user-info">
+            <p class="sidebar-user-name" id="sidebar-user-name">—</p>
+            <p class="sidebar-user-role" id="sidebar-user-role">—</p>
+        </div>
+    </a>
+    <button id="sidebar-btn-logout" class="sidebar-logout-btn" title="Cerrar sesión" aria-label="Cerrar sesión">
+        <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+    </button>
 </div>

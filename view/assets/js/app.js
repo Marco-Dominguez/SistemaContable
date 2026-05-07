@@ -153,6 +153,13 @@ function escHtml(str) {
     return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+function getUserInitials(nombre, apellidos) {
+    const first = (nombre ?? '').trim();
+    const last = (apellidos ?? '').trim();
+    if (first && last) return (first[0] + last[0]).toUpperCase();
+    return (first[0] ?? '?').toUpperCase();
+}
+
 function sanitizeUrl(url) {
     if (!url) return '';
     try {
@@ -192,7 +199,7 @@ function applyNavPermissions() {
     });
 }
 
-// sidebar active link highlight
+// resaltar la opcion seleccionada
 function initSidebarActive() {
     const path = window.location.pathname;
     $$('.nav-item').forEach(el => el.classList.remove('active'));
@@ -204,7 +211,7 @@ function initSidebarActive() {
     });
 }
 
-// sidebar toggle mobile
+// toggle del sidebar en moviles
 function initSidebarToggle() {
     const toggle = $('#sidebar-toggle');
     const sidebar = $('#sidebar');
@@ -242,22 +249,24 @@ async function loadSidebar() {
     }
 }
 
-// init topbar user info
-function initTopbarUser() {
+// cargar usuario en sidebar
+function initSidebarUser() {
     const u = Auth.getUser();
     if (!u) return;
-    const el = $('#topbar-user-name');
-    if (el) el.textContent = `${u.nombre} ${u.apellidos}`;
-    const roleEl = $('#topbar-user-role');
+    const avatarEl = $('#sidebar-user-avatar');
+    if (avatarEl) avatarEl.textContent = getUserInitials(u.nombre, u.apellidos);
+    const nameEl = $('#sidebar-user-name');
+    if (nameEl) nameEl.textContent = `${u.nombre ?? ''} ${u.apellidos ?? ''}`.trim();
+    const roleEl = $('#sidebar-user-role');
     if (roleEl) roleEl.textContent = u.roles?.join(', ') ?? '';
 }
 
-// init general
+// inicializar general
 document.addEventListener('DOMContentLoaded', async () => {
     await loadSidebar();
-    initTopbarUser();
+    initSidebarUser();
 
-    $('#btn-logout')?.addEventListener('click', async () => {
+    $('#sidebar-btn-logout')?.addEventListener('click', async () => {
         await Api.post('auth?action=logout');
         Auth.clear();
         window.location.href = '/view/pages/auth/login.html';

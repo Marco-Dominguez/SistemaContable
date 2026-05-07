@@ -74,10 +74,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td>
                     <div class="flex items-center gap-2">
                         <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-xs">
-                            ${(u.nombre[0] + u.apellidos[0]).toUpperCase()}
+                            ${getUserInitials(u.nombre, u.apellidos)}
                         </div>
                         <div>
-                            <p class="font-medium text-slate-800">${escHtml(u.nombre)} ${escHtml(u.apellidos)}</p>
+                            <p class="font-medium text-slate-800">${escHtml(u.nombre)} ${escHtml(u.apellidos ?? '')}</p>
                         </div>
                     </div>
                 </td>

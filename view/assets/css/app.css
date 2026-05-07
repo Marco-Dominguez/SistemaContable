@@ -237,6 +237,110 @@ h4 {
     text-align: center;
 }
 
+/* Sidebar user footer */
+.sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.625rem 0.75rem;
+    border-top: 1px solid #1e293b;
+    flex-shrink: 0;
+}
+
+.sidebar-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex: 1;
+    min-width: 0;
+    text-decoration: none;
+    border-radius: 8px;
+    padding: 0.375rem 0.5rem;
+    transition: background .15s;
+}
+
+.sidebar-user-profile:hover {
+    background: var(--color-sidebar-act);
+}
+
+.sidebar-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #1d4ed8;
+    color: #bfdbfe;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+    font-family: var(--font-body);
+}
+
+.sidebar-user-info {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+}
+
+.sidebar-user-name {
+    color: #e2e8f0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.25;
+}
+
+.sidebar-user-role {
+    color: #64748b;
+    font-size: 0.6875rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+}
+
+.sidebar-logout-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .15s, color .15s;
+    font-size: 1rem;
+    padding: 0;
+}
+
+.sidebar-logout-btn:hover {
+    background: rgba(239,68,68,.15);
+    color: #f87171;
+}
+
+#sidebar.collapsed .sidebar-user-info,
+#sidebar.collapsed .sidebar-logout-btn {
+    display: none;
+}
+
+#sidebar.collapsed .sidebar-user {
+    justify-content: center;
+    padding: 0.625rem 0;
+}
+
+#sidebar.collapsed .sidebar-user-profile {
+    flex: none;
+    padding: 0.375rem;
+}
+
 /* Main */
 #main {
     margin-left: var(--sidebar-width);
