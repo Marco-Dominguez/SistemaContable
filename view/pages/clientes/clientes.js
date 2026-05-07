@@ -23,6 +23,59 @@ document.addEventListener('DOMContentLoaded', async () => {
     let editingId = null;
     let deleteId = null;
 
+    // tooltip de regímenes
+    const tooltipEl = document.createElement('div');
+    tooltipEl.className = 'hidden fixed bg-white border border-slate-200 rounded-lg shadow-xl p-3 font-normal text-left';
+    tooltipEl.style.cssText = 'min-width:340px; z-index:9999; max-height:360px';
+    tooltipEl.innerHTML = `
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Catálogo de Regímenes SAT</p>
+        <div id="regimenes-tooltip-list" class="flex flex-col gap-0.5 text-xs text-slate-600 overflow-y-auto" style="max-height:300px"></div>
+    `;
+    document.body.appendChild(tooltipEl);
+
+    async function initRegimenesInfo() {
+        try {
+            const res = await Api.get('catalogos?action=regimenes');
+            const list = res?.data?.regimenes ?? [];
+            const container = tooltipEl.querySelector('#regimenes-tooltip-list');
+            if (!container) return;
+            container.innerHTML = list.map(r => `
+                <div class="flex items-baseline gap-2 py-1 border-b border-slate-50 last:border-0">
+                    <span class="font-mono font-semibold text-blue-600 shrink-0" style="min-width:2.8rem">${escHtml(r.clave)}</span>
+                    <span class="text-slate-500 leading-snug">${escHtml(r.nombre)}</span>
+                </div>
+            `).join('');
+        } catch { /* silent */ }
+    }
+
+    const infoBtn = document.getElementById('btn-regimenes-info');
+    if (infoBtn) {
+        let hideTimer;
+        const showTooltip = () => {
+            clearTimeout(hideTimer);
+            const rect = infoBtn.getBoundingClientRect();
+            tooltipEl.style.left = Math.min(rect.left, window.innerWidth - 356) + 'px';
+            tooltipEl.style.top = (rect.bottom + 6) + 'px';
+            tooltipEl.classList.remove('hidden');
+        };
+        const hideTooltip = () => { hideTimer = setTimeout(() => tooltipEl.classList.add('hidden'), 150); };
+
+        infoBtn.addEventListener('mouseenter', showTooltip);
+        infoBtn.addEventListener('mouseleave', hideTooltip);
+        infoBtn.addEventListener('click', () =>
+            tooltipEl.classList.contains('hidden') ? showTooltip() : tooltipEl.classList.add('hidden')
+        );
+        tooltipEl.addEventListener('mouseenter', () => clearTimeout(hideTimer));
+        tooltipEl.addEventListener('mouseleave', hideTooltip);
+
+        document.addEventListener('click', (e) => {
+            if (!infoBtn.contains(e.target) && !tooltipEl.contains(e.target))
+                tooltipEl.classList.add('hidden');
+        });
+    }
+
+    initRegimenesInfo();
+
     // empty state
     document.getElementById('btn-empty-new-client')?.addEventListener('click', () => {
         document.getElementById('btn-new-client')?.click();
@@ -104,7 +157,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </td>
                 <td class="text-slate-500">${escHtml(c.email || '—')}</td>
                 <td>${c.regimenes ? c.regimenes.split(', ').map(r =>
-            `<span class="badge badge-blue mr-1 mb-1" style="font-size:.65rem">${escHtml(r)}</span>`).join('') : '<span class="text-slate-300">—</span>'}</td>
+            `<span class="badge badge-blue mr-1 mb-1 font-mono" style="font-size:.65rem">${escHtml(r)}</span>`).join('') : '<span class="text-slate-300">—</span>'}</td>
                 <td>
                     <span class="badge ${c.activo ? 'badge-green' : 'badge-red'}">
                         <i class="bi ${c.activo ? 'bi-check-circle' : 'bi-x-circle'} mr-1" aria-hidden="true"></i>

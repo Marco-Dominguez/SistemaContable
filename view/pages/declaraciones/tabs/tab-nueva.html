@@ -51,14 +51,29 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="form-group">
-                    <label class="form-label" for="new-decl-fecha-limite">Fecha Límite</label>
-                    <input class="form-input" type="date" id="new-decl-fecha-limite">
+            <div class="form-group">
+                <label class="form-label" for="new-decl-fecha-limite">Fecha Límite</label>
+                <input class="form-input" type="date" id="new-decl-fecha-limite">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Resultado fiscal</label>
+                <div class="flex rounded-lg border border-slate-200 overflow-hidden mb-2" id="decl-tipo-toggle" role="group" aria-label="Tipo de resultado fiscal">
+                    <button type="button" id="btn-tipo-pagar"
+                            class="flex-1 py-2 px-3 text-sm font-medium transition-colors bg-blue-600 text-white"
+                            aria-pressed="true">
+                        <i class="bi bi-arrow-up-right-circle mr-1" aria-hidden="true"></i>A Pagar
+                    </button>
+                    <button type="button" id="btn-tipo-favor"
+                            class="flex-1 py-2 px-3 text-sm font-medium transition-colors bg-white text-slate-500 hover:bg-slate-50"
+                            aria-pressed="false">
+                        <i class="bi bi-arrow-down-left-circle mr-1" aria-hidden="true"></i>Saldo a Favor
+                    </button>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="new-decl-importe">Importe a Pagar</label>
-                    <input class="form-input" type="number" step="0.01" id="new-decl-importe" placeholder="0.00">
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm select-none">$</span>
+                    <input class="form-input pl-7" type="number" step="0.01" min="0" id="new-decl-importe"
+                           placeholder="0.00" aria-label="Monto">
                 </div>
             </div>
 

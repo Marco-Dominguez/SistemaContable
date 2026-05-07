@@ -29,7 +29,7 @@ function getClientes(array $user): void {
     $stmt = $db->query('
         SELECT c.id, c.rfc, c.razon_social, c.email, c.telefono, c.activo, c.created_at,
                c.usuario_id,
-               GROUP_CONCAT(rf.nombre ORDER BY rf.clave SEPARATOR ", ") AS regimenes
+               GROUP_CONCAT(rf.clave ORDER BY rf.clave SEPARATOR ", ") AS regimenes
         FROM clientes c
         LEFT JOIN cliente_regimenes cr ON cr.cliente_id = c.id
         LEFT JOIN regimenes_fiscales rf ON rf.id = cr.regimen_id

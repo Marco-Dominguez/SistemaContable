@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     Auth.redirectIfNotLogged();
     await loadTabs();
 
-    const canCrear   = Auth.can('declaraciones', 'crear');
-    const canEditar  = Auth.can('declaraciones', 'editar');
+    const canCrear = Auth.can('declaraciones', 'crear');
+    const canEditar = Auth.can('declaraciones', 'editar');
     const canEliminar = Auth.can('declaraciones', 'eliminar');
 
     // ocultar tabs sin permiso
@@ -305,22 +305,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div>
                 <label class="form-label text-xs">Estatus</label>
                 ${canEditar
-                    ? `<select class="form-input" id="detail-estatus">
+                ? `<select class="form-input" id="detail-estatus">
                         <option value="Pendiente"       ${d.estatus === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
                         <option value="En Proceso"      ${d.estatus === 'En Proceso' ? 'selected' : ''}>En Proceso</option>
                         <option value="Para Pago"       ${d.estatus === 'Para Pago' ? 'selected' : ''}>Para Pago</option>
                         <option value="Pagada"          ${d.estatus === 'Pagada' ? 'selected' : ''}>Pagada</option>
                         <option value="Presentada_Cero" ${d.estatus === 'Presentada_Cero' ? 'selected' : ''}>Presentada en Cero</option>
                        </select>`
-                    : `<p class="form-input bg-slate-50 text-slate-600" id="detail-estatus" data-value="${escHtml(d.estatus)}">${d.estatus === 'Presentada_Cero' ? 'Presentada en Cero' : escHtml(d.estatus)}</p>`
-                }
+                : `<p class="form-input bg-slate-50 text-slate-600" id="detail-estatus" data-value="${escHtml(d.estatus)}">${d.estatus === 'Presentada_Cero' ? 'Presentada en Cero' : escHtml(d.estatus)}</p>`
+            }
             </div>
             <div>
                 <label class="form-label text-xs">Observaciones</label>
                 ${canEditar
-                    ? `<textarea class="form-input" id="detail-obs" rows="2">${escHtml(d.observaciones || '')}</textarea>`
-                    : `<p class="form-input bg-slate-50 text-slate-600 min-h-[3rem]">${escHtml(d.observaciones || '—')}</p>`
-                }
+                ? `<textarea class="form-input" id="detail-obs" rows="2">${escHtml(d.observaciones || '')}</textarea>`
+                : `<p class="form-input bg-slate-50 text-slate-600 min-h-[3rem]">${escHtml(d.observaciones || '—')}</p>`
+            }
             </div>
             <div class="flex gap-3 flex-wrap">
                 ${d.acuse_url ? `<a href="${sanitizeUrl(d.acuse_url)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm"><i class="bi bi-file-pdf text-red-500"></i> Ver Acuse</a>` : ''}
@@ -433,8 +433,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // nueva declaración
+    let declTipo = 'pagar';
+
+    function setDeclTipo(tipo) {
+        declTipo = tipo;
+        const btnPagar = document.getElementById('btn-tipo-pagar');
+        const btnFavor = document.getElementById('btn-tipo-favor');
+        if (!btnPagar || !btnFavor) return;
+        if (tipo === 'pagar') {
+            btnPagar.className = 'flex-1 py-2 px-3 text-sm font-medium transition-colors bg-blue-600 text-white';
+            btnFavor.className = 'flex-1 py-2 px-3 text-sm font-medium transition-colors bg-white text-slate-500 hover:bg-slate-50';
+            btnPagar.setAttribute('aria-pressed', 'true');
+            btnFavor.setAttribute('aria-pressed', 'false');
+        } else {
+            btnFavor.className = 'flex-1 py-2 px-3 text-sm font-medium transition-colors bg-green-600 text-white';
+            btnPagar.className = 'flex-1 py-2 px-3 text-sm font-medium transition-colors bg-white text-slate-500 hover:bg-slate-50';
+            btnFavor.setAttribute('aria-pressed', 'true');
+            btnPagar.setAttribute('aria-pressed', 'false');
+        }
+    }
+
+    document.getElementById('btn-tipo-pagar')?.addEventListener('click', () => setDeclTipo('pagar'));
+    document.getElementById('btn-tipo-favor')?.addEventListener('click', () => setDeclTipo('favor'));
+
     async function loadNewDeclForm() {
         if (!allClients.length) await loadClientsForSelectors();
+        setDeclTipo('pagar');
+        document.getElementById('new-decl-importe').value = '';
     }
 
     // cuando cambia el cliente, cargar sus obligaciones
@@ -485,11 +510,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         const periodo_mes = document.getElementById('new-decl-mes').value;
         const periodo_anio = document.getElementById('new-decl-anio').value;
         const fecha_limite = document.getElementById('new-decl-fecha-limite').value;
-        const importe = document.getElementById('new-decl-importe').value;
+        const montoRaw = parseFloat(document.getElementById('new-decl-importe').value) || 0;
         const observaciones = document.getElementById('new-decl-obs').value;
 
         if (!cliente_id || !obligacion_id || !periodo_mes || !periodo_anio) {
             document.getElementById('form-new-decl-error-msg').textContent = 'Completa todos los campos requeridos.';
+            errorEl.classList.remove('hidden');
+            return;
+        }
+        if (montoRaw < 0) {
+            document.getElementById('form-new-decl-error-msg').textContent = 'El monto no puede ser negativo.';
             errorEl.classList.remove('hidden');
             return;
         }
@@ -504,7 +534,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 periodo_mes: parseInt(periodo_mes),
                 periodo_anio: parseInt(periodo_anio),
                 fecha_limite,
-                importe_a_pagar: parseFloat(importe) || 0,
+                importe_a_pagar: declTipo === 'pagar' ? montoRaw : 0,
+                saldo_a_favor: declTipo === 'favor' ? montoRaw : 0,
                 observaciones,
             });
             if (res?.success) {

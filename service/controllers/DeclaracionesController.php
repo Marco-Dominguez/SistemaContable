@@ -116,6 +116,8 @@ function createDeclaracion(array $user): void {
     if (!$obligacion_id) jsonResponse(false, 'La obligación es requerida.', [], 422);
     if ($periodo_mes < 1 || $periodo_mes > 12) jsonResponse(false, 'El mes debe estar entre 1 y 12.', [], 422);
     if ($periodo_anio < 2020)                  jsonResponse(false, 'El año no es válido.', [], 422);
+    if ($importe < 0)   jsonResponse(false, 'El importe a pagar no puede ser negativo.', [], 422);
+    if ($saldo < 0)     jsonResponse(false, 'El saldo a favor no puede ser negativo.', [], 422);
 
     $db = Database::getInstance();
     try {
