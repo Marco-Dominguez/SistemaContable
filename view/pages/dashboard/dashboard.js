@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function renderCarousel(declaraciones) {
-        const track   = document.getElementById('carousel-track');
+        const track = document.getElementById('carousel-track');
         const btnPrev = document.getElementById('carousel-prev');
         const btnNext = document.getElementById('carousel-next');
         if (!track) return;
@@ -42,11 +42,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const MESES = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
         const STATUS_MAP = {
-            'Pendiente':       { badge: 'badge-yellow', bg: '#fefce8', icon: '#ca8a04' },
-            'En Proceso':      { badge: 'badge-blue',   bg: '#eff6ff', icon: '#2563eb' },
-            'Para Pago':       { badge: 'badge-red',    bg: '#fef2f2', icon: '#dc2626' },
-            'Pagada':          { badge: 'badge-green',  bg: '#f0fdf4', icon: '#16a34a' },
-            'Presentada_Cero': { badge: 'badge-gray',   bg: '#f8fafc', icon: '#64748b' },
+            'Pendiente': { badge: 'badge-yellow', bg: '#fefce8', icon: '#ca8a04' },
+            'En Proceso': { badge: 'badge-blue', bg: '#eff6ff', icon: '#2563eb' },
+            'Para Pago': { badge: 'badge-red', bg: '#fef2f2', icon: '#dc2626' },
+            'Pagada': { badge: 'badge-green', bg: '#f0fdf4', icon: '#16a34a' },
+            'Presentada_Cero': { badge: 'badge-gray', bg: '#f8fafc', icon: '#64748b' },
         };
 
         if (!declaraciones.length) {
@@ -57,11 +57,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         track.innerHTML = declaraciones.map(d => {
-            const st     = STATUS_MAP[d.estatus] || STATUS_MAP['Pendiente'];
-            const label  = d.estatus === 'Presentada_Cero' ? 'En Cero' : d.estatus;
+            const st = STATUS_MAP[d.estatus] || STATUS_MAP['Pendiente'];
+            const label = d.estatus === 'Presentada_Cero' ? 'En Cero' : d.estatus;
             const period = `${MESES[d.periodo_mes] ?? ''} ${d.periodo_anio ?? ''}`.trim();
             const client = d.razon_social ? d.razon_social.substring(0, 18) : '—';
-            const oblig  = d.obligacion_nombre || d.obligacion_clave || '—';
+            const oblig = d.obligacion_nombre || d.obligacion_clave || '—';
             return `
                 <div class="decl-card" role="button" tabindex="0"
                      aria-label="Declaración ${oblig} — ${period}"
@@ -87,9 +87,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }).join('');
 
         function update() {
-            const outerW  = track.parentElement.offsetWidth;
+            const outerW = track.parentElement.offsetWidth;
             const visible = Math.max(1, Math.floor(outerW / CARD_W));
-            const maxOff  = Math.max(0, declaraciones.length - visible);
+            const maxOff = Math.max(0, declaraciones.length - visible);
             offset = Math.min(offset, maxOff);
             btnPrev.disabled = offset === 0;
             btnNext.disabled = offset >= maxOff;
@@ -102,9 +102,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         update();
     }
 
-    document.getElementById('modal-decl-close')?.addEventListener('click', () => Modal.close('modal-decl'));
-    document.getElementById('modal-decl-close2')?.addEventListener('click', () => Modal.close('modal-decl'));
-    document.getElementById('modal-decl')?.addEventListener('click', e => {
-        if (e.target.id === 'modal-decl') Modal.close('modal-decl');
-    });
 });

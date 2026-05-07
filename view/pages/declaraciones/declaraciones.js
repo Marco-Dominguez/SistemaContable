@@ -167,9 +167,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ? `$${parseFloat(d.importe_a_pagar).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`
                 : (parseFloat(d.saldo_a_favor) > 0 ? `<span class="text-green-600">+$${parseFloat(d.saldo_a_favor).toLocaleString('es-MX', { minimumFractionDigits: 2 })}</span>` : '$0.00');
 
-            const hasAcuse = d.acuse_url ? `<a href="${d.acuse_url}" target="_blank" class="text-blue-600 text-xs hover:underline"><i class="bi bi-file-pdf"></i> Acuse</a>` : '';
-            const hasLinea = d.linea_captura_url ? `<a href="${d.linea_captura_url}" target="_blank" class="text-blue-600 text-xs hover:underline"><i class="bi bi-file-pdf"></i> Línea</a>` : '';
-            const hasComprob = d.comprobante_pago_url ? `<a href="${d.comprobante_pago_url}" target="_blank" class="text-green-600 text-xs hover:underline"><i class="bi bi-receipt"></i> Pago</a>` : '';
+            const hasAcuse = d.acuse_url ? `<a href="${sanitizeUrl(d.acuse_url)}" target="_blank" rel="noopener" class="text-blue-600 text-xs hover:underline"><i class="bi bi-file-pdf"></i> Acuse</a>` : '';
+            const hasLinea = d.linea_captura_url ? `<a href="${sanitizeUrl(d.linea_captura_url)}" target="_blank" rel="noopener" class="text-blue-600 text-xs hover:underline"><i class="bi bi-file-pdf"></i> Línea</a>` : '';
+            const hasComprob = d.comprobante_pago_url ? `<a href="${sanitizeUrl(d.comprobante_pago_url)}" target="_blank" rel="noopener" class="text-green-600 text-xs hover:underline"><i class="bi bi-receipt"></i> Pago</a>` : '';
 
             return `
             <tr data-id="${d.id}">
@@ -236,10 +236,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             btn.addEventListener('click', () => { deleteId = parseInt(btn.dataset.id); Modal.open('modal-delete-decl'); }));
     }
 
-    function escHtml(str) {
-        return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
     // filtros
     document.getElementById('btn-filter-decl')?.addEventListener('click', loadDeclaraciones);
     document.getElementById('btn-refresh-decl')?.addEventListener('click', loadDeclaraciones);
@@ -302,9 +298,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <textarea class="form-input" id="detail-obs" rows="2">${escHtml(d.observaciones || '')}</textarea>
             </div>
             <div class="flex gap-3 flex-wrap">
-                ${d.acuse_url ? `<a href="${d.acuse_url}" target="_blank" class="btn btn-outline btn-sm"><i class="bi bi-file-pdf text-red-500"></i> Ver Acuse</a>` : ''}
-                ${d.linea_captura_url ? `<a href="${d.linea_captura_url}" target="_blank" class="btn btn-outline btn-sm"><i class="bi bi-file-pdf text-blue-500"></i> Ver Línea de Captura</a>` : ''}
-                ${d.comprobante_pago_url ? `<a href="${d.comprobante_pago_url}" target="_blank" class="btn btn-outline btn-sm"><i class="bi bi-receipt text-green-500"></i> Ver Comprobante</a>` : ''}
+                ${d.acuse_url ? `<a href="${sanitizeUrl(d.acuse_url)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm"><i class="bi bi-file-pdf text-red-500"></i> Ver Acuse</a>` : ''}
+                ${d.linea_captura_url ? `<a href="${sanitizeUrl(d.linea_captura_url)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm"><i class="bi bi-file-pdf text-blue-500"></i> Ver Línea de Captura</a>` : ''}
+                ${d.comprobante_pago_url ? `<a href="${sanitizeUrl(d.comprobante_pago_url)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm"><i class="bi bi-receipt text-green-500"></i> Ver Comprobante</a>` : ''}
             </div>
         `;
 
@@ -524,16 +520,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!allDecl.length) { Toast.info('No hay declaraciones para exportar.'); return; }
 
         const headers = ['ID', 'RFC', 'Cliente', 'Obligacion', 'Clave',
-                         'Periodo Mes', 'Periodo Año', 'Estatus',
-                         'Importe a Pagar', 'Saldo a Favor',
-                         'Fecha Limite', 'Fecha Pago', 'Observaciones', 'Creada'];
+            'Periodo Mes', 'Periodo Año', 'Estatus',
+            'Importe a Pagar', 'Saldo a Favor',
+            'Fecha Limite', 'Fecha Pago', 'Observaciones', 'Creada'];
 
         const rows = allDecl.map(d => [
             d.id, d.rfc, d.razon_social, d.obligacion_nombre, d.obligacion_clave,
             MESES[d.periodo_mes] || d.periodo_mes, d.periodo_anio,
             d.estatus === 'Presentada_Cero' ? 'Presentada en Cero' : d.estatus,
             parseFloat(d.importe_a_pagar || 0).toFixed(2),
-            parseFloat(d.saldo_a_favor   || 0).toFixed(2),
+            parseFloat(d.saldo_a_favor || 0).toFixed(2),
             d.fecha_limite || '', d.fecha_pago || '',
             d.observaciones || '', d.created_at || '',
         ]);
@@ -543,8 +539,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             .join('\r\n');
 
         const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
-        const a    = Object.assign(document.createElement('a'), {
-            href:     URL.createObjectURL(blob),
+        const a = Object.assign(document.createElement('a'), {
+            href: URL.createObjectURL(blob),
             download: `declaraciones_${new Date().toISOString().slice(0, 10)}.csv`,
         });
         document.body.appendChild(a); a.click(); document.body.removeChild(a);

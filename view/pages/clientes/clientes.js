@@ -135,10 +135,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    function escHtml(str) {
-        return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
     // buscar
     document.getElementById('search-clients')?.addEventListener('input', (e) => {
         const q = e.target.value.toLowerCase();

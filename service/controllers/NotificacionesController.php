@@ -13,8 +13,8 @@ $action = $_GET['action'] ?? '';
 match (true) {
     $method === 'GET' && !$action                       => getNotificaciones($user),
     $method === 'GET' && $action === 'count'             => getCount($user),
-    $method === 'PUT' && $id                             => marcarLeida($user, $id),
     $method === 'PUT' && $action === 'read-all'          => marcarTodasLeidas($user),
+    $method === 'PUT' && $id && !$action                 => marcarLeida($user, $id),
     default => jsonResponse(false, 'Ruta no encontrada.', [], 404),
 };
 

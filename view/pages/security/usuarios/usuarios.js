@@ -3,10 +3,15 @@ const TABS = ['tab-users', 'tab-user-roles'];
 
 async function loadTabs() {
     const container = document.getElementById('page-content');
-    for (const name of TABS) {
-        const res  = await fetch(`${TABS_BASE}${name}.html`);
-        const html = await res.text();
-        container.insertAdjacentHTML('beforeend', html);
+    try {
+        for (const name of TABS) {
+            const res = await fetch(`${TABS_BASE}${name}.html`);
+            if (!res.ok) throw new Error(`${name}: ${res.status}`);
+            const html = await res.text();
+            container.insertAdjacentHTML('beforeend', html);
+        }
+    } catch (e) {
+        Toast.error('Error al cargar la página. Recarga el navegador.');
     }
 }
 
@@ -15,9 +20,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadTabs();
 
     // estados globales
-    let allUsers   = [];
-    let editingId  = null;
-    let deleteId   = null;
+    let allUsers = [];
+    let editingId = null;
+    let deleteId = null;
 
     // tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -78,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </td>
                 <td class="text-slate-500">${escHtml(u.email)}</td>
                 <td>${u.roles ? u.roles.split(', ').map(r =>
-                    `<span class="badge badge-blue mr-1">${escHtml(r)}</span>`).join('') : '<span class="text-slate-300">—</span>'}</td>
+            `<span class="badge badge-blue mr-1">${escHtml(r)}</span>`).join('') : '<span class="text-slate-300">—</span>'}</td>
                 <td>
                     <span class="badge ${u.activo ? 'badge-green' : 'badge-red'}">
                         <i class="bi ${u.activo ? 'bi-check-circle' : 'bi-x-circle'} mr-1"></i>
@@ -107,10 +112,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         tbody.querySelectorAll('.btn-delete-user').forEach(btn => {
             btn.addEventListener('click', () => openDeleteUser(parseInt(btn.dataset.id), btn.dataset.name));
         });
-    }
-
-    function escHtml(str) {
-        return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     // busqueda
@@ -160,18 +161,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         Modal.open('modal-user');
     }
 
-    ['btn-close-modal-user','btn-cancel-user'].forEach(id => {
+    ['btn-close-modal-user', 'btn-cancel-user'].forEach(id => {
         document.getElementById(id)?.addEventListener('click', () => Modal.close('modal-user'));
     });
 
     // guardar
     document.getElementById('btn-save-user')?.addEventListener('click', async () => {
         hideFormError();
-        const nombre    = document.getElementById('user-nombre').value.trim();
+        const nombre = document.getElementById('user-nombre').value.trim();
         const apellidos = document.getElementById('user-apellidos').value.trim();
-        const email     = document.getElementById('user-email').value.trim();
-        const password  = document.getElementById('user-password').value;
-        const activo    = document.getElementById('user-activo').checked;
+        const email = document.getElementById('user-email').value.trim();
+        const password = document.getElementById('user-password').value;
+        const activo = document.getElementById('user-activo').checked;
 
         if (!nombre || !apellidos) return showFormError('Nombre y apellidos son requeridos.');
         if (!email || !/\S+@\S+\.\S+/.test(email)) return showFormError('Correo no válido.');
@@ -261,7 +262,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function loadRolesForUser(uid) {
         const res = await Api.get(`usuarios?id=${uid}&action=roles`);
         if (!res?.success) { Toast.error('Error al cargar roles.'); return; }
-        allRoles     = res.data.roles ?? [];
+        allRoles = res.data.roles ?? [];
         const assigned = res.data.asignados ?? [];
         const container = document.getElementById('roles-checkboxes');
         container.innerHTML = allRoles.map(r => `

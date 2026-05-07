@@ -149,16 +149,31 @@ function formatDate(str) {
     return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
+function escHtml(str) {
+    return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function sanitizeUrl(url) {
+    if (!url) return '';
+    try {
+        const parsed = new URL(url, window.location.origin);
+        if (!['http:', 'https:', ''].includes(parsed.protocol) && !url.startsWith('/')) return '';
+        return escHtml(url);
+    } catch {
+        return url.startsWith('/') ? escHtml(url) : '';
+    }
+}
+
 // ocultar ítems de navegación según permisos del usuario
 function applyNavPermissions() {
     const NAV_MAP = {
-        '/view/pages/dashboard/index.html':          'dashboard',
-        '/view/pages/security/usuarios/index.html':  'usuarios',
-        '/view/pages/security/roles/index.html':     'roles',
-        '/view/pages/clientes/index.html':           'clientes',
-        '/view/pages/declaraciones/index.html':      'declaraciones',
-        '/view/pages/analiticas/index.html':         'analiticas',
-        '/view/pages/auth/profile.html':             'perfil',
+        '/view/pages/dashboard/index.html': 'dashboard',
+        '/view/pages/security/usuarios/index.html': 'usuarios',
+        '/view/pages/security/roles/index.html': 'roles',
+        '/view/pages/clientes/index.html': 'clientes',
+        '/view/pages/declaraciones/index.html': 'declaraciones',
+        '/view/pages/analiticas/index.html': 'analiticas',
+        '/view/pages/auth/profile.html': 'perfil',
     };
 
     $$('.nav-item').forEach(el => {
@@ -321,8 +336,8 @@ function initNotifications() {
                         <div class="notif-item ${n.leido ? '' : 'notif-unread'}" data-id="${n.id}">
                             <i class="bi ${tipoIcons[n.tipo] || tipoIcons.info} text-lg"></i>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-slate-800 truncate">${n.titulo}</p>
-                                <p class="text-xs text-slate-500 line-clamp-2">${n.mensaje}</p>
+                                <p class="text-sm font-medium text-slate-800 truncate">${escHtml(n.titulo)}</p>
+                                <p class="text-xs text-slate-500 line-clamp-2">${escHtml(n.mensaje)}</p>
                                 <p class="text-xs text-slate-300 mt-1">${timeAgo(n.created_at)}</p>
                             </div>
                         </div>

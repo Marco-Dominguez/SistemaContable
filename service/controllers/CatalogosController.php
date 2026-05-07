@@ -12,8 +12,8 @@ $id     = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
 match (true) {
     // regímenes fiscales
-    $method === 'GET' && $action === 'regimenes'                 => getRegimenes($user),
     $method === 'GET' && $action === 'regimenes' && $id          => getRegimen($user, $id),
+    $method === 'GET' && $action === 'regimenes' && !$id         => getRegimenes($user),
 
     // obligaciones
     $method === 'GET' && $action === 'obligaciones'              => getObligaciones($user),

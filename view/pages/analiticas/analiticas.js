@@ -53,14 +53,14 @@ async function loadAnaliticas() {
         const d = res.data;
 
         // kpis
-        renderKPIs(d.kpi);
+        if (d.kpi) renderKPIs(d.kpi);
 
         // graficas
-        renderChartEstatus(d.por_estatus);
-        renderChartTendencia(d.tendencia);
-        renderChartObligaciones(d.obligaciones);
-        renderChartDeclMes(d.tendencia);
-        renderTopClientes(d.top_clientes);
+        if (d.por_estatus) renderChartEstatus(d.por_estatus);
+        if (d.tendencia) renderChartTendencia(d.tendencia);
+        if (d.obligaciones) renderChartObligaciones(d.obligaciones);
+        if (d.tendencia) renderChartDeclMes(d.tendencia);
+        if (d.top_clientes) renderTopClientes(d.top_clientes);
 
     } catch (e) {
         Toast.error('No se pudieron cargar las analíticas.');
@@ -319,8 +319,4 @@ function renderTopClientes(topClientes) {
             <td class="text-right font-medium">$${parseFloat(c.total_importe).toLocaleString('es-MX', { minimumFractionDigits: 2 })}</td>
         </tr>
     `).join('');
-}
-
-function escHtml(str) {
-    return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }

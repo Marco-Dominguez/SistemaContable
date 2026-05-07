@@ -11,17 +11,15 @@ $id     = isset($_GET['id']) ? (int)$_GET['id'] : null;
 $action = $_GET['action'] ?? '';
 
 match (true) {
+    // specific action routes first
+    $method === 'POST'   && $action === 'upload' && $id             => uploadFile($user, $id),
+    $method === 'GET'    && $action === 'stats'                     => getStats($user),
+    $method === 'POST'   && $action === 'generar'                   => generarObligaciones($user),
     $method === 'GET'    && !$id && !$action                        => getDeclaraciones($user),
     $method === 'GET'    && $id  && !$action                        => getDeclaracion($user, $id),
     $method === 'POST'   && !$action                                => createDeclaracion($user),
     $method === 'PUT'    && $id  && !$action                        => updateDeclaracion($user, $id),
-    $method === 'DELETE' && $id                                     => deleteDeclaracion($user, $id),
-    // subir archivos (acuse, linea de captura, comprobante pago)
-    $method === 'POST'   && $action === 'upload' && $id             => uploadFile($user, $id),
-    // stats para dashboard
-    $method === 'GET'    && $action === 'stats'                     => getStats($user),
-    // generar obligaciones pendientes del mes
-    $method === 'POST'   && $action === 'generar'                   => generarObligaciones($user),
+    $method === 'DELETE' && $id  && !$action                        => deleteDeclaracion($user, $id),
     default => jsonResponse(false, 'Ruta no encontrada.', [], 404),
 };
 

@@ -1,15 +1,15 @@
 // credenciales de emailjs
-const EMAILJS_PUBLIC_KEY  = 'bued6nbXThDM67F-2';
-const EMAILJS_SERVICE_ID  = 'service_glhlyz7';
+const EMAILJS_PUBLIC_KEY = 'bued6nbXThDM67F-2';
+const EMAILJS_SERVICE_ID = 'service_glhlyz7';
 const EMAILJS_TEMPLATE_ID = 'template_fjxe6q8';
 
 // pre-llena nombre y correo con los datos de la sesion activa
 function prefillContactForm() {
     const user = Auth.getUser();
     if (!user) return;
-    const nameEl  = document.getElementById('contact-name');
+    const nameEl = document.getElementById('contact-name');
     const emailEl = document.getElementById('contact-email');
-    if (nameEl)  nameEl.value  = `${user.nombre} ${user.apellidos}`.trim();
+    if (nameEl) nameEl.value = `${user.nombre} ${user.apellidos}`.trim();
     if (emailEl) emailEl.value = user.email || '';
 }
 
@@ -21,11 +21,17 @@ async function sendContactForm(e) {
     setLoading(btn, true);
 
     const params = {
-        from_name:  document.getElementById('contact-name').value.trim(),
+        from_name: document.getElementById('contact-name').value.trim(),
         from_email: document.getElementById('contact-email').value.trim(),
-        subject:    document.getElementById('contact-subject').value.trim(),
-        message:    document.getElementById('contact-message').value.trim(),
+        subject: document.getElementById('contact-subject').value.trim(),
+        message: document.getElementById('contact-message').value.trim(),
     };
+
+    if (!params.from_name || !params.from_email || !params.subject || !params.message) {
+        Toast.error('Completa todos los campos antes de enviar.');
+        setLoading(btn, false);
+        return;
+    }
 
     try {
         emailjs.init(EMAILJS_PUBLIC_KEY);

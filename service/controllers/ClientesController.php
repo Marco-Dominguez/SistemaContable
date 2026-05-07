@@ -11,14 +11,14 @@ $id     = isset($_GET['id']) ? (int)$_GET['id'] : null;
 $action = $_GET['action'] ?? '';
 
 match (true) {
+    // regímenes del cliente
+    $method === 'GET'  && $action === 'regimenes' && $id  => getClienteRegimenes($user, $id),
+    $method === 'POST' && $action === 'regimenes' && $id  => setClienteRegimenes($user, $id),
     $method === 'GET'    && !$id && !$action            => getClientes($user),
     $method === 'GET'    && $id  && !$action            => getCliente($user, $id),
     $method === 'POST'   && !$action                    => createCliente($user),
     $method === 'PUT'    && $id  && !$action            => updateCliente($user, $id),
-    $method === 'DELETE' && $id                         => deleteCliente($user, $id),
-    // regímenes del cliente
-    $method === 'GET'  && $action === 'regimenes' && $id  => getClienteRegimenes($user, $id),
-    $method === 'POST' && $action === 'regimenes' && $id  => setClienteRegimenes($user, $id),
+    $method === 'DELETE' && $id  && !$action            => deleteCliente($user, $id),
     default => jsonResponse(false, 'Ruta no encontrada.', [], 404),
 };
 

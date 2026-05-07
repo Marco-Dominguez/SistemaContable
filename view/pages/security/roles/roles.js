@@ -3,10 +3,15 @@ const TABS = ['tab-roles', 'tab-modulos', 'tab-acciones', 'tab-permisos', 'tab-r
 
 async function loadTABS() {
     const container = document.getElementById('page-content');
-    for (const name of TABS) {
-        const res  = await fetch(`${TABS_BASE}${name}.html`);
-        const html = await res.text();
-        container.insertAdjacentHTML('beforeend', html);
+    try {
+        for (const name of TABS) {
+            const res = await fetch(`${TABS_BASE}${name}.html`);
+            if (!res.ok) throw new Error(`${name}: ${res.status}`);
+            const html = await res.text();
+            container.insertAdjacentHTML('beforeend', html);
+        }
+    } catch (e) {
+        Toast.error('Error al cargar la página. Recarga el navegador.');
     }
 }
 
@@ -14,15 +19,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     Auth.redirectIfNotLogged();
     await loadTABS();
 
-    let allRoles    = [];
-    let editingRolId    = null;
-    let deleteRolId     = null;
+    let allRoles = [];
+    let editingRolId = null;
+    let deleteRolId = null;
     let editingModuloId = null;
-    let deleteModuloId  = null;
+    let deleteModuloId = null;
     let editingAccionId = null;
-    let deleteAccionId  = null;
+    let deleteAccionId = null;
 
-    const ALL_TABS = ['tab-roles','tab-modulos','tab-acciones','tab-permisos','tab-rol-permisos'];
+    const ALL_TABS = ['tab-roles', 'tab-modulos', 'tab-acciones', 'tab-permisos', 'tab-rol-permisos'];
 
     // tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -33,17 +38,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const target = btn.dataset.tab;
             document.getElementById(target)?.classList.remove('hidden');
 
-            if (target === 'tab-modulos')      loadModulos();
-            if (target === 'tab-acciones')     loadAcciones();
-            if (target === 'tab-permisos')     loadMatriz();
+            if (target === 'tab-modulos') loadModulos();
+            if (target === 'tab-acciones') loadAcciones();
+            if (target === 'tab-permisos') loadMatriz();
             if (target === 'tab-rol-permisos') loadRolSelector();
         });
     });
 
-    // helpers
-    function escHtml(str) {
-        return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
 
     function toSlug(text) {
         return text.toLowerCase()
@@ -134,14 +135,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         Modal.open('modal-rol');
     }
 
-    ['btn-close-modal-rol','btn-cancel-rol'].forEach(id =>
+    ['btn-close-modal-rol', 'btn-cancel-rol'].forEach(id =>
         document.getElementById(id)?.addEventListener('click', () => Modal.close('modal-rol')));
 
     document.getElementById('btn-save-rol')?.addEventListener('click', async () => {
         hideError('form-rol-error');
-        const nombre      = document.getElementById('rol-nombre').value.trim();
+        const nombre = document.getElementById('rol-nombre').value.trim();
         const descripcion = document.getElementById('rol-descripcion').value.trim();
-        const activo      = document.getElementById('rol-activo').checked;
+        const activo = document.getElementById('rol-activo').checked;
         if (!nombre) return showError('form-rol-error', 'El nombre es requerido.');
 
         const btn = document.getElementById('btn-save-rol');
@@ -265,33 +266,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!res?.success) { Toast.error('No se pudo cargar el módulo.'); return; }
         const m = res.data.modulo;
         document.getElementById('modal-modulo-title').textContent = 'Editar Módulo';
-        document.getElementById('modulo-id').value       = m.id;
-        document.getElementById('modulo-nombre').value   = m.nombre;
-        document.getElementById('modulo-slug').value     = m.slug;
-        document.getElementById('modulo-icono').value    = m.icono ?? 'bi-grid';
+        document.getElementById('modulo-id').value = m.id;
+        document.getElementById('modulo-nombre').value = m.nombre;
+        document.getElementById('modulo-slug').value = m.slug;
+        document.getElementById('modulo-icono').value = m.icono ?? 'bi-grid';
         document.getElementById('modulo-icono-preview').className = `bi ${m.icono ?? 'bi-grid'} text-slate-600 text-lg`;
         document.getElementById('modulo-descripcion').value = m.descripcion ?? '';
-        document.getElementById('modulo-orden').value    = m.orden ?? 0;
+        document.getElementById('modulo-orden').value = m.orden ?? 0;
         document.getElementById('modulo-activo').checked = !!m.activo;
         document.getElementById('modulo-activo-group').style.display = '';
         hideError('form-modulo-error');
         Modal.open('modal-modulo');
     }
 
-    ['btn-close-modal-modulo','btn-cancel-modulo'].forEach(id =>
+    ['btn-close-modal-modulo', 'btn-cancel-modulo'].forEach(id =>
         document.getElementById(id)?.addEventListener('click', () => Modal.close('modal-modulo')));
 
     document.getElementById('btn-save-modulo')?.addEventListener('click', async () => {
         hideError('form-modulo-error');
-        const nombre      = document.getElementById('modulo-nombre').value.trim();
-        const slug        = document.getElementById('modulo-slug').value.trim();
-        const icono       = document.getElementById('modulo-icono').value.trim() || 'bi-grid';
+        const nombre = document.getElementById('modulo-nombre').value.trim();
+        const slug = document.getElementById('modulo-slug').value.trim();
+        const icono = document.getElementById('modulo-icono').value.trim() || 'bi-grid';
         const descripcion = document.getElementById('modulo-descripcion').value.trim();
-        const orden       = parseInt(document.getElementById('modulo-orden').value) || 0;
-        const activo      = document.getElementById('modulo-activo').checked;
+        const orden = parseInt(document.getElementById('modulo-orden').value) || 0;
+        const activo = document.getElementById('modulo-activo').checked;
 
         if (!nombre) return showError('form-modulo-error', 'El nombre es requerido.');
-        if (!slug)   return showError('form-modulo-error', 'El slug es requerido.');
+        if (!slug) return showError('form-modulo-error', 'El slug es requerido.');
         if (!/^[a-z0-9\-]+$/.test(slug))
             return showError('form-modulo-error', 'El slug solo puede tener minúsculas, números y guiones.');
 
@@ -363,8 +364,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td class="text-slate-500 text-sm max-w-xs truncate">${escHtml(a.descripcion || '—')}</td>
                 <td class="text-center">
                     ${parseInt(a.total_modulos) > 0
-                        ? `<span class="badge badge-blue">${a.total_modulos} módulo${a.total_modulos != 1 ? 's' : ''}</span>`
-                        : `<span class="badge badge-gray">Sin asignar</span>`}
+                ? `<span class="badge badge-blue">${a.total_modulos} módulo${a.total_modulos != 1 ? 's' : ''}</span>`
+                : `<span class="badge badge-gray">Sin asignar</span>`}
                 </td>
                 <td>
                     <div class="flex gap-1">
@@ -410,25 +411,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!res?.success) { Toast.error('No se pudo cargar la acción.'); return; }
         const a = res.data.accion;
         document.getElementById('modal-accion-title').textContent = 'Editar Acción';
-        document.getElementById('accion-id').value          = a.id;
-        document.getElementById('accion-nombre').value      = a.nombre;
-        document.getElementById('accion-slug').value        = a.slug;
+        document.getElementById('accion-id').value = a.id;
+        document.getElementById('accion-nombre').value = a.nombre;
+        document.getElementById('accion-slug').value = a.slug;
         document.getElementById('accion-descripcion').value = a.descripcion ?? '';
         hideError('form-accion-error');
         Modal.open('modal-accion');
     }
 
-    ['btn-close-modal-accion','btn-cancel-accion'].forEach(id =>
+    ['btn-close-modal-accion', 'btn-cancel-accion'].forEach(id =>
         document.getElementById(id)?.addEventListener('click', () => Modal.close('modal-accion')));
 
     document.getElementById('btn-save-accion')?.addEventListener('click', async () => {
         hideError('form-accion-error');
-        const nombre      = document.getElementById('accion-nombre').value.trim();
-        const slug        = document.getElementById('accion-slug').value.trim();
+        const nombre = document.getElementById('accion-nombre').value.trim();
+        const slug = document.getElementById('accion-slug').value.trim();
         const descripcion = document.getElementById('accion-descripcion').value.trim();
 
         if (!nombre) return showError('form-accion-error', 'El nombre es requerido.');
-        if (!slug)   return showError('form-accion-error', 'El slug es requerido.');
+        if (!slug) return showError('form-accion-error', 'El slug es requerido.');
         if (!/^[a-z0-9\-]+$/.test(slug))
             return showError('form-accion-error', 'El slug solo puede tener minúsculas, números y guiones.');
 
@@ -573,7 +574,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderPermisosTable({ modulos, acciones, modulo_acciones, asignados }) {
         const table = document.getElementById('permisos-table');
 
-        const maMap   = {};
+        const maMap = {};
         const maByKey = {};
         modulo_acciones.forEach(ma => {
             maMap[ma.id] = ma;
@@ -620,8 +621,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         table.querySelectorAll('.perm-check').forEach(c => {
             c.addEventListener('change', () => {
-                const maId  = parseInt(c.dataset.maId);
-                const mid   = maMap[maId]?.modulo_id;
+                const maId = parseInt(c.dataset.maId);
+                const mid = maMap[maId]?.modulo_id;
                 const allIn = [...table.querySelectorAll('.perm-check')]
                     .filter(x => maMap[parseInt(x.dataset.maId)]?.modulo_id == mid);
                 const rowChk = table.querySelector(`.row-all-check[data-module-id="${mid}"]`);
