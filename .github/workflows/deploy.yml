@@ -1,0 +1,39 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main # Se ejecuta cuando hay push a la rama main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # obtener el codigo fuente
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # reemplazar credenciales de BD en el archivo database.php
+      - name: Update Database Credentials
+        run: |
+          sed -i "s/define('DB_HOST'.*/define('DB_HOST', '${{ secrets.PROD_DB_HOST }}');/" service/config/database.php
+          sed -i "s/define('DB_NAME'.*/define('DB_NAME', '${{ secrets.PROD_DB_NAME }}');/" service/config/database.php
+          sed -i "s/define('DB_USER'.*/define('DB_USER', '${{ secrets.PROD_DB_USER }}');/" service/config/database.php
+          sed -i "s/define('DB_PASS'.*/define('DB_PASS', '${{ secrets.PROD_DB_PASS }}');/" service/config/database.php
+
+      # 3. subir archivos por FTP a Hostinger
+      - name: Deploy FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # dir default en hostinger
+          server-dir: /public_html/ 
+
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            README.md
