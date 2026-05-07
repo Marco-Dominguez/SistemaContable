@@ -1,30 +1,56 @@
 :root {
+    /* system fonts */
+    --font-conta: 'ContaJink', system-ui, sans-serif;
+    --font-heading: 'Poppins', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-accent: 'Roboto Medium', system-ui, sans-serif;
+
+    /* system colors */
+    --color-logo-base: #3B82F6;
+    --color-logo-light: #9CC0FA;
+    --color-logo-accent: #22D3EE;
+
+    --color-sidebar-bg: #0F172A;
+    --color-sidebar-hover: #1E293B;
+    --color-sidebar-active: #1E40AF;
+    --color-sidebar-border: #1E3A69;
+
+    --color-bg-main: #F1F5F9;
+    --color-bg-sec: #DCDDE0;
+    --color-bg-white: #FFFFFF;
+
+    --color-alert-success: #27AE60;
+    --color-alert-danger: #E74C3C;
+    --color-alert-warning: #F4F43D;
+    --color-alert-info: #3B82F6;
+
+    --color-text-dark: #111827;
+    --color-text-body: #444854;
+    --color-text-muted: #687280;
+    --color-text-welcome: #0F172A;
+
+    /* legacy colors */
     --color-primary: #1e40af;
-    /* blue-800 */
     --color-primary-lt: #3b82f6;
-    /* blue-500 */
     --color-accent: #0ea5e9;
-    /* sky-500  */
     --color-sidebar: #0f172a;
-    /* slate-900 */
     --color-sidebar-text: #94a3b8;
-    /* slate-400 */
     --color-sidebar-act: #1e293b;
-    /* slate-800 */
     --color-bg: #f1f5f9;
-    /* slate-100 */
     --color-card: #fafcff;
-    /* off-white */
     --color-primary-surface: #eff6ff;
-    /* blue-50 */
     --color-warning-text: #b45309;
-    /* amber-700 */
     --color-error-text: #b91c1c;
-    /* red-700 */
     --color-success-text: #15803d;
-    /* green-700 */
+    --color-surface-alt: #f8fafc;
+    --color-text-base: #334155;
+    --color-danger: #ef4444;
+    --color-danger-lt: #dc2626;
+
+    /* layout metrics */
     --sidebar-width: 260px;
     --topbar-height: 64px;
+
     /* z-index scale */
     --z-topbar: 30;
     --z-sidebar: 40;
@@ -32,33 +58,27 @@
     --z-modal: 250;
     --z-toast: 300;
 
-    /* Types */
+    /* legacy fonts */
     --font-display: 'Sora', system-ui, sans-serif;
-    --font-body: 'Figtree', system-ui, sans-serif;
-
-    /* surface and text */
-    --color-surface-alt: #f8fafc;
-    --color-text-base: #334155;
-    --color-text-muted: #475569;
-    --color-danger: #ef4444;
-    --color-danger-lt: #dc2626;
 }
 
-/* Layout */
+/* layout */
 body {
-    background: var(--color-bg);
+    background: var(--color-bg-main);
     font-family: var(--font-body);
+    color: var(--color-text-body);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Headings */
+/* headings */
 h1,
 h2,
 h3,
 h4 {
-    font-family: var(--font-display);
+    font-family: var(--font-heading);
+    color: var(--color-text-dark);
     line-height: 1.2;
     letter-spacing: -0.015em;
 }
