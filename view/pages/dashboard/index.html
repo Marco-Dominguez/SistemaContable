@@ -145,8 +145,33 @@
         </div>
     </div>
 
+    <!-- modal detalle declaracion -->
+    <div id="modal-dash-decl" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="dash-decl-title">
+        <div class="modal-box" style="max-width:520px">
+            <div class="modal-header">
+                <h3 class="font-semibold text-slate-800" id="dash-decl-title">Declaración</h3>
+                <button class="btn btn-outline btn-icon btn-sm" id="btn-close-dash-decl" type="button" aria-label="Cerrar">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="dash-decl-content">
+                <div class="flex items-center gap-2 py-6 text-slate-400 justify-center">
+                    <div class="spinner"></div>
+                    <span class="text-sm">Cargando...</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btn-cancel-dash-decl" type="button">Cerrar</button>
+                <a id="dash-decl-link" href="/view/pages/declaraciones/index.html"
+                   class="btn btn-primary">
+                    <i class="bi bi-arrow-right-circle"></i> Ver en Declaraciones
+                </a>
+            </div>
+        </div>
+    </div>
+
     <script src="/view/assets/js/app.js?v=2"></script>
-    <script src="/view/pages/dashboard/dashboard.js?v=3"></script>
+    <script src="/view/pages/dashboard/dashboard.js?v=4"></script>
 </body>
 
 </html>
