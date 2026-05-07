@@ -66,6 +66,22 @@ function requirePermission(int $usuarioId, string $moduloSlug, string $accionSlu
     }
 }
 
+// verifica si el usuario tiene permiso
+function hasPermission(int $usuarioId, string $moduloSlug, string $accionSlug): bool {
+    $db   = Database::getInstance();
+    $stmt = $db->prepare('
+        SELECT COUNT(*) AS cnt
+        FROM usuario_roles ur
+        JOIN rol_modulo_acciones rma ON rma.rol_id     = ur.rol_id
+        JOIN modulo_acciones     ma  ON ma.id           = rma.modulo_accion_id
+        JOIN modulos             m   ON m.id            = ma.modulo_id  AND m.slug = :modulo
+        JOIN acciones            a   ON a.id            = ma.accion_id  AND a.slug = :accion
+        WHERE ur.usuario_id = :uid
+    ');
+    $stmt->execute([':uid' => $usuarioId, ':modulo' => $moduloSlug, ':accion' => $accionSlug]);
+    return (int)($stmt->fetch()['cnt'] ?? 0) > 0;
+}
+
 // retorna todos los permisos asignados a un usuario específico
 function getUserPermissions(int $usuarioId): array {
     $db   = Database::getInstance();

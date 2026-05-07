@@ -28,12 +28,20 @@ function getDeclaraciones(array $user): void {
     requirePermission($user['usuario_id'], 'declaraciones', 'ver');
     $db = Database::getInstance();
 
-    // si es un cliente, solo ve las propias
-    $clienteFilter = '';
-    $params = [];
     $clienteId = getClienteIdForUser($user['usuario_id']);
+    $isClientOnly = !hasPermission($user['usuario_id'], 'declaraciones', 'editar');
+
+    // usuario con rol cliente sin cuenta vinculada
+    if ($isClientOnly && !$clienteId) {
+        jsonResponse(true, 'OK', ['declaraciones' => []]);
+        return;
+    }
+
+    $params = [];
+    $wheres = [];
+
     if ($clienteId) {
-        $clienteFilter = 'WHERE d.cliente_id = :cid';
+        $wheres[] = 'd.cliente_id = :cid';
         $params[':cid'] = $clienteId;
     }
 
@@ -43,11 +51,9 @@ function getDeclaraciones(array $user): void {
     $anio    = isset($_GET['anio']) ? (int)$_GET['anio'] : null;
     $cliente = isset($_GET['cliente_id']) ? (int)$_GET['cliente_id'] : null;
 
-    $wheres = [];
-    if ($clienteFilter) $wheres[] = 'd.cliente_id = :cid';
-    if ($estatus)       { $wheres[] = 'd.estatus = :est';       $params[':est']  = $estatus; }
-    if ($mes)           { $wheres[] = 'd.periodo_mes = :mes';   $params[':mes']  = $mes;     }
-    if ($anio)          { $wheres[] = 'd.periodo_anio = :anio'; $params[':anio'] = $anio;    }
+    if ($estatus) { $wheres[] = 'd.estatus = :est';       $params[':est']  = $estatus; }
+    if ($mes)     { $wheres[] = 'd.periodo_mes = :mes';   $params[':mes']  = $mes;     }
+    if ($anio)    { $wheres[] = 'd.periodo_anio = :anio'; $params[':anio'] = $anio;    }
     if ($cliente && !$clienteId) { $wheres[] = 'd.cliente_id = :cid2'; $params[':cid2'] = $cliente; }
 
     $where = $wheres ? 'WHERE ' . implode(' AND ', $wheres) : '';
@@ -78,6 +84,16 @@ function getDeclaracion(array $user, int $id): void {
     $stmt->execute([':id' => $id]);
     $decl = $stmt->fetch();
     if (!$decl) jsonResponse(false, 'Declaración no encontrada.', [], 404);
+
+    // si es cliente, verificar que la declaración le pertenece
+    $clienteId = getClienteIdForUser($user['usuario_id']);
+    $isClientOnly = !hasPermission($user['usuario_id'], 'declaraciones', 'editar');
+    if ($isClientOnly) {
+        if (!$clienteId || (int)$decl['cliente_id'] !== $clienteId) {
+            jsonResponse(false, 'No tienes acceso a esta declaración.', [], 403);
+        }
+    }
+
     jsonResponse(true, 'OK', ['declaracion' => $decl]);
 }
 
@@ -190,6 +206,13 @@ function uploadFile(array $user, int $declId): void {
     // para comprobante_pago permiso "ver" (el cliente), para los demás "editar" (solo el contador)
     if ($tipo === 'comprobante_pago') {
         requirePermission($user['usuario_id'], 'declaraciones', 'ver');
+        // si es cliente, verificar que la declaración le pertenece
+        $clienteId = getClienteIdForUser($user['usuario_id']);
+        if (!hasPermission($user['usuario_id'], 'declaraciones', 'editar')) {
+            if (!$clienteId || (int)$decl['cliente_id'] !== $clienteId) {
+                jsonResponse(false, 'No tienes acceso a esta declaración.', [], 403);
+            }
+        }
     } else {
         requirePermission($user['usuario_id'], 'declaraciones', 'editar');
     }
@@ -258,12 +281,50 @@ function getStats(array $user): void {
     requirePermission($user['usuario_id'], 'declaraciones', 'ver');
     $db = Database::getInstance();
 
-    $totalClientes = $db->query('SELECT COUNT(*) AS cnt FROM clientes WHERE activo=1')->fetch()['cnt'];
-    $totalDecl     = $db->query('SELECT COUNT(*) AS cnt FROM declaraciones')->fetch()['cnt'];
-    $pendientes    = $db->query("SELECT COUNT(*) AS cnt FROM declaraciones WHERE estatus = 'Pendiente'")->fetch()['cnt'];
-    $paraPago      = $db->query("SELECT COUNT(*) AS cnt FROM declaraciones WHERE estatus = 'Para Pago'")->fetch()['cnt'];
+    $clienteId    = getClienteIdForUser($user['usuario_id']);
+    $isClientOnly = !hasPermission($user['usuario_id'], 'declaraciones', 'editar');
 
-    // recientes
+    if ($isClientOnly && $clienteId) {
+        // cliente: solo sus propias estadísticas
+        $p = [':cid' => $clienteId];
+
+        $s = $db->prepare("SELECT COUNT(*) AS cnt FROM declaraciones WHERE cliente_id = :cid"); $s->execute($p);
+        $totalDecl = (int)$s->fetch()['cnt'];
+
+        $s = $db->prepare("SELECT COUNT(*) AS cnt FROM declaraciones WHERE cliente_id = :cid AND estatus = 'Pendiente'"); $s->execute($p);
+        $pendientes = (int)$s->fetch()['cnt'];
+
+        $s = $db->prepare("SELECT COUNT(*) AS cnt FROM declaraciones WHERE cliente_id = :cid AND estatus = 'Para Pago'"); $s->execute($p);
+        $paraPago = (int)$s->fetch()['cnt'];
+
+        $s = $db->prepare("
+            SELECT d.id, d.estatus, d.periodo_mes, d.periodo_anio, d.importe_a_pagar,
+                   c.razon_social, o.nombre AS obligacion_nombre, o.clave AS obligacion_clave
+            FROM declaraciones d
+            JOIN clientes c     ON c.id = d.cliente_id
+            JOIN obligaciones o ON o.id = d.obligacion_id
+            WHERE d.cliente_id = :cid
+            ORDER BY d.updated_at DESC LIMIT 10
+        ");
+        $s->execute($p);
+        $recientes = $s->fetchAll();
+
+        jsonResponse(true, 'OK', [
+            'total_clientes'      => 1,
+            'total_declaraciones' => $totalDecl,
+            'pendientes'          => $pendientes,
+            'para_pago'           => $paraPago,
+            'recientes'           => $recientes,
+        ]);
+        return;
+    }
+
+    // admin / contador: datos globales
+    $totalClientes = (int)$db->query('SELECT COUNT(*) AS cnt FROM clientes WHERE activo=1')->fetch()['cnt'];
+    $totalDecl     = (int)$db->query('SELECT COUNT(*) AS cnt FROM declaraciones')->fetch()['cnt'];
+    $pendientes    = (int)$db->query("SELECT COUNT(*) AS cnt FROM declaraciones WHERE estatus = 'Pendiente'")->fetch()['cnt'];
+    $paraPago      = (int)$db->query("SELECT COUNT(*) AS cnt FROM declaraciones WHERE estatus = 'Para Pago'")->fetch()['cnt'];
+
     $recientes = $db->query("
         SELECT d.id, d.estatus, d.periodo_mes, d.periodo_anio, d.importe_a_pagar,
                c.razon_social, o.nombre AS obligacion_nombre, o.clave AS obligacion_clave
@@ -275,10 +336,10 @@ function getStats(array $user): void {
     ")->fetchAll();
 
     jsonResponse(true, 'OK', [
-        'total_clientes'      => (int)$totalClientes,
-        'total_declaraciones' => (int)$totalDecl,
-        'pendientes'          => (int)$pendientes,
-        'para_pago'           => (int)$paraPago,
+        'total_clientes'      => $totalClientes,
+        'total_declaraciones' => $totalDecl,
+        'pendientes'          => $pendientes,
+        'para_pago'           => $paraPago,
         'recientes'           => $recientes,
     ]);
 }

@@ -28,6 +28,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     Auth.redirectIfNotLogged();
     await loadTabs();
 
+    const canCrear   = Auth.can('declaraciones', 'crear');
+    const canEditar  = Auth.can('declaraciones', 'editar');
+    const canEliminar = Auth.can('declaraciones', 'eliminar');
+
+    // ocultar tabs sin permiso
+    if (!canCrear) {
+        document.getElementById('tab-btn-nueva')?.classList.add('hidden');
+        document.getElementById('tab-btn-generar')?.classList.add('hidden');
+    }
+
+    // ocultar filtro de cliente para usuarios sin permiso de editar
+    if (!canEditar) {
+        document.getElementById('filter-cliente')?.closest('.form-group')?.classList.add('hidden');
+    }
+
     let allDecl = [];
     let allClients = [];
     let deleteId = null;
@@ -151,7 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('decl-empty-msg').textContent = filtering
                 ? 'No se encontraron declaraciones con los filtros aplicados.'
                 : 'Aún no hay declaraciones en el sistema. Crea la primera desde "Nueva Declaración".';
-            document.getElementById('decl-empty-cta').classList.toggle('hidden', filtering);
+            document.getElementById('decl-empty-cta').classList.toggle('hidden', filtering || !canCrear);
             document.getElementById('decl-empty-clear').classList.toggle('hidden', !filtering);
             empty.classList.remove('hidden');
             document.getElementById('decl-table-wrap').classList.add('hidden');
@@ -198,9 +213,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <td>
                     <div class="flex gap-1 flex-wrap">
                         <button class="btn btn-outline btn-icon btn-sm btn-view-decl" data-id="${d.id}"
-                                title="Ver / Editar" aria-label="Ver declaración #${d.id}">
+                                title="Ver detalle" aria-label="Ver declaración #${d.id}">
                             <i class="bi bi-eye" aria-hidden="true"></i>
                         </button>
+                        ${canEditar ? `
                         <button class="btn btn-outline btn-icon btn-sm btn-upload-acuse" data-id="${d.id}"
                                 title="Subir Acuse" aria-label="Subir acuse para declaración #${d.id}">
                             <i class="bi bi-file-earmark-arrow-up" aria-hidden="true"></i>
@@ -208,16 +224,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <button class="btn btn-outline btn-icon btn-sm btn-upload-linea" data-id="${d.id}"
                                 title="Subir Línea de Captura" aria-label="Subir línea de captura para declaración #${d.id}">
                             <i class="bi bi-credit-card" aria-hidden="true"></i>
-                        </button>
+                        </button>` : ''}
                         <button class="btn btn-outline btn-icon btn-sm btn-upload-comprobante" data-id="${d.id}"
                                 title="Subir Comprobante de Pago" aria-label="Subir comprobante de pago para declaración #${d.id}"
                                 style="color:#16a34a">
                             <i class="bi bi-receipt" aria-hidden="true"></i>
                         </button>
+                        ${canEliminar ? `
                         <button class="btn btn-danger btn-icon btn-sm btn-delete-decl" data-id="${d.id}"
                                 title="Eliminar" aria-label="Eliminar declaración #${d.id}">
                             <i class="bi bi-trash" aria-hidden="true"></i>
-                        </button>
+                        </button>` : ''}
                     </div>
                 </td>
             </tr>`;
@@ -232,8 +249,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             btn.addEventListener('click', () => openUpload(parseInt(btn.dataset.id), 'linea_captura', 'Subir Línea de Captura')));
         tbody.querySelectorAll('.btn-upload-comprobante').forEach(btn =>
             btn.addEventListener('click', () => openUpload(parseInt(btn.dataset.id), 'comprobante_pago', 'Subir Comprobante de Pago')));
-        tbody.querySelectorAll('.btn-delete-decl').forEach(btn =>
-            btn.addEventListener('click', () => { deleteId = parseInt(btn.dataset.id); Modal.open('modal-delete-decl'); }));
+        if (canEliminar) {
+            tbody.querySelectorAll('.btn-delete-decl').forEach(btn =>
+                btn.addEventListener('click', () => { deleteId = parseInt(btn.dataset.id); Modal.open('modal-delete-decl'); }));
+        }
     }
 
     // filtros
@@ -285,17 +304,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
             <div>
                 <label class="form-label text-xs">Estatus</label>
-                <select class="form-input" id="detail-estatus">
-                    <option value="Pendiente"       ${d.estatus === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
-                    <option value="En Proceso"      ${d.estatus === 'En Proceso' ? 'selected' : ''}>En Proceso</option>
-                    <option value="Para Pago"       ${d.estatus === 'Para Pago' ? 'selected' : ''}>Para Pago</option>
-                    <option value="Pagada"          ${d.estatus === 'Pagada' ? 'selected' : ''}>Pagada</option>
-                    <option value="Presentada_Cero" ${d.estatus === 'Presentada_Cero' ? 'selected' : ''}>Presentada en Cero</option>
-                </select>
+                ${canEditar
+                    ? `<select class="form-input" id="detail-estatus">
+                        <option value="Pendiente"       ${d.estatus === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                        <option value="En Proceso"      ${d.estatus === 'En Proceso' ? 'selected' : ''}>En Proceso</option>
+                        <option value="Para Pago"       ${d.estatus === 'Para Pago' ? 'selected' : ''}>Para Pago</option>
+                        <option value="Pagada"          ${d.estatus === 'Pagada' ? 'selected' : ''}>Pagada</option>
+                        <option value="Presentada_Cero" ${d.estatus === 'Presentada_Cero' ? 'selected' : ''}>Presentada en Cero</option>
+                       </select>`
+                    : `<p class="form-input bg-slate-50 text-slate-600" id="detail-estatus" data-value="${escHtml(d.estatus)}">${d.estatus === 'Presentada_Cero' ? 'Presentada en Cero' : escHtml(d.estatus)}</p>`
+                }
             </div>
             <div>
                 <label class="form-label text-xs">Observaciones</label>
-                <textarea class="form-input" id="detail-obs" rows="2">${escHtml(d.observaciones || '')}</textarea>
+                ${canEditar
+                    ? `<textarea class="form-input" id="detail-obs" rows="2">${escHtml(d.observaciones || '')}</textarea>`
+                    : `<p class="form-input bg-slate-50 text-slate-600 min-h-[3rem]">${escHtml(d.observaciones || '—')}</p>`
+                }
             </div>
             <div class="flex gap-3 flex-wrap">
                 ${d.acuse_url ? `<a href="${sanitizeUrl(d.acuse_url)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm"><i class="bi bi-file-pdf text-red-500"></i> Ver Acuse</a>` : ''}
@@ -305,18 +330,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
 
         const saveBtn = document.getElementById('btn-save-decl-detail');
-        saveBtn.classList.remove('hidden');
-        saveBtn.onclick = async () => {
-            setLoading(saveBtn, true);
-            const body = {
-                estatus: document.getElementById('detail-estatus').value,
-                observaciones: document.getElementById('detail-obs').value,
+        if (canEditar) {
+            saveBtn.classList.remove('hidden');
+            saveBtn.onclick = async () => {
+                setLoading(saveBtn, true);
+                const body = {
+                    estatus: document.getElementById('detail-estatus').value,
+                    observaciones: document.getElementById('detail-obs').value,
+                };
+                const r = await Api.put(`declaraciones?id=${id}`, body);
+                setLoading(saveBtn, false);
+                if (r?.success) { Toast.success('Actualizada.'); Modal.close('modal-decl-detail'); loadDeclaraciones(); }
+                else Toast.error(r?.message || 'Error.');
             };
-            const r = await Api.put(`declaraciones?id=${id}`, body);
-            setLoading(saveBtn, false);
-            if (r?.success) { Toast.success('Actualizada.'); Modal.close('modal-decl-detail'); loadDeclaraciones(); }
-            else Toast.error(r?.message || 'Error.');
-        };
+        } else {
+            saveBtn.classList.add('hidden');
+        }
 
         Modal.open('modal-decl-detail');
     }
