@@ -254,8 +254,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // icon preview
-    document.getElementById('modulo-icono')?.addEventListener('input', e => {
-        const cls = e.target.value.trim() || 'bi-grid';
+    document.getElementById('modulo-icono')?.addEventListener('change', e => {
+        const cls = e.target.value || 'bi-grid';
         document.getElementById('modulo-icono-preview').className = `bi ${cls} text-slate-600 text-lg`;
     });
 
