@@ -194,8 +194,21 @@ function uploadFile(array $user, int $declId): void {
         requirePermission($user['usuario_id'], 'declaraciones', 'editar');
     }
 
-    if (!isset($_FILES['archivo']) || $_FILES['archivo']['error'] !== UPLOAD_ERR_OK) {
+    if (!isset($_FILES['archivo'])) {
         jsonResponse(false, 'No se recibió ningún archivo.', [], 422);
+    }
+    $uploadError = $_FILES['archivo']['error'];
+    if ($uploadError !== UPLOAD_ERR_OK) {
+        $phpErrors = [
+            UPLOAD_ERR_INI_SIZE   => 'El archivo excede el límite de tamaño configurado en el servidor.',
+            UPLOAD_ERR_FORM_SIZE  => 'El archivo excede el límite de tamaño del formulario.',
+            UPLOAD_ERR_PARTIAL    => 'El archivo se recibió de forma parcial. Intenta de nuevo.',
+            UPLOAD_ERR_NO_FILE    => 'No se seleccionó ningún archivo.',
+            UPLOAD_ERR_NO_TMP_DIR => 'Error de configuración del servidor: directorio temporal no disponible.',
+            UPLOAD_ERR_CANT_WRITE => 'Error de configuración del servidor: no se pudo escribir el archivo temporal.',
+            UPLOAD_ERR_EXTENSION  => 'Una extensión de PHP detuvo la subida del archivo.',
+        ];
+        jsonResponse(false, $phpErrors[$uploadError] ?? 'Error desconocido al recibir el archivo.', [], 422);
     }
 
     $file     = $_FILES['archivo'];
@@ -205,7 +218,9 @@ function uploadFile(array $user, int $declId): void {
     if ($file['size'] > 10 * 1024 * 1024) jsonResponse(false, 'El archivo excede el tamaño máximo de 10 MB.', [], 422);
 
     $uploadDir = __DIR__ . '/../../uploads/declaraciones/' . $declId;
-    if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+    if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
+        jsonResponse(false, 'No se pudo crear el directorio de almacenamiento. Verifica los permisos del servidor.', [], 500);
+    }
 
     $filename = $tipo . '_' . time() . '.' . $ext;
     $destPath = $uploadDir . '/' . $filename;

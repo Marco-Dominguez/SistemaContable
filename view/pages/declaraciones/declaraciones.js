@@ -370,6 +370,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formData,
+                signal: AbortSignal.timeout(15000),
             });
             const data = await res.json();
             if (data.success) {
