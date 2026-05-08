@@ -22,76 +22,100 @@ function getGeneral(array $user): void {
     requirePermission($user['usuario_id'], 'declaraciones', 'ver');
     $db = Database::getInstance();
 
-    $anio = isset($_GET['anio']) ? (int)$_GET['anio'] : (int)date('Y');
+    $anio         = isset($_GET['anio']) ? (int)$_GET['anio'] : (int)date('Y');
+    $clienteId    = getClienteIdForUser($user['usuario_id']);
+    $isClientOnly = !hasPermission($user['usuario_id'], 'declaraciones', 'editar');
+
+    // cliente sin cuenta
+    if ($isClientOnly && !$clienteId) {
+        jsonResponse(true, 'OK', [
+            'anio'         => $anio,
+            'kpi'          => ['total'=>0,'pendientes'=>0,'en_proceso'=>0,'para_pago'=>0,
+                               'pagadas'=>0,'en_cero'=>0,'total_importe'=>0.0,'total_saldo'=>0.0],
+            'por_estatus'  => [],
+            'tendencia'    => [],
+            'top_clientes' => [],
+            'obligaciones' => [],
+        ]);
+        return;
+    }
+
+    $filterPlain = ($isClientOnly && $clienteId) ? ' AND cliente_id = :cid'   : '';
+    $filterAlias = ($isClientOnly && $clienteId) ? ' AND d.cliente_id = :cid' : '';
+    $params      = [':anio' => $anio];
+    if ($isClientOnly && $clienteId) $params[':cid'] = $clienteId;
 
     // kpis del año
     $stmtKpi = $db->prepare("
         SELECT
             COUNT(*)                                                          AS total,
-            SUM(CASE WHEN estatus = 'Pendiente' THEN 1 ELSE 0 END)           AS pendientes,
-            SUM(CASE WHEN estatus = 'En Proceso' THEN 1 ELSE 0 END)         AS en_proceso,
-            SUM(CASE WHEN estatus = 'Para Pago' THEN 1 ELSE 0 END)          AS para_pago,
-            SUM(CASE WHEN estatus = 'Pagada' THEN 1 ELSE 0 END)             AS pagadas,
+            SUM(CASE WHEN estatus = 'Pendiente'       THEN 1 ELSE 0 END)    AS pendientes,
+            SUM(CASE WHEN estatus = 'En Proceso'      THEN 1 ELSE 0 END)    AS en_proceso,
+            SUM(CASE WHEN estatus = 'Para Pago'       THEN 1 ELSE 0 END)    AS para_pago,
+            SUM(CASE WHEN estatus = 'Pagada'          THEN 1 ELSE 0 END)    AS pagadas,
             SUM(CASE WHEN estatus = 'Presentada_Cero' THEN 1 ELSE 0 END)    AS en_cero,
             COALESCE(SUM(importe_a_pagar), 0)                                AS total_importe,
-            COALESCE(SUM(saldo_a_favor), 0)                                  AS total_saldo_favor
+            COALESCE(SUM(saldo_a_favor),   0)                                AS total_saldo_favor
         FROM declaraciones
-        WHERE periodo_anio = :anio
+        WHERE periodo_anio = :anio{$filterPlain}
     ");
-    $stmtKpi->execute([':anio' => $anio]);
+    $stmtKpi->execute($params);
     $kpi = $stmtKpi->fetch();
 
     // distribucion por estatus
     $stmtEst = $db->prepare("
         SELECT estatus, COUNT(*) AS cantidad
         FROM declaraciones
-        WHERE periodo_anio = :anio
+        WHERE periodo_anio = :anio{$filterPlain}
         GROUP BY estatus
         ORDER BY FIELD(estatus, 'Pendiente','En Proceso','Para Pago','Pagada','Presentada_Cero')
     ");
-    $stmtEst->execute([':anio' => $anio]);
+    $stmtEst->execute($params);
     $porEstatus = $stmtEst->fetchAll();
 
     // importe vs saldo a favor
     $stmtTend = $db->prepare("
         SELECT
-            periodo_mes                          AS mes,
-            COALESCE(SUM(importe_a_pagar), 0)    AS importe,
-            COALESCE(SUM(saldo_a_favor), 0)      AS saldo_favor,
-            COUNT(*)                             AS total_decl
+            periodo_mes                        AS mes,
+            COALESCE(SUM(importe_a_pagar), 0)  AS importe,
+            COALESCE(SUM(saldo_a_favor),   0)  AS saldo_favor,
+            COUNT(*)                           AS total_decl
         FROM declaraciones
-        WHERE periodo_anio = :anio
+        WHERE periodo_anio = :anio{$filterPlain}
         GROUP BY periodo_mes
         ORDER BY periodo_mes
     ");
-    $stmtTend->execute([':anio' => $anio]);
+    $stmtTend->execute($params);
     $tendencia = $stmtTend->fetchAll();
 
     // clientes con mas declaraciones en el año
-    $stmtTop = $db->prepare("
-        SELECT c.razon_social, COUNT(*) AS cantidad,
-               COALESCE(SUM(d.importe_a_pagar), 0) AS total_importe
-        FROM declaraciones d
-        JOIN clientes c ON c.id = d.cliente_id
-        WHERE d.periodo_anio = :anio
-        GROUP BY d.cliente_id, c.razon_social
-        ORDER BY cantidad DESC
-        LIMIT 5
-    ");
-    $stmtTop->execute([':anio' => $anio]);
-    $topClientes = $stmtTop->fetchAll();
+    $topClientes = [];
+    if (!$isClientOnly) {
+        $stmtTop = $db->prepare("
+            SELECT c.razon_social, COUNT(*) AS cantidad,
+                   COALESCE(SUM(d.importe_a_pagar), 0) AS total_importe
+            FROM declaraciones d
+            JOIN clientes c ON c.id = d.cliente_id
+            WHERE d.periodo_anio = :anio
+            GROUP BY d.cliente_id, c.razon_social
+            ORDER BY cantidad DESC
+            LIMIT 5
+        ");
+        $stmtTop->execute([':anio' => $anio]);
+        $topClientes = $stmtTop->fetchAll();
+    }
 
     // obligaciones mas frecuentes
     $stmtObl = $db->prepare("
         SELECT o.nombre, o.clave, COUNT(*) AS cantidad
         FROM declaraciones d
         JOIN obligaciones o ON o.id = d.obligacion_id
-        WHERE d.periodo_anio = :anio
+        WHERE d.periodo_anio = :anio{$filterAlias}
         GROUP BY d.obligacion_id, o.nombre, o.clave
         ORDER BY cantidad DESC
         LIMIT 6
     ");
-    $stmtObl->execute([':anio' => $anio]);
+    $stmtObl->execute($params);
     $obligaciones = $stmtObl->fetchAll();
 
     jsonResponse(true, 'OK', [
@@ -149,6 +173,15 @@ function getTendencia(array $user): void {
     $stmt->execute([':anio' => $anio]);
 
     jsonResponse(true, 'OK', ['tendencia' => $stmt->fetchAll()]);
+}
+
+// retorna el id de cliente de usuario
+function getClienteIdForUser(int $userId): ?int {
+    $db   = Database::getInstance();
+    $stmt = $db->prepare('SELECT id FROM clientes WHERE usuario_id = :uid');
+    $stmt->execute([':uid' => $userId]);
+    $row  = $stmt->fetch();
+    return $row ? (int)$row['id'] : null;
 }
 
 // distribucion por cliente
