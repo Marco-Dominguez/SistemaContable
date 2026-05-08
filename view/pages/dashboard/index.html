@@ -1,183 +1,290 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio — Sistema Contable</title>
+    <title>Inicio — Conta⅃ink</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Sora:wght@600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/SistemaContable/view/assets/css/app.css">
+    <link rel="stylesheet" href="/view/assets/css/app.css?v=2">
+    <link rel="icon" href="/view/assets/img/Isotipo.svg" type="image/svg+xml">
+    <!-- google tag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H55HB0QW2W"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag("js", new Date());
+        gtag("config", "G-H55HB0QW2W");
+    </script>
 </head>
+
 <body>
-<div id="app">
-    <!-- SIDEBAR -->
-    <aside id="sidebar">
-        <div class="sidebar-brand">
-            <div class="brand-icon"><i class="bi bi-calculator"></i></div>
-            <span>SistemaContable</span>
+    <div id="app">
+        <!-- sidebar -->
+        <aside id="sidebar"></aside>
+
+        <div id="main">
+            <header id="topbar">
+                <div class="flex items-center gap-3">
+                    <button id="sidebar-toggle" class="btn btn-outline btn-icon" aria-label="Abrir menú de navegación">
+                        <i class="bi bi-list text-lg" aria-hidden="true"></i>
+                    </button>
+                    <h1 class="text-base font-semibold text-slate-700">Inicio</h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- notificaciones -->
+                    <div class="relative" id="notif-wrapper">
+                        <button class="btn btn-outline btn-icon btn-sm" id="btn-notif" aria-label="Notificaciones"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="bi bi-bell" aria-hidden="true"></i>
+                            <span class="notif-badge hidden" id="notif-count" aria-hidden="true">0</span>
+                        </button>
+                        <div class="notif-dropdown hidden" id="notif-dropdown"></div>
+                    </div>
+                </div>
+            </header>
+
+            <main id="page-content">
+                <!-- greeting -->
+                <div class="mb-8">
+                    <h2 id="welcome-title">Bienvenido</h2>
+                    <p class="text-sm text-slate-400 mt-1.5" id="welcome-date"></p>
+                </div>
+
+                <!-- stats -->
+                <div class="dash-stats mb-6" id="stats-grid">
+                    <div class="card p-6 dash-stat-primary">
+                        <p class="dash-stat-label">Declaraciones</p>
+                        <p class="dash-stat-value" id="stat-decl">—</p>
+                        <p class="dash-stat-hint">en el sistema</p>
+                    </div>
+                    <div class="card p-6">
+                        <p class="dash-stat-label">Clientes</p>
+                        <p class="dash-stat-value" id="stat-clients">—</p>
+                        <p class="dash-stat-hint">registrados</p>
+                    </div>
+                    <div class="card p-5 dash-stat-admin">
+                        <div class="flex-1 text-center">
+                            <p class="dash-stat-label">Usuarios</p>
+                            <p class="dash-stat-mini-value" id="stat-users">—</p>
+                        </div>
+                        <div class="dash-stat-divider"></div>
+                        <div class="flex-1 text-center">
+                            <p class="dash-stat-label">Roles</p>
+                            <p class="dash-stat-mini-value" id="stat-roles">—</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- quick actions + recent declarations -->
+                <div class="dash-cols mb-6">
+                    <div class="card p-5">
+                        <h3>Acciones rápidas</h3>
+                        <nav>
+                            <a href="/view/pages/declaraciones/index.html" class="quick-action">
+                                <i class="bi bi-file-earmark-plus"></i>
+                                <span>Nueva Declaración</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                            <a href="/view/pages/clientes/index.html" class="quick-action">
+                                <i class="bi bi-person-plus"></i>
+                                <span>Nuevo Cliente</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                            <a href="/view/pages/security/usuarios/index.html" class="quick-action">
+                                <i class="bi bi-person-gear"></i>
+                                <span>Nuevo Usuario</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                            <a href="/view/pages/security/roles/index.html" class="quick-action">
+                                <i class="bi bi-shield-plus"></i>
+                                <span>Nuevo Rol</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </nav>
+                    </div>
+
+                    <div class="card p-5">
+                        <div class="card-header-row flex items-center justify-between mb-4">
+                            <h3>Declaraciones recientes</h3>
+                            <a href="/view/pages/declaraciones/index.html"
+                                class="text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors">
+                                Ver todas <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                        <div class="carousel-wrapper">
+                            <button class="carousel-btn prev" id="carousel-prev" aria-label="Anterior" disabled>
+                                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                            </button>
+                            <div class="carousel-track-outer">
+                                <div class="carousel-track" id="carousel-track">
+                                    <div class="flex items-center gap-2 py-6 text-slate-400 w-full justify-center">
+                                        <div class="spinner"></div>
+                                        <span class="text-sm">Cargando...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="carousel-btn next" id="carousel-next" aria-label="Siguiente" disabled>
+                                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- system color palette component -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-semibold mb-4"
+                        style="font-family: var(--font-heading); color: var(--color-text-dark);">Paleta de Colores del Sistema
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" style="font-family: var(--font-body);">
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-logo-base);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Logo Base</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#3B82F6</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-logo-light);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Logo Claro</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#9CC0FA</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-logo-accent);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Logo Acento</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#22D3EE</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-sidebar-bg);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Barra Lateral Base</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#0F172A</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-sidebar-hover);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Barra Lateral Hover</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#1E293B</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-sidebar-active);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Barra Lateral Activo</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#1E40AF</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-sidebar-border);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Borde Barra Lateral</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#1E3A69</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-bg-main);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Fondo Principal</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#F1F5F9</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-bg-sec);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Fondo Secundario</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#DCDDE0</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2 border border-slate-200"
+                                style="background-color: var(--color-bg-white);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Fondo Blanco</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#FFFFFF</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-alert-success);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Alerta Éxito</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#27AE60</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-alert-danger);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Alerta Peligro</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#E74C3C</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-alert-warning);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Alerta Advertencia</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#F4F43D</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-alert-info);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Alerta Info</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#3B82F6</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-text-dark);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Texto Oscuro</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#111827</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-text-body);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Texto Cuerpo</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#444854</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-text-muted);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Texto Atenuado</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#687280</span>
+                        </div>
+                        <div class="card p-4 flex flex-col items-center text-center">
+                            <div class="w-10 h-10 rounded shadow-sm mb-2"
+                                style="background-color: var(--color-text-welcome);"></div>
+                            <span class="text-xs font-medium" style="color: var(--color-text-body);">Texto Bienvenida</span>
+                            <span class="text-[10px]" style="color: var(--color-text-muted);">#0F172A</span>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
         </div>
-        <nav class="flex-1 overflow-y-auto py-3">
-            <div class="nav-group">
-                <a href="/SistemaContable/view/pages/dashboard/index.html" class="nav-item">
-                    <i class="bi bi-house-door"></i> Inicio
-                </a>
-            </div>
-            <div class="nav-group" id="nav-seguridad">
-                <div class="nav-group-label">Seguridad</div>
-                <a href="/SistemaContable/view/pages/security/usuarios/index.html" class="nav-item">
-                    <i class="bi bi-people"></i> Usuarios
-                </a>
-                <a href="/SistemaContable/view/pages/security/roles/index.html" class="nav-item">
-                    <i class="bi bi-shield-lock"></i> Roles y Permisos
-                </a>
-            </div>
-            <div class="nav-group">
-                <div class="nav-group-label">Gestión</div>
-                <a href="#" class="nav-item text-slate-500 cursor-not-allowed">
-                    <i class="bi bi-person-badge"></i> Clientes <span class="ml-auto text-xs badge badge-gray">Próximo</span>
-                </a>
-                <a href="#" class="nav-item text-slate-500 cursor-not-allowed">
-                    <i class="bi bi-file-earmark-text"></i> Declaraciones <span class="ml-auto text-xs badge badge-gray">Próximo</span>
-                </a>
-                <a href="#" class="nav-item text-slate-500 cursor-not-allowed">
-                    <i class="bi bi-bar-chart-line"></i> Analíticas <span class="ml-auto text-xs badge badge-gray">Próximo</span>
-                </a>
-            </div>
-        </nav>
-        <div class="p-3 border-t border-slate-800">
-            <a href="#" class="nav-item">
-                <i class="bi bi-person-circle"></i> Perfil
-            </a>
-        </div>
-    </aside>
-
-    <div id="main">
-        <header id="topbar">
-            <div class="flex items-center gap-3">
-                <button id="sidebar-toggle" class="btn btn-outline btn-icon">
-                    <i class="bi bi-list text-lg"></i>
-                </button>
-                <h1 class="text-base font-semibold text-slate-700">Inicio</h1>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="text-right hidden sm:block">
-                    <p class="text-sm font-medium text-slate-700" id="topbar-user-name">—</p>
-                    <p class="text-xs text-slate-400" id="topbar-user-role">—</p>
-                </div>
-                <button id="btn-logout" class="btn btn-outline btn-sm">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span class="hidden sm:inline">Salir</span>
-                </button>
-            </div>
-        </header>
-
-        <main id="page-content">
-            <!-- Bienvenidos -->
-            <div class="card p-6 mb-6" style="background: linear-gradient(135deg,#1e3a5f,#1e40af); color:#fff; border-radius:14px;">
-                <h2 class="text-xl font-bold mb-1" id="welcome-title">Bienvenido</h2>
-                <p class="text-blue-200 text-sm" id="welcome-sub">Sistema Contable — Control de declaraciones fiscales</p>
-            </div>
-
-            <!-- Stats -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="stats-grid">
-                <div class="card p-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                            <i class="bi bi-people text-blue-600 text-lg"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-400 font-medium">Usuarios</p>
-                            <p class="text-xl font-bold text-slate-700" id="stat-users">—</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card p-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
-                            <i class="bi bi-shield-lock text-purple-600 text-lg"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-400 font-medium">Roles</p>
-                            <p class="text-xl font-bold text-slate-700" id="stat-roles">—</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card p-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
-                            <i class="bi bi-person-badge text-green-600 text-lg"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-400 font-medium">Clientes</p>
-                            <p class="text-xl font-bold text-slate-700">—</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card p-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-                            <i class="bi bi-file-earmark-check text-amber-600 text-lg"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs text-slate-400 font-medium">Declaraciones</p>
-                            <p class="text-xl font-bold text-slate-700">—</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Acciones -->
-            <div class="card p-5">
-                <h3 class="text-sm font-semibold text-slate-600 mb-4 uppercase tracking-wide">Acciones rápidas</h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="quick-actions">
-                    <a href="/SistemaContable/view/pages/security/usuarios/index.html"
-                       class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition text-center">
-                        <i class="bi bi-person-plus text-blue-600 text-2xl"></i>
-                        <span class="text-xs font-medium text-slate-600">Nuevo Usuario</span>
-                    </a>
-                    <a href="/SistemaContable/view/pages/security/roles/index.html"
-                       class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50 transition text-center">
-                        <i class="bi bi-shield-plus text-purple-600 text-2xl"></i>
-                        <span class="text-xs font-medium text-slate-600">Nuevo Rol</span>
-                    </a>
-                    <a href="#"
-                       class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 text-center opacity-50 cursor-not-allowed">
-                        <i class="bi bi-person-badge text-green-600 text-2xl"></i>
-                        <span class="text-xs font-medium text-slate-600">Nuevo Cliente</span>
-                    </a>
-                    <a href="#"
-                       class="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 text-center opacity-50 cursor-not-allowed">
-                        <i class="bi bi-file-earmark-plus text-amber-600 text-2xl"></i>
-                        <span class="text-xs font-medium text-slate-600">Nueva Declaración</span>
-                    </a>
-                </div>
-            </div>
-        </main>
     </div>
-</div>
 
-<script src="/SistemaContable/view/assets/js/app.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', async () => {
-    Auth.redirectIfNotLogged();
+    <!-- modal detalle declaracion -->
+    <div id="modal-dash-decl" class="modal-backdrop hidden" role="dialog" aria-modal="true"
+        aria-labelledby="dash-decl-title">
+        <div class="modal-box" style="max-width:520px">
+            <div class="modal-header">
+                <h3 class="font-semibold text-slate-800" id="dash-decl-title">Declaración</h3>
+                <button class="btn btn-outline btn-icon btn-sm" id="btn-close-dash-decl" type="button"
+                    aria-label="Cerrar">
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="dash-decl-content">
+                <div class="flex items-center gap-2 py-6 text-slate-400 justify-center">
+                    <div class="spinner"></div>
+                    <span class="text-sm">Cargando...</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="btn-cancel-dash-decl" type="button">Cerrar</button>
+                <a id="dash-decl-link" href="/view/pages/declaraciones/index.html" class="btn btn-primary">
+                    <i class="bi bi-arrow-right-circle"></i> Ver en Declaraciones
+                </a>
+            </div>
+        </div>
+    </div>
 
-    const u = Auth.getUser();
-    if (u) {
-        document.getElementById('welcome-title').textContent = `Bienvenido, ${u.nombre} ${u.apellidos}`;
-    }
-
-    // cargar stats
-    try {
-        const [resUsers, resRoles] = await Promise.all([
-            Api.get('usuarios'),
-            Api.get('roles'),
-        ]);
-        if (resUsers?.success) document.getElementById('stat-users').textContent = resUsers.data.usuarios?.length ?? 0;
-        if (resRoles?.success) document.getElementById('stat-roles').textContent = resRoles.data.roles?.length ?? 0;
-    } catch (e) { /* na */ }
-});
-</script>
+    <script src="/view/assets/js/app.js?v=2"></script>
+    <script src="/view/pages/dashboard/dashboard.js?v=4"></script>
 </body>
+
 </html>

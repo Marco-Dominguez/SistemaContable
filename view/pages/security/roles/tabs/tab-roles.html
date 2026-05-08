@@ -1,0 +1,100 @@
+<!-- roles -->
+<div id="tab-roles" role="tabpanel" aria-labelledby="tab-btn-roles">
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <h2 class="text-lg font-bold text-slate-800">Gestión de Roles</h2>
+            <p class="text-sm text-slate-400">Crea y administra los roles del sistema</p>
+        </div>
+        <button class="btn btn-primary" id="btn-new-role">
+            <i class="bi bi-plus-lg"></i> Nuevo Rol
+        </button>
+    </div>
+
+    <div class="card overflow-hidden">
+        <div id="roles-loading" class="p-8 text-center text-slate-400">
+            <div class="spinner mx-auto mb-2"></div>
+            Cargando roles...
+        </div>
+        <div id="roles-table-wrap" class="hidden overflow-x-auto">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Usuarios</th>
+                        <th>Estado</th>
+                        <th>Creado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="roles-tbody"></tbody>
+            </table>
+        </div>
+        <div id="roles-empty" class="hidden p-10 text-center text-slate-400">
+            <i class="bi bi-shield text-4xl block mb-2"></i>
+            No hay roles registrados.
+        </div>
+    </div>
+</div>
+
+<!-- crear / editar rol -->
+<div id="modal-rol" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-rol-title">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800" id="modal-rol-title">Nuevo Rol</h3>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-rol" aria-label="Cerrar">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="form-rol" novalidate class="flex flex-col gap-4">
+                <input type="hidden" id="rol-id">
+                <div class="form-group">
+                    <label class="form-label" for="rol-nombre">Nombre del Rol *</label>
+                    <input class="form-input" type="text" id="rol-nombre" placeholder="Ej. Contador Senior">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="rol-descripcion">Descripción</label>
+                    <textarea class="form-input" id="rol-descripcion" rows="3"
+                              placeholder="Describe las responsabilidades de este rol..."></textarea>
+                </div>
+                <div class="form-group" id="rol-activo-group" style="display:none;">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="rol-activo" checked class="w-4 h-4 accent-blue-600">
+                        <span class="form-label mb-0">Rol activo</span>
+                    </label>
+                </div>
+                <div id="form-rol-error" class="alert alert-error hidden">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <span id="form-rol-error-msg"></span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-rol">Cancelar</button>
+            <button class="btn btn-primary" id="btn-save-rol">
+                <i class="bi bi-save"></i> Guardar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- confirmar eliminar rol -->
+<div id="modal-delete-rol" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-delete-rol-title">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800" id="modal-delete-rol-title">Confirmar eliminación</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-slate-600">¿Eliminar el rol <strong id="delete-rol-name"></strong>?
+                Se quitará de todos los usuarios que lo tengan asignado.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-delete-rol">Cancelar</button>
+            <button class="btn btn-danger" id="btn-confirm-delete-rol">
+                <i class="bi bi-trash"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,10 +1,10 @@
 // configuracion
-const API_BASE = '/SistemaContable/service/api';
+const API_BASE = '/service/api';
 
 // auth helpers
 const Auth = {
-    getToken()   { return localStorage.getItem('sc_token'); },
-    getUser()    {
+    getToken() { return localStorage.getItem('sc_token'); },
+    getUser() {
         try { return JSON.parse(localStorage.getItem('sc_user')); }
         catch { return null; }
     },
@@ -16,19 +16,19 @@ const Auth = {
         localStorage.removeItem('sc_token');
         localStorage.removeItem('sc_user');
     },
-    isLogged()   { return !!this.getToken(); },
+    isLogged() { return !!this.getToken(); },
     can(modulo, accion) {
         const u = this.getUser();
         return !!(u?.permisos?.[modulo]?.includes(accion));
     },
     redirectIfNotLogged() {
         if (!this.isLogged()) {
-            window.location.href = '/SistemaContable/view/pages/auth/login.html';
+            window.location.href = '/view/pages/auth/login.html';
         }
     },
     redirectIfLogged() {
         if (this.isLogged()) {
-            window.location.href = '/SistemaContable/view/pages/dashboard/index.html';
+            window.location.href = '/view/pages/dashboard/index.html';
         }
     },
 };
@@ -46,23 +46,32 @@ const Api = {
         };
         if (body && method !== 'GET') opts.body = JSON.stringify(body);
 
-        const res  = await fetch(`${API_BASE}/${endpoint}`, opts);
-        const data = await res.json();
+        const res = await fetch(`${API_BASE}/${endpoint}`, {
+            ...opts,
+            signal: AbortSignal.timeout(15000),
+        });
+
+        let data;
+        try {
+            data = await res.json();
+        } catch {
+            throw new Error('Respuesta inválida del servidor.');
+        }
 
         // si es 401 limpiar sesion y redirigir
         if (res.status === 401) {
             Auth.clear();
             if (!window.location.pathname.includes('login.html')) {
-                window.location.href = '/SistemaContable/view/pages/auth/login.html';
+                window.location.href = '/view/pages/auth/login.html';
                 return;
             }
         }
         return data;
     },
-    get(endpoint)          { return this.request('GET',    endpoint); },
-    post(endpoint, body)   { return this.request('POST',   endpoint, body); },
-    put(endpoint, body)    { return this.request('PUT',    endpoint, body); },
-    delete(endpoint)       { return this.request('DELETE', endpoint); },
+    get(endpoint) { return this.request('GET', endpoint); },
+    post(endpoint, body) { return this.request('POST', endpoint, body); },
+    put(endpoint, body) { return this.request('PUT', endpoint, body); },
+    delete(endpoint) { return this.request('DELETE', endpoint); },
 };
 
 // toast helper
@@ -72,27 +81,50 @@ const Toast = {
         if (!this.container) {
             this.container = document.createElement('div');
             this.container.id = 'toast-container';
+            this.container.setAttribute('role', 'status');
+            this.container.setAttribute('aria-live', 'polite');
+            this.container.setAttribute('aria-atomic', 'false');
             document.body.appendChild(this.container);
         }
     },
     show(message, type = 'info', duration = 3500) {
         this.init();
+        if (type === 'error') {
+            this.container.setAttribute('aria-live', 'assertive');
+        } else {
+            this.container.setAttribute('aria-live', 'polite');
+        }
         const icons = { success: 'bi-check-circle', error: 'bi-x-circle', info: 'bi-info-circle' };
         const t = document.createElement('div');
         t.className = `toast toast-${type}`;
-        t.innerHTML = `<i class="bi ${icons[type] || icons.info}"></i><span>${message}</span>`;
+        t.setAttribute('role', 'alert');
+        t.innerHTML = `<i class="bi ${icons[type] || icons.info}" aria-hidden="true"></i><span>${message}</span>`;
         this.container.appendChild(t);
         setTimeout(() => t.remove(), duration);
     },
     success(m) { this.show(m, 'success'); },
-    error(m)   { this.show(m, 'error'); },
-    info(m)    { this.show(m, 'info'); },
+    error(m) { this.show(m, 'error'); },
+    info(m) { this.show(m, 'info'); },
 };
 
 // modal helper
 const Modal = {
-    open(id)  { document.getElementById(id)?.classList.remove('hidden'); },
-    close(id) { document.getElementById(id)?.classList.add('hidden'); },
+    _trigger: null,
+    open(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        this._trigger = document.activeElement;
+        el.classList.remove('hidden');
+        const first = el.querySelector('button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        first?.focus();
+    },
+    close(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.add('hidden');
+        this._trigger?.focus();
+        this._trigger = null;
+    },
 };
 
 // dom helpers
@@ -117,7 +149,57 @@ function formatDate(str) {
     return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-// sidebar active link highlight
+function escHtml(str) {
+    return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function getUserInitials(nombre, apellidos) {
+    const first = (nombre ?? '').trim();
+    const last = (apellidos ?? '').trim();
+    if (first && last) return (first[0] + last[0]).toUpperCase();
+    return (first[0] ?? '?').toUpperCase();
+}
+
+function sanitizeUrl(url) {
+    if (!url) return '';
+    try {
+        const parsed = new URL(url, window.location.origin);
+        if (!['http:', 'https:', ''].includes(parsed.protocol) && !url.startsWith('/')) return '';
+        return escHtml(url);
+    } catch {
+        return url.startsWith('/') ? escHtml(url) : '';
+    }
+}
+
+// ocultar ítems de navegación según permisos del usuario
+function applyNavPermissions() {
+    const NAV_MAP = {
+        '/view/pages/dashboard/index.html': 'dashboard',
+        '/view/pages/security/usuarios/index.html': 'usuarios',
+        '/view/pages/security/roles/index.html': 'roles',
+        '/view/pages/clientes/index.html': 'clientes',
+        '/view/pages/declaraciones/index.html': 'declaraciones',
+        '/view/pages/analiticas/index.html': 'analiticas',
+        '/view/pages/auth/profile.html': 'perfil',
+    };
+
+    $$('.nav-item').forEach(el => {
+        const href = el.getAttribute('href');
+        if (!href || href === '#') return;
+        const slug = NAV_MAP[href];
+        if (slug && !Auth.can(slug, 'ver')) el.style.display = 'none';
+    });
+
+    // ocultar etiqueta del grupo si todos sus nav-items están ocultos
+    $$('.nav-group').forEach(g => {
+        const items = $$('.nav-item', g);
+        if (items.length && items.every(el => el.style.display === 'none')) {
+            g.style.display = 'none';
+        }
+    });
+}
+
+// resaltar la opcion seleccionada
 function initSidebarActive() {
     const path = window.location.pathname;
     $$('.nav-item').forEach(el => el.classList.remove('active'));
@@ -129,32 +211,184 @@ function initSidebarActive() {
     });
 }
 
-// sidebar toggle mobile
+// toggle del sidebar en moviles
 function initSidebarToggle() {
     const toggle = $('#sidebar-toggle');
     const sidebar = $('#sidebar');
-    toggle?.addEventListener('click', () => sidebar?.classList.toggle('open'));
+    const main = $('#main');
+    toggle?.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            sidebar?.classList.toggle('open');
+        } else {
+            sidebar?.classList.toggle('collapsed');
+            main?.classList.toggle('collapsed');
+        }
+    });
 }
 
-// init topbar user info
-function initTopbarUser() {
+// load sidebar component from partial HTML
+async function loadSidebar() {
+    const sidebar = $('#sidebar');
+    if (!sidebar) return;
+    // solo cargar si el sidebar esta vacio
+    if (sidebar.children.length > 0) {
+        initSidebarActive();
+        initSidebarToggle();
+        applyNavPermissions();
+        return;
+    }
+    try {
+        const res = await fetch('/view/components/sidebar.html');
+        if (!res.ok) return;
+        sidebar.innerHTML = await res.text();
+        initSidebarActive();
+        initSidebarToggle();
+        applyNavPermissions();
+    } catch (e) {
+        console.error('Error cargando sidebar:', e);
+    }
+}
+
+// cargar usuario en sidebar
+function initSidebarUser() {
     const u = Auth.getUser();
     if (!u) return;
-    const el = $('#topbar-user-name');
-    if (el) el.textContent = `${u.nombre} ${u.apellidos}`;
-    const roleEl = $('#topbar-user-role');
+    const avatarEl = $('#sidebar-user-avatar');
+    if (avatarEl) avatarEl.textContent = getUserInitials(u.nombre, u.apellidos);
+    const nameEl = $('#sidebar-user-name');
+    if (nameEl) nameEl.textContent = `${u.nombre ?? ''} ${u.apellidos ?? ''}`.trim();
+    const roleEl = $('#sidebar-user-role');
     if (roleEl) roleEl.textContent = u.roles?.join(', ') ?? '';
 }
 
-// logout
-document.addEventListener('DOMContentLoaded', () => {
-    initSidebarActive();
-    initSidebarToggle();
-    initTopbarUser();
+// inicializar general
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadSidebar();
+    initSidebarUser();
 
-    $('#btn-logout')?.addEventListener('click', async () => {
+    $('#sidebar-btn-logout')?.addEventListener('click', async () => {
         await Api.post('auth?action=logout');
         Auth.clear();
-        window.location.href = '/SistemaContable/view/pages/auth/login.html';
+        window.location.href = '/view/pages/auth/login.html';
     });
+
+    // notificaciones
+    initNotifications();
 });
+
+// notificaciones sistema
+function initNotifications() {
+    const btnNotif = $('#btn-notif');
+    const dropdown = $('#notif-dropdown');
+    const countBadge = $('#notif-count');
+    if (!btnNotif || !dropdown) return;
+    if (!Auth.isLogged()) return;
+
+    let isOpen = false;
+
+    btnNotif.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        isOpen = !isOpen;
+        btnNotif.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        if (isOpen) {
+            await loadNotifications();
+            dropdown.classList.remove('hidden');
+        } else {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (isOpen && !dropdown.contains(e.target) && !btnNotif.contains(e.target)) {
+            dropdown.classList.add('hidden');
+            btnNotif.setAttribute('aria-expanded', 'false');
+            isOpen = false;
+        }
+    });
+
+    async function loadNotifCount() {
+        try {
+            const res = await Api.get('notificaciones?action=count');
+            if (res?.success) {
+                const cnt = res.data.count || 0;
+                if (cnt > 0) {
+                    countBadge.textContent = cnt > 99 ? '99+' : cnt;
+                    countBadge.classList.remove('hidden');
+                } else {
+                    countBadge.classList.add('hidden');
+                }
+            }
+        } catch (e) { /* silencio */ }
+    }
+
+    async function loadNotifications() {
+        try {
+            const res = await Api.get('notificaciones');
+            if (!res?.success) return;
+            const notifs = res.data.notificaciones ?? [];
+            if (!notifs.length) {
+                dropdown.innerHTML = `
+                    <div class="notif-dropdown-header">
+                        <span class="font-semibold text-sm">Notificaciones</span>
+                    </div>
+                    <div class="p-4 text-center text-slate-400 text-sm">
+                        <i class="bi bi-bell-slash text-2xl block mb-1"></i>
+                        Sin notificaciones
+                    </div>`;
+                return;
+            }
+            const tipoIcons = {
+                info: 'bi-info-circle text-blue-500',
+                success: 'bi-check-circle text-green-500',
+                warning: 'bi-exclamation-triangle text-amber-500',
+                error: 'bi-x-circle text-red-500',
+            };
+            dropdown.innerHTML = `
+                <div class="notif-dropdown-header">
+                    <span class="font-semibold text-sm">Notificaciones</span>
+                    <button class="text-xs text-blue-600 hover:underline" id="btn-mark-all-read">Marcar todas como leídas</button>
+                </div>
+                <div class="notif-dropdown-list">
+                    ${notifs.slice(0, 20).map(n => `
+                        <div class="notif-item ${n.leido ? '' : 'notif-unread'}" data-id="${n.id}">
+                            <i class="bi ${tipoIcons[n.tipo] || tipoIcons.info} text-lg"></i>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-slate-800 truncate">${escHtml(n.titulo)}</p>
+                                <p class="text-xs text-slate-500 line-clamp-2">${escHtml(n.mensaje)}</p>
+                                <p class="text-xs text-slate-300 mt-1">${timeAgo(n.created_at)}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`;
+
+            // marcar como leída
+            dropdown.querySelectorAll('.notif-item').forEach(item => {
+                item.addEventListener('click', async () => {
+                    const nid = item.dataset.id;
+                    await Api.put(`notificaciones?id=${nid}`);
+                    item.classList.remove('notif-unread');
+                    loadNotifCount();
+                });
+            });
+
+            // marcar todas como leídas
+            $('#btn-mark-all-read')?.addEventListener('click', async () => {
+                await Api.put('notificaciones?action=read-all');
+                dropdown.querySelectorAll('.notif-unread').forEach(i => i.classList.remove('notif-unread'));
+                countBadge.classList.add('hidden');
+            });
+        } catch (e) { /* silencio */ }
+    }
+
+    function timeAgo(dateStr) {
+        const diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
+        if (diff < 60) return 'Justo ahora';
+        if (diff < 3600) return `Hace ${Math.floor(diff / 60)} min`;
+        if (diff < 86400) return `Hace ${Math.floor(diff / 3600)} h`;
+        return `Hace ${Math.floor(diff / 86400)} d`;
+    }
+
+    // carga inicial y cada 30 segundos
+    loadNotifCount();
+    setInterval(loadNotifCount, 30000);
+}

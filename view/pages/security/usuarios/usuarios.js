@@ -1,12 +1,28 @@
-// view/pages/security/usuarios/usuarios.js
+const TABS_BASE = '/view/pages/security/usuarios/tabs/';
+const TABS = ['tab-users', 'tab-user-roles'];
 
-document.addEventListener('DOMContentLoaded', () => {
+async function loadTabs() {
+    const container = document.getElementById('page-content');
+    try {
+        for (const name of TABS) {
+            const res = await fetch(`${TABS_BASE}${name}.html`);
+            if (!res.ok) throw new Error(`${name}: ${res.status}`);
+            const html = await res.text();
+            container.insertAdjacentHTML('beforeend', html);
+        }
+    } catch (e) {
+        Toast.error('Error al cargar la página. Recarga el navegador.');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
     Auth.redirectIfNotLogged();
+    await loadTabs();
 
     // estados globales
-    let allUsers   = [];
-    let editingId  = null;
-    let deleteId   = null;
+    let allUsers = [];
+    let editingId = null;
+    let deleteId = null;
 
     // tabs
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -58,16 +74,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>
                     <div class="flex items-center gap-2">
                         <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-semibold text-xs">
-                            ${(u.nombre[0] + u.apellidos[0]).toUpperCase()}
+                            ${getUserInitials(u.nombre, u.apellidos)}
                         </div>
                         <div>
-                            <p class="font-medium text-slate-800">${escHtml(u.nombre)} ${escHtml(u.apellidos)}</p>
+                            <p class="font-medium text-slate-800">${escHtml(u.nombre)} ${escHtml(u.apellidos ?? '')}</p>
                         </div>
                     </div>
                 </td>
                 <td class="text-slate-500">${escHtml(u.email)}</td>
                 <td>${u.roles ? u.roles.split(', ').map(r =>
-                    `<span class="badge badge-blue mr-1">${escHtml(r)}</span>`).join('') : '<span class="text-slate-300">—</span>'}</td>
+            `<span class="badge badge-blue mr-1">${escHtml(r)}</span>`).join('') : '<span class="text-slate-300">—</span>'}</td>
                 <td>
                     <span class="badge ${u.activo ? 'badge-green' : 'badge-red'}">
                         <i class="bi ${u.activo ? 'bi-check-circle' : 'bi-x-circle'} mr-1"></i>
@@ -89,17 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>
         `).join('');
 
-        // Bind edit buttons
+        // bind botones
         tbody.querySelectorAll('.btn-edit-user').forEach(btn => {
             btn.addEventListener('click', () => openEditUser(parseInt(btn.dataset.id)));
         });
         tbody.querySelectorAll('.btn-delete-user').forEach(btn => {
             btn.addEventListener('click', () => openDeleteUser(parseInt(btn.dataset.id), btn.dataset.name));
         });
-    }
-
-    function escHtml(str) {
-        return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     // busqueda
@@ -112,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-refresh-users')?.addEventListener('click', loadUsers);
 
-    // abrir modal de crear usuario
+    // abrir modal crear
     document.getElementById('btn-new-user')?.addEventListener('click', () => openCreateUser());
 
     function openCreateUser() {
@@ -129,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Modal.open('modal-user');
     }
 
-    // abrir modal de editar usuario
+    // abrir modal editar
     async function openEditUser(id) {
         editingId = id;
         const res = await Api.get(`usuarios?id=${id}`);
@@ -149,18 +161,18 @@ document.addEventListener('DOMContentLoaded', () => {
         Modal.open('modal-user');
     }
 
-    ['btn-close-modal-user','btn-cancel-user'].forEach(id => {
+    ['btn-close-modal-user', 'btn-cancel-user'].forEach(id => {
         document.getElementById(id)?.addEventListener('click', () => Modal.close('modal-user'));
     });
 
-    // guardar usuario
+    // guardar
     document.getElementById('btn-save-user')?.addEventListener('click', async () => {
         hideFormError();
-        const nombre    = document.getElementById('user-nombre').value.trim();
+        const nombre = document.getElementById('user-nombre').value.trim();
         const apellidos = document.getElementById('user-apellidos').value.trim();
-        const email     = document.getElementById('user-email').value.trim();
-        const password  = document.getElementById('user-password').value;
-        const activo    = document.getElementById('user-activo').checked;
+        const email = document.getElementById('user-email').value.trim();
+        const password = document.getElementById('user-password').value;
+        const activo = document.getElementById('user-activo').checked;
 
         if (!nombre || !apellidos) return showFormError('Nombre y apellidos son requeridos.');
         if (!email || !/\S+@\S+\.\S+/.test(email)) return showFormError('Correo no válido.');
@@ -197,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('form-user-error').classList.add('hidden');
     }
 
-    // abrir modal de confirmar eliminacion de usuario
+    // confirmar eliminar
     function openDeleteUser(id, name) {
         deleteId = id;
         document.getElementById('delete-user-name').textContent = name;
@@ -224,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // cargar selector de usuarios para asignar roles
+    // cargar selector para asignar roles
     let allRoles = [];
 
     async function loadUserSelector() {
@@ -250,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadRolesForUser(uid) {
         const res = await Api.get(`usuarios?id=${uid}&action=roles`);
         if (!res?.success) { Toast.error('Error al cargar roles.'); return; }
-        allRoles     = res.data.roles ?? [];
+        allRoles = res.data.roles ?? [];
         const assigned = res.data.asignados ?? [];
         const container = document.getElementById('roles-checkboxes');
         container.innerHTML = allRoles.map(r => `

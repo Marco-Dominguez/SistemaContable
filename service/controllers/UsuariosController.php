@@ -11,13 +11,14 @@ $id     = isset($_GET['id']) ? (int)$_GET['id'] : null;
 $action = $_GET['action'] ?? '';
 
 match (true) {
+    // user roles
+    $method === 'GET'  && $action === 'roles'  && $id => getUserRoles($user, $id),
+    $method === 'POST' && $action === 'roles'  && $id => setUserRoles($user, $id),
     $method === 'GET'    && !$id && !$action   => getUsers($user),
     $method === 'GET'    && $id  && !$action   => getUser($user, $id),
     $method === 'POST'   && !$action           => createUser($user),
     $method === 'PUT'    && $id  && !$action   => updateUser($user, $id),
-    $method === 'DELETE' && $id                => deleteUser($user, $id),
-    $method === 'GET'  && $action === 'roles'  && $id => getUserRoles($user, $id),
-    $method === 'POST' && $action === 'roles'  && $id => setUserRoles($user, $id),
+    $method === 'DELETE' && $id  && !$action   => deleteUser($user, $id),
     default => jsonResponse(false, 'Ruta no encontrada.', [], 404),
 };
 
@@ -125,8 +126,10 @@ function updateUser(array $user, int $id): void {
 function deleteUser(array $user, int $id): void {
     requirePermission($user['usuario_id'], 'usuarios', 'eliminar');
     if ($id === $user['usuario_id']) jsonResponse(false, 'No puedes eliminar tu propia cuenta.', [], 403);
-    $db = Database::getInstance();
-    $db->prepare('SELECT id FROM usuarios WHERE id = :id')->execute([':id' => $id]);
+    $db    = Database::getInstance();
+    $check = $db->prepare('SELECT id FROM usuarios WHERE id = :id');
+    $check->execute([':id' => $id]);
+    if (!$check->fetch()) jsonResponse(false, 'Usuario no encontrado.', [], 404);
     $db->prepare('DELETE FROM usuarios WHERE id = :id')->execute([':id' => $id]);
     jsonResponse(true, 'Usuario eliminado correctamente.');
 }

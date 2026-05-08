@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             Auth.setSession(res.data.token, res.data.usuario);
             Toast.success('¡Bienvenido!');
             setTimeout(() => {
-                window.location.href = '/SistemaContable/view/pages/dashboard/index.html';
+                window.location.href = '/view/pages/dashboard/index.html';
             }, 600);
 
         } catch (err) {

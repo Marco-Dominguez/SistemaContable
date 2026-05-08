@@ -1,0 +1,123 @@
+<!-- usuarios -->
+<div id="tab-users" role="tabpanel" aria-labelledby="tab-btn-users">
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <h2 class="text-lg font-bold text-slate-800">Gestión de Usuarios</h2>
+            <p class="text-sm text-slate-400">Administra los usuarios del sistema</p>
+        </div>
+        <button class="btn btn-primary" id="btn-new-user">
+            <i class="bi bi-plus-lg"></i> Nuevo Usuario
+        </button>
+    </div>
+
+    <div class="card p-4 mb-4">
+        <div class="flex gap-3 flex-wrap">
+            <input type="text" id="search-users" placeholder="Buscar por nombre o correo..."
+                   class="form-input flex-1 min-w-48">
+            <button class="btn btn-outline" id="btn-refresh-users">
+                <i class="bi bi-arrow-clockwise"></i> Actualizar
+            </button>
+        </div>
+    </div>
+
+    <div class="card overflow-hidden">
+        <div id="users-loading" class="p-8 text-center text-slate-400">
+            <div class="spinner mx-auto mb-2"></div>
+            Cargando usuarios...
+        </div>
+        <div id="users-table-wrap" class="hidden overflow-x-auto">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Roles</th>
+                        <th>Estado</th>
+                        <th>Último acceso</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody"></tbody>
+            </table>
+        </div>
+        <div id="users-empty" class="hidden p-10 text-center text-slate-400">
+            <i class="bi bi-people text-4xl block mb-2"></i>
+            No hay usuarios registrados.
+        </div>
+    </div>
+</div>
+
+<!-- crear / editar usuario -->
+<div id="modal-user" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-user-title">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800" id="modal-user-title">Nuevo Usuario</h3>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-user" aria-label="Cerrar">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="form-user" novalidate class="flex flex-col gap-4">
+                <input type="hidden" id="user-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="form-label" for="user-nombre">Nombre *</label>
+                        <input class="form-input" type="text" id="user-nombre" placeholder="Nombre">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="user-apellidos">Apellidos *</label>
+                        <input class="form-input" type="text" id="user-apellidos" placeholder="Apellidos">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="user-email">Correo electrónico *</label>
+                    <input class="form-input" type="email" id="user-email" placeholder="correo@ejemplo.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="user-password">
+                        Contraseña <span id="pass-hint" class="text-slate-400 text-xs">(requerida)</span>
+                    </label>
+                    <input class="form-input" type="password" id="user-password" placeholder="Mínimo 8 caracteres">
+                </div>
+                <div class="form-group" id="user-activo-group" style="display:none;">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="user-activo" checked class="w-4 h-4 accent-blue-600">
+                        <span class="form-label mb-0">Usuario activo</span>
+                    </label>
+                </div>
+                <div id="form-user-error" class="alert alert-error hidden">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <span id="form-user-error-msg"></span>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-user">Cancelar</button>
+            <button class="btn btn-primary" id="btn-save-user">
+                <i class="bi bi-save"></i> Guardar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- confirmar eliminar usuario -->
+<div id="modal-delete" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-delete-user-title">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800" id="modal-delete-user-title">Confirmar eliminación</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-slate-600">¿Estás seguro de que deseas eliminar al usuario
+                <strong id="delete-user-name"></strong>?
+                Esta acción no se puede deshacer.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-delete">Cancelar</button>
+            <button class="btn btn-danger" id="btn-confirm-delete">
+                <i class="bi bi-trash"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</div>

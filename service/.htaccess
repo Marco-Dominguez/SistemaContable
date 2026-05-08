@@ -10,15 +10,20 @@ Options -Indexes
 # CORS
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /SistemaContable/service/
+    RewriteBase /service/
 
     # Permitir OPTIONS
     RewriteCond %{REQUEST_METHOD} OPTIONS
     RewriteRule ^ - [L]
 
     # Rutas APIs
-    RewriteRule ^api/auth(.*)$     controllers/AuthController.php$1 [L,QSA]
-    RewriteRule ^api/roles(.*)$    controllers/RolesController.php$1 [L,QSA]
-    RewriteRule ^api/usuarios(.*)$ controllers/UsuariosController.php$1 [L,QSA]
-    RewriteRule ^api/modulos(.*)$  controllers/ModulosController.php$1 [L,QSA]
+    RewriteRule ^api/auth(.*)$            controllers/AuthController.php$1 [L,QSA]
+    RewriteRule ^api/roles(.*)$           controllers/RolesController.php$1 [L,QSA]
+    RewriteRule ^api/usuarios(.*)$        controllers/UsuariosController.php$1 [L,QSA]
+    RewriteRule ^api/modulos(.*)$         controllers/ModulosController.php$1 [L,QSA]
+    RewriteRule ^api/clientes(.*)$        controllers/ClientesController.php$1 [L,QSA]
+    RewriteRule ^api/declaraciones(.*)$   controllers/DeclaracionesController.php$1 [L,QSA]
+    RewriteRule ^api/catalogos(.*)$       controllers/CatalogosController.php$1 [L,QSA]
+    RewriteRule ^api/notificaciones(.*)$  controllers/NotificacionesController.php$1 [L,QSA]
+    RewriteRule ^api/analiticas(.*)$      controllers/AnaliticasController.php$1 [L,QSA]
 </IfModule>

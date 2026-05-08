@@ -11,14 +11,14 @@ $id     = isset($_GET['id']) ? (int)$_GET['id'] : null;
 $action = $_GET['action'] ?? '';
 
 match (true) {
+    // permisos de un rol
+    $method === 'GET'  && $action === 'permisos' && $id => getRolePermissions($user, $id),
+    $method === 'POST' && $action === 'permisos' && $id => setRolePermissions($user, $id),
     $method === 'GET'    && !$id && !$action  => getRoles($user),
     $method === 'GET'    && $id               => getRole($user, $id),
     $method === 'POST'   && !$action          => createRole($user),
     $method === 'PUT'    && $id               => updateRole($user, $id),
     $method === 'DELETE' && $id               => deleteRole($user, $id),
-    // permisos de un rol
-    $method === 'GET'  && $action === 'permisos' && $id => getRolePermissions($user, $id),
-    $method === 'POST' && $action === 'permisos' && $id => setRolePermissions($user, $id),
     default => jsonResponse(false, 'Ruta no encontrada.', [], 404),
 };
 

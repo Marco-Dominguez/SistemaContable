@@ -1,5 +1,5 @@
 <?php
-define('APP_NAME',    'Sistema Contable');
+define('APP_NAME',    'Conta⅃ink');
 define('APP_VERSION', '1.0.0');
 define('APP_ENV',     'development'); // 'production' subido en host
 

@@ -1,0 +1,51 @@
+<!-- sidebar -->
+<div class="sidebar-brand">
+    <img src="/view/assets/img/Logotipo.svg" alt="Conta⅃ink" class="brand-logo-img" />
+    <img src="/view/assets/img/Isotipo.svg" alt="Conta⅃ink" class="brand-icon-img" />
+</div>
+<nav class="flex-1 overflow-y-auto py-3">
+    <div class="nav-group">
+        <a href="/view/pages/dashboard/index.html" class="nav-item">
+            <i class="bi bi-house-door"></i> Inicio
+        </a>
+    </div>
+    <div class="nav-group" id="nav-seguridad">
+        <div class="nav-group-label">Seguridad</div>
+        <a href="/view/pages/security/usuarios/index.html" class="nav-item">
+            <i class="bi bi-people"></i> Usuarios
+        </a>
+        <a href="/view/pages/security/roles/index.html" class="nav-item">
+            <i class="bi bi-shield-lock"></i> Roles y Permisos
+        </a>
+    </div>
+    <div class="nav-group">
+        <div class="nav-group-label">Gestión</div>
+        <a href="/view/pages/clientes/index.html" class="nav-item">
+            <i class="bi bi-person-badge"></i> Clientes
+        </a>
+        <a href="/view/pages/declaraciones/index.html" class="nav-item">
+            <i class="bi bi-file-earmark-text"></i> Declaraciones
+        </a>
+        <a href="/view/pages/analiticas/index.html" class="nav-item">
+            <i class="bi bi-bar-chart-line"></i> Analíticas
+        </a>
+    </div>
+    <div class="nav-group">
+        <div class="nav-group-label">Soporte</div>
+        <a href="/view/pages/soporte/index.html" class="nav-item">
+            <i class="bi bi-headset"></i> Soporte
+        </a>
+    </div>
+</nav>
+<div class="sidebar-user">
+    <a href="/view/pages/auth/profile.html" class="sidebar-user-profile" aria-label="Ver perfil">
+        <div class="sidebar-user-avatar" id="sidebar-user-avatar">?</div>
+        <div class="sidebar-user-info">
+            <p class="sidebar-user-name" id="sidebar-user-name">—</p>
+            <p class="sidebar-user-role" id="sidebar-user-role">—</p>
+        </div>
+    </a>
+    <button id="sidebar-btn-logout" class="sidebar-logout-btn" title="Cerrar sesión" aria-label="Cerrar sesión">
+        <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+    </button>
+</div>

@@ -1,0 +1,174 @@
+<!-- lista de declaraciones -->
+<div id="tab-declaraciones" role="tabpanel" aria-labelledby="tab-btn-declaraciones">
+    <div class="flex items-center justify-between mb-4">
+        <div>
+            <h2 class="text-lg font-bold text-slate-800">Control de Declaraciones</h2>
+            <p class="text-sm text-slate-400">Administra las declaraciones fiscales de tus clientes</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <button class="btn btn-outline btn-sm hidden" id="btn-export-decl"
+                    aria-label="Exportar declaraciones a CSV">
+                <i class="bi bi-download" aria-hidden="true"></i>
+                <span class="hidden sm:inline">Exportar CSV</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- filtros -->
+    <div class="card p-4 mb-4">
+        <div class="flex gap-3 flex-wrap items-end">
+            <div class="form-group" style="min-width:160px">
+                <label class="form-label text-xs">Cliente</label>
+                <select id="filter-cliente" class="form-input">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="form-group" style="min-width:130px">
+                <label class="form-label text-xs">Estatus</label>
+                <select id="filter-estatus" class="form-input">
+                    <option value="">Todos</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En Proceso">En Proceso</option>
+                    <option value="Para Pago">Para Pago</option>
+                    <option value="Pagada">Pagada</option>
+                    <option value="Presentada_Cero">Presentada en Cero</option>
+                </select>
+            </div>
+            <div class="form-group" style="min-width:90px">
+                <label class="form-label text-xs">Mes</label>
+                <select id="filter-mes" class="form-input">
+                    <option value="">Todos</option>
+                    <option value="1">Enero</option>
+                    <option value="2">Febrero</option>
+                    <option value="3">Marzo</option>
+                    <option value="4">Abril</option>
+                    <option value="5">Mayo</option>
+                    <option value="6">Junio</option>
+                    <option value="7">Julio</option>
+                    <option value="8">Agosto</option>
+                    <option value="9">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+            </div>
+            <div class="form-group" style="min-width:90px">
+                <label class="form-label text-xs">Año</label>
+                <select id="filter-anio" class="form-input">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" id="btn-filter-decl">
+                <i class="bi bi-funnel"></i> Filtrar
+            </button>
+            <button class="btn btn-outline" id="btn-refresh-decl" aria-label="Actualizar declaraciones">
+                <i class="bi bi-arrow-clockwise" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="card overflow-hidden">
+        <div id="decl-loading" class="p-8 text-center text-slate-400">
+            <div class="spinner mx-auto mb-2"></div>
+            Cargando declaraciones...
+        </div>
+        <div id="decl-table-wrap" class="hidden overflow-x-auto">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Cliente</th>
+                        <th>Obligación</th>
+                        <th>Periodo</th>
+                        <th>Estatus</th>
+                        <th>Importe</th>
+                        <th>Archivos</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="decl-tbody"></tbody>
+            </table>
+        </div>
+        <div id="decl-empty" class="hidden p-10 text-center">
+            <i class="bi bi-file-earmark-text text-5xl block mb-3 text-slate-200"></i>
+            <p class="font-semibold text-slate-700 mb-1" id="decl-empty-title">Sin declaraciones registradas</p>
+            <p class="text-sm text-slate-400 mb-5" id="decl-empty-msg">Aún no hay declaraciones en el sistema. Crea la primera desde "Nueva Declaración".</p>
+            <button class="btn btn-primary btn-sm" id="decl-empty-cta">
+                <i class="bi bi-plus-circle"></i> Nueva Declaración
+            </button>
+            <button class="btn btn-outline btn-sm hidden" id="decl-empty-clear">
+                <i class="bi bi-x-circle"></i> Limpiar filtros
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- modal detalle / editar declaracion -->
+<div id="modal-decl-detail" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-decl-title">
+    <div class="modal-box" style="max-width:600px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800" id="modal-decl-title">Detalle de Declaración</h3>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-modal-decl" aria-label="Cerrar">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="decl-detail-content" class="flex flex-col gap-4">
+                <!-- filled by JS -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-decl-detail">Cerrar</button>
+            <button class="btn btn-primary hidden" id="btn-save-decl-detail">
+                <i class="bi bi-save"></i> Guardar Cambios
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- modal subir archivo -->
+<div id="modal-upload" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="upload-title">
+    <div class="modal-box" style="max-width:450px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800" id="upload-title">Subir Archivo</h3>
+            <button class="btn btn-outline btn-icon btn-sm" id="btn-close-upload" aria-label="Cerrar">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Selecciona el archivo (PDF, PNG, JPG — máx 10MB)</label>
+                <input type="file" id="upload-file" accept=".pdf,.png,.jpg,.jpeg" class="form-input">
+            </div>
+            <div id="upload-error" class="alert alert-error hidden mt-3">
+                <i class="bi bi-exclamation-circle"></i>
+                <span id="upload-error-msg"></span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-upload" type="button">Cancelar</button>
+            <button class="btn btn-primary" id="btn-confirm-upload" type="button">
+                <i class="bi bi-cloud-upload"></i> Subir
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- confirmar eliminar declaracion -->
+<div id="modal-delete-decl" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-delete-decl-title">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header">
+            <h3 class="font-semibold text-slate-800" id="modal-delete-decl-title">Confirmar eliminación</h3>
+        </div>
+        <div class="modal-body">
+            <p class="text-slate-600">¿Estás seguro de que deseas eliminar esta declaración?
+                Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="btn-cancel-delete-decl">Cancelar</button>
+            <button class="btn btn-danger" id="btn-confirm-delete-decl">
+                <i class="bi bi-trash"></i> Eliminar
+            </button>
+        </div>
+    </div>
+</div>

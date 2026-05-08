@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuarios — Conta⅃ink</title>
+    <title>Clientes — Conta⅃ink</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +25,6 @@
 
 <body>
     <div id="app">
-
         <!-- sidebar -->
         <aside id="sidebar"></aside>
 
@@ -36,12 +35,13 @@
                         <i class="bi bi-list text-lg" aria-hidden="true"></i>
                     </button>
                     <nav class="text-sm text-slate-400">
-                        <span>Seguridad</span>
+                        <span>Gestión</span>
                         <span class="mx-1">/</span>
-                        <span class="text-slate-700 font-medium">Usuarios</span>
+                        <span class="text-slate-700 font-medium">Clientes</span>
                     </nav>
                 </div>
                 <div class="flex items-center gap-4">
+                    <!-- notificaciones -->
                     <div class="relative" id="notif-wrapper">
                         <button class="btn btn-outline btn-icon btn-sm" id="btn-notif" aria-label="Notificaciones"
                             aria-haspopup="true" aria-expanded="false">
@@ -56,18 +56,18 @@
             <main id="page-content">
                 <!-- nav de tabs -->
                 <div class="tab-list" role="tablist">
-                    <button id="tab-btn-users" class="tab-btn active" role="tab" aria-selected="true"
-                        aria-controls="tab-users" data-tab="tab-users">Usuarios</button>
-                    <button id="tab-btn-user-roles" class="tab-btn" role="tab" aria-selected="false"
-                        aria-controls="tab-user-roles" data-tab="tab-user-roles">Asignar Roles</button>
+                    <button id="tab-btn-clientes" class="tab-btn active" role="tab" aria-selected="true"
+                        aria-controls="tab-clientes" data-tab="tab-clientes">Clientes</button>
+                    <button id="tab-btn-regimenes" class="tab-btn" role="tab" aria-selected="false"
+                        aria-controls="tab-regimenes" data-tab="tab-regimenes">Asignar Regímenes</button>
                 </div>
-                <!-- tabs/ -->
+                <!-- tabs loaded by JS -->
             </main>
         </div>
     </div>
 
     <script src="/view/assets/js/app.js?v=2"></script>
-    <script src="/view/pages/security/usuarios/usuarios.js"></script>
+    <script src="/view/pages/clientes/clientes.js?v=2"></script>
 </body>
 
 </html>
