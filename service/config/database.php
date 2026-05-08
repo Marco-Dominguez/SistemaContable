@@ -1,5 +1,5 @@
 <?php
-//configs de xampp, cambiar al subir a host
+//configs de la db
 define('DB_HOST', 'localhost');
 define('DB_PORT', '3306');
 define('DB_NAME', 'sistema_contable');
