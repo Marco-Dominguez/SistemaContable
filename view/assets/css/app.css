@@ -595,6 +595,7 @@ h4 {
 }
 
 .form-input {
+    box-sizing: border-box;
     padding: .55rem .85rem;
     border: 1.5px solid #e2e8f0;
     border-radius: 8px;
