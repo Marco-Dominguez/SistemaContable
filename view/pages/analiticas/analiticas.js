@@ -25,6 +25,11 @@ let chartDeclMes = null;
 document.addEventListener('DOMContentLoaded', async () => {
     Auth.redirectIfNotLogged();
 
+    const isClientRole = Auth.getUser()?.roles?.includes('Cliente') ?? false;
+    if (isClientRole) {
+        document.getElementById('top-clientes-panel')?.classList.add('hidden');
+    }
+
     // selector de año
     const currentYear = new Date().getFullYear();
     const selAnio = document.getElementById('analiticas-anio');

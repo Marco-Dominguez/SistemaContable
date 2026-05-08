@@ -6,6 +6,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('welcome-title').textContent = `Bienvenido, ${u.nombre} ${u.apellidos}`;
     }
 
+    // ocultar acciones rapidas y kpis si es cliente
+    const isClientRole = u?.roles?.includes('Cliente') ?? false;
+    if (isClientRole) {
+        document.getElementById('stats-grid')?.classList.add('hidden');
+        const quickActionsPanel = document.getElementById('quick-actions-panel');
+        if (quickActionsPanel) {
+            quickActionsPanel.classList.add('hidden');
+            // Expand carousel card to full width when quick actions are hidden
+            const dashCols = quickActionsPanel.closest('.dash-cols');
+            if (dashCols) dashCols.style.gridTemplateColumns = '1fr';
+        }
+    }
+
     const dateEl = document.getElementById('welcome-date');
     if (dateEl) {
         const fecha = new Intl.DateTimeFormat('es-MX', {
@@ -15,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const MESES_FULL = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
     const STATUS_LABELS = {
         'Pendiente': { class: 'badge-yellow', icon: 'bi-clock' },
@@ -96,17 +109,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     try {
-        const [resUsers, resRoles, resDecl] = await Promise.all([
-            Api.get('usuarios'),
-            Api.get('roles'),
-            Api.get('declaraciones?action=stats'),
-        ]);
-        if (resUsers?.success) document.getElementById('stat-users').textContent = resUsers.data.usuarios?.length ?? 0;
-        if (resRoles?.success) document.getElementById('stat-roles').textContent = resRoles.data.roles?.length ?? 0;
-        if (resDecl?.success) {
-            document.getElementById('stat-clients').textContent = resDecl.data.total_clientes ?? 0;
-            document.getElementById('stat-decl').textContent = resDecl.data.total_declaraciones ?? 0;
-            renderCarousel(resDecl.data.recientes ?? []);
+        if (isClientRole) {
+            // traer solo las declaraciones del cliente
+            const resDecl = await Api.get('declaraciones?action=stats');
+            if (resDecl?.success) {
+                renderCarousel(resDecl.data.recientes ?? []);
+            } else {
+                renderCarousel([]);
+            }
+        } else {
+            const [resUsers, resRoles, resDecl] = await Promise.all([
+                Api.get('usuarios'),
+                Api.get('roles'),
+                Api.get('declaraciones?action=stats'),
+            ]);
+            if (resUsers?.success) document.getElementById('stat-users').textContent = resUsers.data.usuarios?.length ?? 0;
+            if (resRoles?.success) document.getElementById('stat-roles').textContent = resRoles.data.roles?.length ?? 0;
+            if (resDecl?.success) {
+                document.getElementById('stat-clients').textContent = resDecl.data.total_clientes ?? 0;
+                document.getElementById('stat-decl').textContent = resDecl.data.total_declaraciones ?? 0;
+                renderCarousel(resDecl.data.recientes ?? []);
+            }
         }
     } catch (e) {
         renderCarousel([]);
