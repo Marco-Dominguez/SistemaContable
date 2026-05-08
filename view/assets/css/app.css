@@ -1274,6 +1274,29 @@ h4 {
     color: var(--color-primary-lt);
 }
 
+/* developer social links */
+.dev-social-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.dev-social-link {
+    color: #94a3b8;
+    font-size: 1.25rem;
+    transition: color .2s ease, transform .2s ease;
+    display: inline-flex;
+}
+
+.dev-social-link:hover {
+    color: var(--color-primary-lt);
+    transform: scale(1.15);
+}
+
 /* tarjetas de soporte */
 .support-phone-card {
     background: var(--color-sidebar);
