@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let uploadDeclId = null;
     let uploadTipo = '';
 
-    // empty state
+    // estado vacio
     document.getElementById('decl-empty-cta')?.addEventListener('click', () => {
         document.querySelector('.tab-btn[data-tab="tab-nueva"]')?.click();
     });
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const genMes = document.getElementById('gen-mes');
     if (genMes) genMes.value = currentMonth;
 
-    // tabs
+    // pestañas
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tab-btn').forEach(b => {
@@ -98,12 +98,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const res = await Api.get('clientes');
             if (res?.success) allClients = res.data.clientes ?? [];
-        } catch (e) { /* silent */ }
+        } catch (e) { /* silencio */ }
 
         ['filter-cliente', 'new-decl-cliente'].forEach(id => {
             const sel = document.getElementById(id);
             if (!sel) return;
-            // keep first option, clear rest
+            // mantener primera opcion, limpiar el resto
             const first = sel.options[0];
             sel.innerHTML = '';
             sel.appendChild(first);
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </tr>`;
         }).join('');
 
-        // binds
+        // enlaces
         tbody.querySelectorAll('.btn-view-decl').forEach(btn =>
             btn.addEventListener('click', () => openDeclDetail(parseInt(btn.dataset.id))));
         tbody.querySelectorAll('.btn-upload-acuse').forEach(btn =>
@@ -614,7 +614,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     document.getElementById('btn-export-decl')?.addEventListener('click', exportToCSV);
 
-    // init
+    // inicializar
     await loadClientsForSelectors();
     loadDeclaraciones();
 });

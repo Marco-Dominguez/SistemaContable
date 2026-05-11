@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const quickActionsPanel = document.getElementById('quick-actions-panel');
         if (quickActionsPanel) {
             quickActionsPanel.classList.add('hidden');
-            // Expand carousel card to full width when quick actions are hidden
+            // expandir tarjeta de carrusel a ancho completo cuando las acciones rapidas estan ocultas
             const dashCols = quickActionsPanel.closest('.dash-cols');
             if (dashCols) dashCols.style.gridTemplateColumns = '1fr';
         }
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const btnNext = document.getElementById('carousel-next');
         if (!track) return;
 
-        const CARD_W = 200 + 16; // card width + gap
+        const CARD_W = 200 + 16; // ancho de tarjeta mas espacio
         let offset = 0;
 
         const MESES = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];

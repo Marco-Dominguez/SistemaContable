@@ -11,7 +11,7 @@ $id     = isset($_GET['id']) ? (int)$_GET['id'] : null;
 $action = $_GET['action'] ?? '';
 
 match (true) {
-    // specific action routes first
+    // rutas de acciones especificas primero
     $method === 'POST'   && $action === 'upload' && $id             => uploadFile($user, $id),
     $method === 'GET'    && $action === 'stats'                     => getStats($user),
     $method === 'POST'   && $action === 'generar'                   => generarObligaciones($user),
@@ -391,7 +391,7 @@ function generarObligaciones(array $user): void {
     ]);
 }
 
-// helpers
+// ayudantes
 function getClienteIdForUser(int $userId): ?int {
     $db   = Database::getInstance();
     $stmt = $db->prepare('SELECT id FROM clientes WHERE usuario_id = :uid');

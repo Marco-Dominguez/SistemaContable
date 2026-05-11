@@ -1,7 +1,7 @@
 // configuracion
 const API_BASE = '/service/api';
 
-// auth helpers
+// ayudantes de autenticacion
 const Auth = {
     getToken() { return localStorage.getItem('sc_token'); },
     getUser() {
@@ -33,7 +33,7 @@ const Auth = {
     },
 };
 
-// api client helper
+// ayudante de cliente api
 const Api = {
     async request(method, endpoint, body = null) {
         const token = Auth.getToken();
@@ -74,7 +74,7 @@ const Api = {
     delete(endpoint) { return this.request('DELETE', endpoint); },
 };
 
-// toast helper
+// ayudante de toast
 const Toast = {
     container: null,
     init() {
@@ -107,7 +107,7 @@ const Toast = {
     info(m) { this.show(m, 'info'); },
 };
 
-// modal helper
+// ayudante de modal
 const Modal = {
     _trigger: null,
     open(id) {
@@ -127,7 +127,7 @@ const Modal = {
     },
 };
 
-// dom helpers
+// ayudantes del dom
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
 
@@ -226,7 +226,7 @@ function initSidebarToggle() {
     });
 }
 
-// load sidebar component from partial HTML
+// cargar componente de barra lateral desde html parcial
 async function loadSidebar() {
     const sidebar = $('#sidebar');
     if (!sidebar) return;

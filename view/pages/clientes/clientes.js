@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <span class="text-slate-500 leading-snug">${escHtml(r.nombre)}</span>
                 </div>
             `).join('');
-        } catch { /* silent */ }
+        } catch { /* silencio */ }
     }
 
     const infoBtn = document.getElementById('btn-regimenes-info');
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     initRegimenesInfo();
 
-    // empty state
+    // estado vacio
     document.getElementById('btn-empty-new-client')?.addEventListener('click', () => {
         document.getElementById('btn-new-client')?.click();
     });
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderClients(allClients);
     });
 
-    // tabs
+    // pestañas
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tab-btn').forEach(b => {
@@ -376,6 +376,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         finally { setLoading(btn, false); }
     });
 
-    // init
+    // inicializar
     loadClients();
 });
