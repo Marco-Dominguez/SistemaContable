@@ -20,44 +20,75 @@ Estructura del proyecto:
 
 ```
 C:\xampp\htdocs\SistemaContable\
-├── index.php
 ├── .htaccess
+├── index.php
+├── README.md
+├── documentos\
 ├── service\
 │   ├── .htaccess
 │   ├── config\
-│   │   ├── database.php
 │   │   ├── app.php
+│   │   ├── database.php
+│   │   ├── migration_clientes_declaraciones.sql
 │   │   └── schema.sql
-│   ├── middleware\
-│   │   └── auth.php
-│   └── controllers\
-│       ├── AuthController.php
-│       ├── RolesController.php
-│       ├── UsuariosController.php
-│       └── ModulosController.php
+│   ├── controllers\
+│   │   ├── AnaliticasController.php
+│   │   ├── AuthController.php
+│   │   ├── CatalogosController.php
+│   │   ├── ClientesController.php
+│   │   ├── DeclaracionesController.php
+│   │   ├── ModulosController.php
+│   │   ├── NotificacionesController.php
+│   │   ├── RolesController.php
+│   │   └── UsuariosController.php
+│   └── middleware\
+│       └── auth.php
+├── uploads\
 └── view\
     ├── .htaccess
     ├── assets\
     │   ├── css\
     │   │   └── app.css
+    │   ├── fonts\
+    │   ├── img\
     │   └── js\
     │       └── app.js
     ├── components\
+    │   ├── sidebar.html
     │   └── templates\
     │       └── layout.html
     └── pages\
+        ├── analiticas\
+        │   ├── index.html
+        │   └── analiticas.js
         ├── auth\
         │   ├── login.html
-        │   └── login.js
+        │   ├── login.js
+        │   ├── profile.html
+        │   └── profile.js
+        ├── clientes\
+        │   ├── index.html
+        │   ├── clientes.js
+        │   └── tabs\
         ├── dashboard\
-        │   └── index.html
-        └── security\
-            ├── usuarios\
-            │   ├── index.html
-            │   └── usuarios.js
-            └── roles\
-                ├── index.html
-                └── roles.js
+        │   ├── index.html
+        │   └── dashboard.js
+        ├── declaraciones\
+        │   ├── index.html
+        │   ├── declaraciones.js
+        │   └── tabs\
+        ├── security\
+        │   ├── roles\
+        │   │   ├── index.html
+        │   │   ├── roles.js
+        │   │   └── tabs\
+        │   └── usuarios\
+        │       ├── index.html
+        │       ├── usuarios.js
+        │       └── tabs\
+        └── soporte\
+            ├── index.html
+            └── soporte.js
 ```
 
 ---
