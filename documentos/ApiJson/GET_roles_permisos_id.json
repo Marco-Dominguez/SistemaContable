@@ -1,0 +1,34 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "rol_id": 1,
+        "modulos": [
+            {
+                "id": 1,
+                "nombre": "Clientes",
+                "slug": "clientes"
+            }
+        ],
+        "acciones": [
+            {
+                "id": 1,
+                "nombre": "Ver",
+                "slug": "ver"
+            }
+        ],
+        "modulo_acciones": [
+            {
+                "id": 1,
+                "modulo_id": 1,
+                "accion_id": 1
+            }
+        ],
+        "asignados": {
+            "1": {
+                "1": true,
+                "2": true
+            }
+        }
+    }
+}

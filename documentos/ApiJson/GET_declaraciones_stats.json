@@ -1,0 +1,22 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "total_clientes": 45,
+        "total_declaraciones": 320,
+        "pendientes": 15,
+        "para_pago": 5,
+        "recientes": [
+            {
+                "id": 10,
+                "estatus": "Pendiente",
+                "periodo_mes": 4,
+                "periodo_anio": 2026,
+                "importe_a_pagar": 0,
+                "razon_social": "Mecánica Fronteriza SA de CV",
+                "obligacion_nombre": "Impuesto al Valor Agregado",
+                "obligacion_clave": "IVA"
+            }
+        ]
+    }
+}

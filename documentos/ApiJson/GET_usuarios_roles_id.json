@@ -1,0 +1,19 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "roles": [
+            {
+                "id": 1,
+                "nombre": "Administrador"
+            },
+            {
+                "id": 2,
+                "nombre": "Cliente"
+            }
+        ],
+        "asignados": [
+            1
+        ]
+    }
+}

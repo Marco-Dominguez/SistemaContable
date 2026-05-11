@@ -1,0 +1,15 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "usuario": {
+            "id": 1,
+            "nombre": "María",
+            "apellidos": "López Hernández",
+            "email": "maria.lopez@empresa.com.mx",
+            "activo": 1,
+            "ultimo_login": "2026-05-11 07:00:00",
+            "created_at": "2025-01-15"
+        }
+    }
+}

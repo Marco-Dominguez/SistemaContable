@@ -1,0 +1,38 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "modulos": [
+            {
+                "id": 1,
+                "nombre": "Clientes",
+                "slug": "clientes",
+                "icono": "bi-people"
+            }
+        ],
+        "acciones": [
+            {
+                "id": 1,
+                "nombre": "Ver",
+                "slug": "ver"
+            },
+            {
+                "id": 2,
+                "nombre": "Crear",
+                "slug": "crear"
+            }
+        ],
+        "modulo_acciones": [
+            {
+                "id": 1,
+                "modulo_id": 1,
+                "accion_id": 1
+            },
+            {
+                "id": 2,
+                "modulo_id": 1,
+                "accion_id": 2
+            }
+        ]
+    }
+}

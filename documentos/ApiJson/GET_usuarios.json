@@ -1,0 +1,28 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "usuarios": [
+            {
+                "id": 1,
+                "nombre": "María",
+                "apellidos": "López Hernández",
+                "email": "maria.lopez@empresa.com.mx",
+                "activo": 1,
+                "ultimo_login": "2026-05-11 07:00:00",
+                "created_at": "2025-01-15",
+                "roles": "Administrador"
+            },
+            {
+                "id": 2,
+                "nombre": "Juan",
+                "apellidos": "Ramírez",
+                "email": "juan.ramirez@hotmail.com",
+                "activo": 1,
+                "ultimo_login": "2026-05-01 12:00:00",
+                "created_at": "2025-02-10",
+                "roles": "Cliente"
+            }
+        ]
+    }
+}

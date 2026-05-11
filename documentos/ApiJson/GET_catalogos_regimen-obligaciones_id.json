@@ -1,0 +1,14 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "obligaciones": [
+            {
+                "id": 1,
+                "clave": "ISR_PM",
+                "nombre": "Pago provisional mensual de ISR",
+                "periodicidad": "Mensual"
+            }
+        ]
+    }
+}

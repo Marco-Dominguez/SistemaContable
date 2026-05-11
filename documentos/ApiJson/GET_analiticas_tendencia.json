@@ -1,0 +1,14 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "tendencia": [
+            {
+                "mes": 1,
+                "importe": 45000,
+                "saldo_favor": 1000,
+                "total_decl": 12
+            }
+        ]
+    }
+}

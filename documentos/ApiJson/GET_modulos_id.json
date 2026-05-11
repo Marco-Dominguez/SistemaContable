@@ -1,0 +1,15 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "modulo": {
+            "id": 1,
+            "nombre": "Dashboard",
+            "slug": "dashboard",
+            "icono": "bi-grid",
+            "descripcion": "Vista principal",
+            "activo": 1,
+            "orden": 1
+        }
+    }
+}

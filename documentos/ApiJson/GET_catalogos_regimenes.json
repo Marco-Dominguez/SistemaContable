@@ -1,0 +1,22 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "regimenes": [
+            {
+                "id": 1,
+                "clave": "601",
+                "nombre": "General de Ley Personas Morales",
+                "descripcion": "Para sociedades...",
+                "activo": 1
+            },
+            {
+                "id": 2,
+                "clave": "612",
+                "nombre": "Personas Físicas con Actividades Empresariales y Profesionales",
+                "descripcion": "Para personas físicas...",
+                "activo": 1
+            }
+        ]
+    }
+}

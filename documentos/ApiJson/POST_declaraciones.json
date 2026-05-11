@@ -1,0 +1,7 @@
+{
+    "success": true,
+    "message": "Declaración creada correctamente.",
+    "data": {
+        "id": 123
+    }
+}

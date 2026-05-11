@@ -1,0 +1,26 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "usuario": {
+            "usuario_id": 1,
+            "nombre": "Carlos",
+            "apellidos": "Gómez Pérez",
+            "email": "carlos.gomez@empresa.com.mx"
+        },
+        "roles": [
+            {
+                "id": 1,
+                "nombre": "Administrador"
+            }
+        ],
+        "permisos": {
+            "clientes": [
+                "ver",
+                "crear",
+                "editar",
+                "eliminar"
+            ]
+        }
+    }
+}

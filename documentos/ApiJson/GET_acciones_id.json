@@ -1,0 +1,12 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "accion": {
+            "id": 1,
+            "nombre": "Ver",
+            "slug": "ver",
+            "descripcion": "Solo lectura"
+        }
+    }
+}
