@@ -1,0 +1,9 @@
+{
+    "success": true,
+    "message": "Perfil actualizado correctamente.",
+    "data": {
+        "nombre": "Carlos Alberto",
+        "apellidos": "Gómez Pérez",
+        "email": "carlos.gomez@empresa.com.mx"
+    }
+}

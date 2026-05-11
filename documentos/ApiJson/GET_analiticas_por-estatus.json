@@ -1,0 +1,16 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "por_estatus": [
+            {
+                "estatus": "Pendiente",
+                "cantidad": 20
+            },
+            {
+                "estatus": "Pagada",
+                "cantidad": 100
+            }
+        ]
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "regimenes": [
+            {
+                "id": 1,
+                "clave": "601",
+                "nombre": "General de Ley Personas Morales"
+            }
+        ],
+        "asignados": [
+            1
+        ]
+    }
+}

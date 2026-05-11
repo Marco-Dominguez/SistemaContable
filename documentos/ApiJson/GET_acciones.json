@@ -1,0 +1,24 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "acciones": [
+            {
+                "id": 1,
+                "nombre": "Ver",
+                "slug": "ver",
+                "descripcion": "Solo lectura",
+                "created_at": "2025-01-01 10:00:00",
+                "total_modulos": 5
+            },
+            {
+                "id": 2,
+                "nombre": "Crear",
+                "slug": "crear",
+                "descripcion": "Creación de registros",
+                "created_at": "2025-01-01 10:00:00",
+                "total_modulos": 4
+            }
+        ]
+    }
+}

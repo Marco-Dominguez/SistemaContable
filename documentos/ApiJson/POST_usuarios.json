@@ -1,0 +1,7 @@
+{
+    "success": true,
+    "message": "Usuario creado correctamente.",
+    "data": {
+        "id": 5
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "success": true,
+    "message": "Se generaron 15 declaraciones (2 ya existían o no aplican).",
+    "data": {
+        "creadas": 15,
+        "omitidas": 2
+    }
+}

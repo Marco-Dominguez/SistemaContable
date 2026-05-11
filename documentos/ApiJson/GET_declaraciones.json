@@ -1,0 +1,29 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "declaraciones": [
+            {
+                "id": 1,
+                "cliente_id": 1,
+                "obligacion_id": 2,
+                "periodo_mes": 4,
+                "periodo_anio": 2026,
+                "estatus": "Para Pago",
+                "fecha_limite": "2026-05-17",
+                "fecha_presentacion": "2026-05-10",
+                "fecha_pago": null,
+                "importe_a_pagar": 15500,
+                "saldo_a_favor": 0,
+                "observaciones": "Favor de pagar antes de la fecha límite.",
+                "acuse_url": "\/uploads\/declaraciones\/1\/acuse.pdf",
+                "linea_captura_url": "\/uploads\/declaraciones\/1\/linea.pdf",
+                "comprobante_pago_url": null,
+                "rfc": "MEF901015XYZ",
+                "razon_social": "Mecánica Fronteriza SA de CV",
+                "obligacion_clave": "IVA",
+                "obligacion_nombre": "Impuesto al Valor Agregado"
+            }
+        ]
+    }
+}

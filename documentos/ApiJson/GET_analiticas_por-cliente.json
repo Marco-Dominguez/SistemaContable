@@ -1,0 +1,14 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "por_cliente": [
+            {
+                "razon_social": "Mecánica Fronteriza SA de CV",
+                "cantidad": 24,
+                "total_importe": 150000,
+                "total_saldo": 500
+            }
+        ]
+    }
+}

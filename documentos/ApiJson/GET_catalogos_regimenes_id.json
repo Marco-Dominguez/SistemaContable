@@ -1,0 +1,13 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "regimen": {
+            "id": 1,
+            "clave": "601",
+            "nombre": "General de Ley Personas Morales",
+            "descripcion": "Para sociedades...",
+            "activo": 1
+        }
+    }
+}

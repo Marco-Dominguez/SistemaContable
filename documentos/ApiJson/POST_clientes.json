@@ -1,0 +1,7 @@
+{
+    "success": true,
+    "message": "Cliente creado correctamente.",
+    "data": {
+        "id": 3
+    }
+}

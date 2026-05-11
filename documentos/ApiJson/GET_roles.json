@@ -1,0 +1,24 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "roles": [
+            {
+                "id": 1,
+                "nombre": "Administrador",
+                "descripcion": "Acceso total",
+                "activo": 1,
+                "created_at": "2025-01-01",
+                "total_usuarios": 2
+            },
+            {
+                "id": 2,
+                "nombre": "Cliente",
+                "descripcion": "Solo consulta y subida de comprobantes",
+                "activo": 1,
+                "created_at": "2025-01-01",
+                "total_usuarios": 45
+            }
+        ]
+    }
+}

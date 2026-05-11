@@ -1,0 +1,77 @@
+{
+    "success": true,
+    "message": "OK",
+    "data": {
+        "anio": 2026,
+        "kpi": {
+            "total": 150,
+            "pendientes": 20,
+            "en_proceso": 15,
+            "para_pago": 5,
+            "pagadas": 100,
+            "en_cero": 10,
+            "total_importe": 450000.5,
+            "total_saldo": 12500.75
+        },
+        "por_estatus": [
+            {
+                "estatus": "Pendiente",
+                "cantidad": 20
+            },
+            {
+                "estatus": "En Proceso",
+                "cantidad": 15
+            },
+            {
+                "estatus": "Para Pago",
+                "cantidad": 5
+            },
+            {
+                "estatus": "Pagada",
+                "cantidad": 100
+            },
+            {
+                "estatus": "Presentada_Cero",
+                "cantidad": 10
+            }
+        ],
+        "tendencia": [
+            {
+                "mes": 1,
+                "importe": 45000,
+                "saldo_favor": 1000,
+                "total_decl": 12
+            },
+            {
+                "mes": 2,
+                "importe": 42000,
+                "saldo_favor": 1200,
+                "total_decl": 11
+            }
+        ],
+        "top_clientes": [
+            {
+                "razon_social": "Mecánica Fronteriza SA de CV",
+                "cantidad": 24,
+                "total_importe": 150000
+            },
+            {
+                "razon_social": "Abarrotes El Chavo",
+                "cantidad": 12,
+                "total_importe": 25000
+            }
+        ],
+        "obligaciones": [
+            {
+                "nombre": "Pago provisional mensual de ISR",
+                "clave": "ISR_PM",
+                "cantidad": 120
+            },
+            {
+                "nombre": "Impuesto al Valor Agregado",
+                "clave": "IVA",
+                "cantidad": 120
+            }
+        ]
+    }
+}
