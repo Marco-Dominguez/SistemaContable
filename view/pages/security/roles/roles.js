@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const ALL_TABS = ['tab-roles', 'tab-modulos', 'tab-acciones', 'tab-permisos', 'tab-rol-permisos'];
 
-    // tabs
+    // pestañas
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -247,14 +247,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         Modal.open('modal-modulo');
     });
 
-    // auto slug from name
+    // slug automatico desde nombre
     document.getElementById('modulo-nombre')?.addEventListener('input', e => {
         if (!editingModuloId) {
             document.getElementById('modulo-slug').value = toSlug(e.target.value);
         }
     });
 
-    // icon preview
+    // vista previa de icono
     document.getElementById('modulo-icono')?.addEventListener('change', e => {
         const cls = e.target.value || 'bi-grid';
         document.getElementById('modulo-icono-preview').className = `bi ${cls} text-slate-600 text-lg`;
@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         Modal.open('modal-accion');
     });
 
-    // auto slug from name
+    // slug automatico desde nombre
     document.getElementById('accion-nombre')?.addEventListener('input', e => {
         if (!editingAccionId) {
             document.getElementById('accion-slug').value = toSlug(e.target.value);
@@ -483,7 +483,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderMatriz(modulos, acciones, ma) {
         const table = document.getElementById('matriz-table');
 
-        // build lookup: modulo_id → Set of accion_id
+        // construir busqueda: modulo_id a conjunto de accion_id
         const assigned = {};
         modulos.forEach(m => assigned[m.id] = new Set());
         ma.forEach(x => assigned[x.modulo_id]?.add(parseInt(x.accion_id)));
@@ -653,7 +653,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         finally { setLoading(btn, false); }
     });
 
-    // utils
+    // utilidades
     function show(id) { document.getElementById(id)?.classList.remove('hidden'); }
     function hide(id) { document.getElementById(id)?.classList.add('hidden'); }
 
@@ -667,6 +667,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById(formErrId)?.classList.add('hidden');
     }
 
-    // init
+    // inicializar
     loadRoles();
 });

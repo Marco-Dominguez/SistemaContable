@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let editingId = null;
     let deleteId = null;
 
-    // tabs
+    // pestañas
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             </tr>
         `).join('');
 
-        // bind botones
+        // enlazar botones
         tbody.querySelectorAll('.btn-edit-user').forEach(btn => {
             btn.addEventListener('click', () => openEditUser(parseInt(btn.dataset.id)));
         });
@@ -290,6 +290,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (e) { Toast.error('Error de conexión.'); }
         finally { setLoading(btn, false); }
     });
-    // init
+    // inicializar
     loadUsers();
 });
